@@ -21,13 +21,7 @@ export default function Comment({ comment, canDelete }) {
     const handleSave = () => {
         put(route('comments.update', { id: comment.id }), {
             preserveScroll: true,
-            onSuccess: () => {
-                setIsEditing(false);
-                console.log('Comment updated successfully');
-            },
-            onError: (errors) => {
-                console.error('Failed to update comment:', errors);
-            },
+            onSuccess: () => setIsEditing(false),
             data: { content },
         });
     };

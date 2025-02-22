@@ -20,7 +20,7 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return redirect()->back();
+        return back()->with('success', 'Comment added successfully.');
     }
 
     public function update(Request $request, $id)

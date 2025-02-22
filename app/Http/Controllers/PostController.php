@@ -36,4 +36,38 @@ class PostController extends Controller
 
         return redirect()->route('dashboard');
     }
+
+    public function update(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $post->update([
+            'title' => $request->title,
+            'content' => $request->content,
+        ]);
+
+        return response()->json(['success' => 'Post updated successfully.']);
+    }
+
+    public function destroy($id)
+    {
+        $post = Post::findOrFail($id);
+
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $post->delete();
+
+        return redirect()->back();
+    }
 }
