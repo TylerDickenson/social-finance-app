@@ -1,12 +1,14 @@
+// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/resources/js/Pages/Dashboard.jsx
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import Post from '@/Components/Post';
 
-export default function Dashboard() {
+export default function Dashboard({ posts, auth }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    
+                <h2 className="text-2xl font-semibold leading-tight text-gray-800">
+                    Dashboard
                 </h2>
             }
         >
@@ -16,7 +18,13 @@ export default function Dashboard() {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            You're logged in!
+                            {posts && posts.length > 0 ? (
+                                posts.map((post) => (
+                                    <Post key={post.id} post={post} currentUserId={auth.user.id} />
+                                ))
+                            ) : (
+                                <p className="text-lg">No posts available.</p>
+                            )}
                         </div>
                     </div>
                 </div>

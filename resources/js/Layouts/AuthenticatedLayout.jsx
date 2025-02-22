@@ -30,6 +30,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route('posts.create')}
+                                    active={route().current('posts.create')}
+                                >
+                                    Make a post
+                                </NavLink>
                             </div>
                         </div>
 

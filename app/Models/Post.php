@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
+    protected $table = 'posts';
+
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'content'];
+    protected $fillable = ['user_id', 'title', 'content', 'image'];
 
     public function user()
     {
@@ -21,5 +23,5 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
-    
+
 }
