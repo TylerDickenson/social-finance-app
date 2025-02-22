@@ -1,5 +1,5 @@
 <?php
-// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/app/Http/Controllers/CommentController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
@@ -11,12 +11,12 @@ class CommentController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'post_id' => 'required|exists:posts,id',
+            'postId' => 'required|exists:posts,id',
         ]);
 
         Comment::create([
             'user_id' => auth()->id(),
-            'post_id' => $request->post_id,
+            'post_id' => $request->postId,
             'content' => $request->content,
         ]);
 
@@ -39,7 +39,7 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return response()->json(['success' => 'Comment updated successfully.']);
+        return back()->with('success', 'Comment updated successfully.');
     }
 
     public function destroy($id)

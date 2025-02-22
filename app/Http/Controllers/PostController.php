@@ -1,5 +1,5 @@
 <?php
-// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/app/Http/Controllers/PostController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Post;
