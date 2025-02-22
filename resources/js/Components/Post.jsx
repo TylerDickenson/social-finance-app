@@ -35,7 +35,9 @@ export default function Post({ post, currentUserId }) {
                         onClick={handleDeletePost}
                         className="text-red-600 hover:text-red-800"
                     >
-                        Delete Post
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
+                        </svg>
                     </button>
                 )}
             </div>

@@ -1,4 +1,3 @@
-// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/resources/js/Components/DateTimeDisplay.jsx
 import React from 'react';
 
 export default function DateTimeDisplay({ timestamp }) {
@@ -15,8 +14,9 @@ export default function DateTimeDisplay({ timestamp }) {
     });
 
     return (
-        <div className="text-right">
+        <div className="flex items-center space-x-2">
             <p className="text-sm text-gray-500">{formattedTime}</p>
+            <p className="text-sm text-gray-500">|</p>
             <p className="text-md text-gray-800 font-semibold">{formattedDate}</p>
         </div>
     );
