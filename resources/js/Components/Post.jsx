@@ -29,17 +29,19 @@ export default function Post({ post, currentUserId }) {
                     <img src={post.user.avatar} alt={post.user.name} className="w-10 h-10 rounded-full mr-2" />
                     <h4 className="text-2xl font-bold">{post.user.name}</h4>
                 </div>
-                <DateTimeDisplay timestamp={post.created_at} />
-                {post.user.id === currentUserId && (
-                    <button
-                        onClick={handleDeletePost}
-                        className="text-red-600 hover:text-red-800"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
-                        </svg>
-                    </button>
-                )}
+                <div className="flex items-center">
+                    {post.user.id === currentUserId && (
+                        <button
+                            onClick={handleDeletePost}
+                            className="text-red-600 hover:text-red-800 mr-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
+                            </svg>
+                        </button>
+                    )}
+                    <DateTimeDisplay timestamp={post.created_at} />
+                </div>
             </div>
             <hr className="my-4 border-gray-300" />
             <div className="flex">
