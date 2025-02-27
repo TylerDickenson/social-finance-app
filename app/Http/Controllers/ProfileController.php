@@ -18,7 +18,7 @@ class ProfileController extends Controller
     public function show(Request $request): Response
     {
         $user = $request->user();
-        $posts = Post::where('user_id', $user->id)->with('user')->get();
+        $posts = Post::where('user_id', $user->id)->with(['user', 'comments.user'])->get();
 
         return Inertia::render('Profile/Show', [
             'user' => $user,

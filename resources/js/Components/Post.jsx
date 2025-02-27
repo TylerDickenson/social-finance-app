@@ -54,7 +54,7 @@ export default function Post({ post, currentUserId }) {
                     <hr className="my-4 border-gray-300" />
                     <div className="mt-4">
                         <h4 className="text-lg font-semibold">Comments</h4>
-                        {post.comments.length > 0 ? (
+                        {post.comments && post.comments.length > 0 ? (
                             post.comments.map((comment) => (
                                 <Comment key={comment.id} comment={comment} canDelete={comment.user.id === currentUserId} />
                             ))
