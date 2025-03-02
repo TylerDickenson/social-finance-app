@@ -70,4 +70,10 @@ class PostController extends Controller
 
         return redirect()->back();
     }
+
+    public function following()
+    {
+        $posts = Post::with(['user', 'comments.user'])->get();
+        return Inertia::render('Following', ['posts' => $posts]);
+    }
 }

@@ -33,8 +33,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Discover
                                 </NavLink>
                                 <NavLink
-                                    href={route('posts.create')}
-                                    active={route().current('posts.create')}
+                                    href={route('following')}
+                                    active={route().current('following')}
                                     className="text-2xl" // Increased text size
                                     style={{ fontSize: '1.5rem' }} // Explicitly set font size
                                 >
