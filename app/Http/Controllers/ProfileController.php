@@ -73,4 +73,17 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function updateAbout(Request $request)
+    {
+        $request->validate([
+            'about' => 'required|string|max:1000',
+        ]);
+
+        $user = Auth::user();
+        $user->about = $request->input('about');
+        $user->save();
+
+        return back()->with('status', 'About section updated successfully.');
+    }
 }

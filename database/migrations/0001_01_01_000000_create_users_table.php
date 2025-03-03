@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('anonymous')->default(false);
             $table->string('avatar')->default('/images/Backgrounds/Avatar.jpeg');
+            $table->text('about')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

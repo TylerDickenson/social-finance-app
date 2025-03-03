@@ -30,6 +30,8 @@ Route::put('/comments/{id}', [CommentController::class, 'update'])->middleware([
 Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->middleware(['auth', 'verified'])->name('comments.destroy');
 Route::patch('/comments/{id}', [CommentController::class, 'update'])->middleware(['auth', 'verified']);
 
+Route::patch('/profile/about', [ProfileController::class, 'updateAbout'])->middleware(['auth', 'verified'])->name('profile.updateAbout');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes dropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes leftBar {
+    from {
+        height: 0;
+    }
+    to {
+        height: 100%;
+    }
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-dropdown {
+    animation: dropdown 0.7s ease-out;
+}
+
+.left-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #4B5563; /* Customize the color as needed */
+    animation: leftBar 0.7s ease-out;
+}
+
+.fade-down {
+    animation: fadeDown 0.7s ease-out;
+}
+
+.dropdown-item:hover {
+    background-color: #E0F2FE; /* Light blue color */
+}

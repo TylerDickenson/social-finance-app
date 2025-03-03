@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'anonymous' => false,
                 'avatar' => $defaultAvatar,
+                'about' => 'I am a software developer.',
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'anonymous' => false,
                 'avatar' => '/images/Chase.png', // Ensure this path is correct
+                'about' => 'I am a software developer.',
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -43,6 +45,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'anonymous' => true,
                 'avatar' => $defaultAvatar,
+                'about' => 'I am a software developer.',
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -15,11 +15,11 @@ export default function AuthenticatedLayout({ header, children }) {
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-20 justify-between"> {/* Increased height */}
+                    <div className="flex h-24 justify-between"> {/* Increased height */}
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <ApplicationLogo className="block h-20 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
@@ -28,7 +28,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                     className="text-2xl" // Increased text size
-                                    style={{ fontSize: '1.5rem' }} // Explicitly set font size
+                                    style={{ fontSize: '1.75rem' }} // Explicitly set font size
                                 >
                                     Discover
                                 </NavLink>
@@ -36,7 +36,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('following')}
                                     active={route().current('following')}
                                     className="text-2xl" // Increased text size
-                                    style={{ fontSize: '1.5rem' }} // Explicitly set font size
+                                    style={{ fontSize: '1.75rem' }} // Explicitly set font size
                                 >
                                     Following
                                 </NavLink>
@@ -47,7 +47,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <button
                                 onClick={() => window.location.href = route('posts.create')}
                                 className="text-2xl bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                                style={{ fontSize: '1.5rem' }} // Explicitly set font size
+                                style={{ fontSize: '1.75rem' }} // Explicitly set font size
                             >
                                 New post
                             </button>
@@ -79,7 +79,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                             </span>
                                         </Dropdown.Trigger>
 
-                                        <Dropdown.Content>
+                                        <Dropdown.Content className="w-56 animate-slow-dropdown"> {/* Increased width and added animation */}
                                             <Dropdown.Link
                                                 href={route('profile.show')}
                                                 className="text-xl" // Increased text size

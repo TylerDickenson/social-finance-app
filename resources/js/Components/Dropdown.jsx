@@ -38,7 +38,7 @@ const Trigger = ({ children }) => {
 const Content = ({
     align = 'right',
     width = '48',
-    contentClasses = 'py-1 bg-white',
+    contentClasses = 'py-0 bg-white',
     children,
 }) => {
     const { open, setOpen } = useContext(DropDownContext);
@@ -61,20 +61,20 @@ const Content = ({
         <>
             <Transition
                 show={open}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+                enter="transition ease-out duration-700"
+                enterFrom="opacity-0 transform scale-95 translate-y-[-20px]"
+                enterTo="opacity-100 transform scale-100 translate-y-0"
+                leave="transition ease-in duration-700"
+                leaveFrom="opacity-100 transform scale-100 translate-y-0"
+                leaveTo="opacity-0 transform scale-95 translate-y-[-20px]"
             >
                 <div
-                    className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
+                    className={`absolute z-50 mt-2 shadow-lg ${alignmentClasses} ${widthClasses} animate-dropdown left-bar`}
                     onClick={() => setOpen(false)}
                 >
                     <div
                         className={
-                            `rounded-md ring-1 ring-black ring-opacity-5 ` +
+                            `bg-white border border-gray-200 shadow-md ` +
                             contentClasses
                         }
                     >
@@ -86,12 +86,12 @@ const Content = ({
     );
 };
 
-const DropdownLink = ({ className = '', children, ...props }) => {
+const DropdownLink = ({ className = '', children, index, ...props }) => {
     return (
         <Link
             {...props}
             className={
-                'block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ' +
+                `block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-blue-100 focus:bg-blue-100 focus:outline-none fade-down delay-[${index * 100}ms] dropdown-item ` +
                 className
             }
         >
