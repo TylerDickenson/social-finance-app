@@ -4,8 +4,9 @@ import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import UpdateAboutForm from './Partials/UpdateAboutForm';
+import UpdateAvatarForm from './Partials/UpdateAvatarForm';
 
-export default function Edit({ mustVerifyEmail, status, about }) {
+export default function Edit({ mustVerifyEmail, status, about, avatarUrl }) {
     return (
         <AuthenticatedLayout
             header={
@@ -32,6 +33,10 @@ export default function Edit({ mustVerifyEmail, status, about }) {
 
                     <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                         <UpdateAboutForm about={about} className="max-w-xl" />
+                    </div>
+
+                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                        <UpdateAvatarForm avatarUrl={avatarUrl} className="max-w-xl" />
                     </div>
 
                     <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">

@@ -7,14 +7,24 @@ const Show = ({ user, posts }) => {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center space-x-6 py-2">
-                    <img src={user.avatar} alt="User Avatar" className="w-48 h-48 rounded-full" />
-                    <div>
+                <div className="flex items-center space-x-8 py-2">
+                    <img src={user.avatar_url} alt="User Avatar" className="w-48 h-48 ml-2 rounded-full" />
+                    <div className="flex flex-col">
                         <h1 className="text-4xl font-bold leading-tight text-gray-800">
                             {user.name}
                         </h1>
-                        <p className="mt-2 text-gray-600">{user.about}</p>
-                        <p className="mt-2 text-gray-600">Posts: {posts.length}</p>
+                        <p className="mt-2 text-xl text-gray-600">{user.about}</p>
+                        <div className="flex items-center space-x-12 mt-4">
+                            <p className="text-xl font-semibold text-gray-600">
+                                Posts | {posts.length}
+                            </p>
+                            <p className="text-xl font-semibold text-gray-600">
+                                Followers | xxxx{/* Add the number of following here */}
+                            </p>
+                            <p className="text-xl font-semibold text-gray-600">
+                                Following | x{/* Add the number of followers here */}
+                            </p>
+                        </div>
                     </div>
                 </div>
             }

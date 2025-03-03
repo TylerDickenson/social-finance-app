@@ -35,7 +35,7 @@ export default function Comment({ comment, canDelete }) {
         <div className="relative mt-2 p-3 border border-gray-200 rounded-lg">
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
-                    <img src={comment.user.avatar} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
+                    <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
                     <h5 className="text-md font-semibold">{comment.user.name}</h5>
                 </div>
                 <DateTimeDisplay timestamp={comment.created_at} />
