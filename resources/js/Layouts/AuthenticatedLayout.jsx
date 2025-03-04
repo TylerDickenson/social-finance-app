@@ -1,208 +1,120 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const [isNavbarOpen, setIsNavbarOpen] = useState(false);
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const handleNavLinkClick = () => {
+        setIsNavbarOpen(false);
+    };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-24 justify-between"> {/* Increased height */}
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-20 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                    className="text-2xl" // Increased text size
-                                    style={{ fontSize: '1.75rem' }} // Explicitly set font size
-                                >
-                                    Discover
-                                </NavLink>
-                                <NavLink
-                                    href={route('following')}
-                                    active={route().current('following')}
-                                    className="text-2xl" // Increased text size
-                                    style={{ fontSize: '1.75rem' }} // Explicitly set font size
-                                >
-                                    Following
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <button
-                                onClick={() => window.location.href = route('posts.create')}
-                                className="text-2xl bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                                style={{ fontSize: '1.75rem' }} // Explicitly set font size
-                            >
-                                New post
-                            </button>
-
-                            <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                                <div className="relative ms-3">
-                                    <Dropdown>
-                                        <Dropdown.Trigger>
-                                            <span className="inline-flex rounded-md">
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-2xl font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none" // Increased text size
-                                                >
-                                                    {user.name}
-
-                                                    <svg
-                                                        className="-me-0.5 ms-2 h-4 w-4"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </Dropdown.Trigger>
-
-                                        <Dropdown.Content className="w-56 animate-slow-dropdown"> {/* Increased width and added animation */}
-                                            <Dropdown.Link
-                                                href={route('profile.show')}
-                                                className="text-xl" // Increased text size
-                                            >
-                                                My Account
-                                            </Dropdown.Link>
-                                            <Dropdown.Link
-                                                 href={route('profile.edit')}
-                                                 className="text-xl" // Increased text size
-                                            >
-                                                Edit Details
-                                            </Dropdown.Link>
-                                            <Dropdown.Link
-                                                href={route('logout')}
-                                                method="post"
-                                                as="button"
-                                                className="text-xl" // Increased text size
-                                            >
-                                                Log Out
-                                            </Dropdown.Link>
-                                        </Dropdown.Content>
-                                    </Dropdown>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+        <div className="min-h-screen flex bg-gray-100">
+            <nav className={`fixed inset-y-0 left-0 w-96 bg-white border-r border-gray-100 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0`}>
+                <div className="h-48 flex items-center justify-center">
+                    <Link href="/">
+                        <ApplicationLogo className="block h-40 w-auto fill-current text-gray-800" />
+                    </Link>
                 </div>
-
-                <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                            className="text-2xl" // Increased text size
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="border-t border-gray-200 pb-1 pt-4">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.show')}>
+                <div className="flex flex-col items-center px-8 py-4 space-y-4">
+                    <NavLink
+                        href={route('dashboard')}
+                        active={route().current('dashboard')}
+                        className="text-2xl block py-6"
+                        style={{ fontSize: '2rem' }}
+                        onClick={handleNavLinkClick}
+                    >
+                        Discover
+                    </NavLink>
+                    <div className="py-4"></div>
+                    <NavLink
+                        href={route('following')}
+                        active={route().current('following')}
+                        className="text-2xl block py-6"
+                        style={{ fontSize: '2rem' }}
+                        onClick={handleNavLinkClick}
+                    >
+                        Following
+                    </NavLink>
+                    <div className="py-4"></div>
+                    <NavLink
+                        href={route('posts.create')}
+                        className="text-2xl block py-6"
+                        style={{ fontSize: '2rem' }}
+                        onClick={handleNavLinkClick}
+                    >
+                        Make a New Post
+                    </NavLink>
+                </div>
+                <div className="mt-auto px-8 py-4">
+                    <Dropdown>
+                        <Dropdown.Trigger>
+                            <span className="inline-flex rounded-md w-full">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center justify-between w-full rounded-md border border-transparent bg-white px-3 py-4 text-2xl font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                >
+                                    {user.name}
+                                    <svg
+                                        className="-me-0.5 ms-2 h-4 w-4"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                </button>
+                            </span>
+                        </Dropdown.Trigger>
+                        <Dropdown.Content className="w-full">
+                            <Dropdown.Link href={route('profile.show')} className="text-xl block py-4">
                                 My Account
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('profile.edit')}>
+                            </Dropdown.Link>
+                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-4">
                                 Edit Details
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
+                            </Dropdown.Link>
+                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-4">
                                 Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
+                            </Dropdown.Link>
+                        </Dropdown.Content>
+                    </Dropdown>
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
+            {isNavbarOpen && (
+                <div
+                    className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+                    onClick={() => setIsNavbarOpen(false)}
+                ></div>
             )}
 
-            <main>{children}</main>
+            <div className="flex-1 flex flex-col lg:ml-96">
+                <header className="fixed top-0 left-0 right-0 bg-white shadow flex items-center justify-between lg:justify-start z-40 lg:ml-96">
+                    <button
+                        onClick={() => setIsNavbarOpen(!isNavbarOpen)}
+                        className="p-4 focus:outline-none lg:hidden"
+                    >
+                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+                        <h1 className="text-3xl font-bold">{header}</h1>
+                    </div>
+                </header>
+
+                <main className="flex-1 p-6 mt-32 lg:mt-40">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

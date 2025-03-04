@@ -1,4 +1,3 @@
-// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/resources/js/Pages/Dashboard.jsx
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Post from '@/Components/Post';
@@ -6,11 +5,7 @@ import Post from '@/Components/Post';
 export default function Dashboard({ posts, auth }) {
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-2xl font-semibold leading-tight text-gray-800 ">
-                    Explore new Content
-                </h2>
-            }
+            header="Explore new Content"
         >
             <Head title="Discover" />
 

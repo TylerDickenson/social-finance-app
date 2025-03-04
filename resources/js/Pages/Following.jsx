@@ -5,11 +5,7 @@ import Post from '@/Components/Post';
 export default function Following({ posts, auth }) {
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-2xl font-semibold leading-tight text-gray-800">
-                    Posts from People You Follow
-                </h2>
-            }
+            header="Posts from People You Follow"
         >
             <Head title="Following" />
 
