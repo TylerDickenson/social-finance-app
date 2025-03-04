@@ -15,11 +15,8 @@ export default function Create() {
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Create Post
-                </h2>
-            }
+            header="Create a new post below "
+            
         >
             <Head title="Create Post" />
 

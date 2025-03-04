@@ -106,12 +106,12 @@ export default function AuthenticatedLayout({ header, children }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold">{header}</h1>
                     </div>
                 </header>
 
-                <main className="flex-1 p-6 mt-32 lg:mt-40">
+                <main className="flex-1 p-4 mt-24 lg:mt-32">
                     {children}
                 </main>
             </div>

@@ -63,19 +63,19 @@ export default function Post({ post, currentUserId }) {
                         ) : (
                             <p className="text-md text-gray-600">No comments available.</p>
                         )}
-                        <form onSubmit={handleSubmit} className="mt-4">
+                        <form onSubmit={handleSubmit} className="mt-4 relative">
                             <textarea
                                 name="content"
                                 value={data.content}
                                 onChange={(e) => setData('content', e.target.value)}
-                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none"
                                 rows="3"
                                 placeholder="Add a comment..."
                             ></textarea>
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="mt-2 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                className="absolute bottom-4 right-2 inline-flex justify-center rounded-md border border-transparent bg-blue-400 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 Post Comment
                             </button>
