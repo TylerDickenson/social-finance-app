@@ -13,10 +13,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Post;
 
-
 class ProfileController extends Controller
 {
-
     public function show(Request $request): Response
     {
         $user = $request->user();
@@ -28,20 +26,16 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'about' => auth()->user()->about,
+            'avatarUrl' => auth()->user()->avatar_url,
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -55,9 +49,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
@@ -88,7 +79,6 @@ class ProfileController extends Controller
 
         return back()->with('status', 'About section updated successfully.');
     }
-    
 
     public function updateAvatar(Request $request)
     {
@@ -107,5 +97,4 @@ class ProfileController extends Controller
 
         return back()->with('status', 'avatar-updated');
     }
-
 }

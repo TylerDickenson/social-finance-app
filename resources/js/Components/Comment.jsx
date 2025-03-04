@@ -72,7 +72,7 @@ export default function Comment({ comment, canDelete }) {
                 </p>
             )}
             {canDelete && (
-                <div className="absolute bottom-2 right-2 flex space-x-2">
+                <div className="absolute bottom-2 right-2 flex items-center space-x-2"> {/* Added items-center to align icons */}
                     <button
                         onClick={handleEdit}
                         className="text-blue-600 hover:text-blue-800"
@@ -86,7 +86,7 @@ export default function Comment({ comment, canDelete }) {
                         disabled={processing}
                         className="text-red-600 hover:text-red-800"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
                         </svg>
                     </button>

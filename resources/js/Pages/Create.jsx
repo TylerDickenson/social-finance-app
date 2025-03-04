@@ -1,23 +1,37 @@
-// filepath: /Users/tylerdickenson/Projects/finance-app-3.0/social-finance-app/resources/js/Pages/Create.jsx
+import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
+import FileUpload from '@/Components/FileUpload';
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         content: '',
+        image: null, // Add image to the form data
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('posts.store'));
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('content', data.content);
+        if (data.image) {
+            formData.append('image', data.image);
+        }
+        post(route('posts.store'), {
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    };
+
+    const handleFileChange = (file) => {
+        setData('image', file);
     };
 
     return (
-        <AuthenticatedLayout
-            header="Create a new post below "
-            
-        >
+        <AuthenticatedLayout header="Create a new post below">
             <Head title="Create Post" />
 
             <div className="py-12">
@@ -25,7 +39,7 @@ export default function Create() {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             {/* Form for creating a post */}
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleSubmit} encType="multipart/form-data">
                                 <div>
                                     <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                                         Title
@@ -54,6 +68,13 @@ export default function Create() {
                                     ></textarea>
                                     {errors.content && <div className="text-red-600">{errors.content}</div>}
                                 </div>
+                                <FileUpload
+                                    label="Image"
+                                    name="image"
+                                    value={data.image}
+                                    onChange={handleFileChange}
+                                    error={errors.image}
+                                />
                                 <div className="mt-4">
                                     <button
                                         type="submit"

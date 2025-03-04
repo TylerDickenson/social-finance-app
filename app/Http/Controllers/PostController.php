@@ -10,7 +10,10 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::with(['user', 'comments.user'])->get(); // Fetch posts with user and comments information
+        $posts = Post::with(['user', 'comments.user'])->get()->map(function ($post) {
+            $post->image_url = $post->image_url;
+            return $post;
+        });
         return Inertia::render('Dashboard', ['posts' => $posts]);
     }
 
@@ -24,14 +27,19 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+        }
 
         Post::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'content' => $request->content,
-            'image' => $request->image,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('dashboard');
@@ -48,11 +56,18 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $imagePath = $post->image;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+        }
 
         $post->update([
             'title' => $request->title,
             'content' => $request->content,
+            'image' => $imagePath,
         ]);
 
         return response()->json(['success' => 'Post updated successfully.']);

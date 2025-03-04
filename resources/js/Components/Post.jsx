@@ -33,8 +33,8 @@ export default function Post({ post, currentUserId }) {
             </div>
             <hr className="my-4 border-gray-300" />
             <div className="flex">
-                {post.image && (
-                    <img src={post.image} alt={post.title} className="mb-4 max-w-full h-auto rounded-lg" style={{ maxWidth: '300px', objectFit: 'cover' }} />
+                {post.image_url && (
+                    <img src={post.image_url} alt={post.title} className="mb-4 max-w-full h-auto rounded-lg" style={{ maxWidth: '300px', objectFit: 'cover' }} />
                 )}
                 <div className="ml-6 flex-1 relative">
                     <div className="flex justify-between items-start">
@@ -75,7 +75,7 @@ export default function Post({ post, currentUserId }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="absolute bottom-4 right-2 inline-flex justify-center rounded-md border border-transparent bg-blue-400 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                className="absolute bottom-4 right-2 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2"
                             >
                                 Post Comment
                             </button>

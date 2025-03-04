@@ -10,6 +10,7 @@
     height: 0;
     background-color: #000;
     animation: growLine 0.5s forwards;
+    transition: height 0.5s ease-in-out, right 0.3s ease-in-out; /* Smooth transition for height and position */
 }
 
 @keyframes growLine {
@@ -23,10 +24,22 @@
     }
 }
 
+@keyframes shrinkLine {
+    from {
+        height: 100%;
+        bottom: 0;
+    }
+    to {
+        height: 0;
+        bottom: 0;
+    }
+}
+
 .dropdown-item {
     position: relative;
     opacity: 0;
     animation: fadeInUp 0.7s forwards; /* Increased duration for emphasis */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition for opacity and transform */
 }
 
 .dropdown-item::after {
@@ -41,7 +54,7 @@
     border-bottom: 8px solid transparent; /* Increased size */
     border-left: 8px solid #000; /* Color of the triangle */
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
 }
 
 .dropdown-item:hover::after {
@@ -57,4 +70,60 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(30px); /* Increased translateY for emphasis */
+    }
+}
+
+.custom-file-input {
+    position: relative;
+    width: 100%;
+    height: 2.5rem;
+    margin: 0;
+    opacity: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.custom-file-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    box-shadow: inset 0 0.2rem 0.4rem rgba(0, 0, 0, 0.05);
+    z-index: 1;
+    cursor: pointer;
+}
+
+.custom-file-label::after {
+    content: 'Choose file';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    height: 2.5rem;
+    padding: 0.5rem 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #e9ecef;
+    border-left: 1px solid #ced4da;
+    border-radius: 0 0.25rem 0.25rem 0;
 }

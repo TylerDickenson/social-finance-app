@@ -12,10 +12,14 @@ function Dropdown({ children }) {
         setIsOpen(!isOpen);
     };
 
+    const handleClose = () => {
+        setIsOpen(false);
+    };
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsOpen(false);
+                handleClose();
             }
         };
 
@@ -26,7 +30,7 @@ function Dropdown({ children }) {
     }, [dropdownRef]);
 
     return (
-        <DropdownContext.Provider value={{ isOpen, handleToggle }}>
+        <DropdownContext.Provider value={{ isOpen, handleToggle, handleClose }}>
             <div className="relative" ref={dropdownRef}>
                 {children}
             </div>
@@ -60,8 +64,9 @@ Dropdown.Content = function Content({ children, className }) {
 };
 
 Dropdown.Link = function LinkComponent({ href, method, as, className, children, ...props }) {
+    const { handleClose } = useContext(DropdownContext);
     return (
-        <Link href={href} method={method} as={as} className={`block text-right text-lg font-medium pr-4 dropdown-item ${className}`} {...props}>
+        <Link href={href} method={method} as={as} className={`block text-right text-lg font-medium pr-4 dropdown-item ${className}`} {...props} onClick={handleClose}>
             {children}
         </Link>
     );

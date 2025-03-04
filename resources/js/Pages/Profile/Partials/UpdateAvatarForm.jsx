@@ -1,10 +1,15 @@
 import { useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useState } from 'react';
+import FileUpload from '@/Components/FileUpload';
 
 export default function UpdateAvatarForm({ avatarUrl }) {
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         avatar: null,
     });
+
+    const handleFileChange = (file) => {
+        setData('avatar', file);
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -28,13 +33,13 @@ export default function UpdateAvatarForm({ avatarUrl }) {
                         Avatar
                     </label>
                     <img src={avatarUrl} alt="Current Avatar" className="w-20 h-20 rounded-full" />
-                    <input
-                        type="file"
-                        id="avatar"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        onChange={(e) => setData('avatar', e.target.files[0])}
+                    <FileUpload
+                        label="Avatar"
+                        name="avatar"
+                        value={data.avatar}
+                        onChange={handleFileChange}
+                        error={errors.avatar}
                     />
-                    {errors.avatar && <div className="mt-2 text-sm text-red-600">{errors.avatar}</div>}
                 </div>
 
                 <div className="flex items-center gap-4">
