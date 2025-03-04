@@ -2,56 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes dropdown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.vertical-line {
+    position: absolute;
+    right: 24px; /* Move the line further to the left */
+    bottom: 0; /* Start from the bottom */
+    width: 5px;
+    height: 0;
+    background-color: #000;
+    animation: growLine 0.5s forwards;
 }
 
-@keyframes leftBar {
+@keyframes growLine {
     from {
         height: 0;
+        bottom: 0;
     }
     to {
         height: 100%;
+        bottom: 0;
     }
 }
 
-@keyframes fadeDown {
+.dropdown-item {
+    position: relative;
+    opacity: 0;
+    animation: fadeInUp 0.7s forwards; /* Increased duration for emphasis */
+}
+
+.dropdown-item::after {
+    content: '';
+    position: absolute;
+    right: 0; /* Position the triangle right next to the vertical line */
+    top: 50%;
+    transform: translateY(-50%) rotate(180deg); /* Rotate the triangle to point left */
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent; /* Increased size */
+    border-bottom: 8px solid transparent; /* Increased size */
+    border-left: 8px solid #000; /* Color of the triangle */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dropdown-item:hover::after {
+    opacity: 1;
+}
+
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(30px); /* Increased translateY for emphasis */
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.animate-dropdown {
-    animation: dropdown 0.7s ease-out;
-}
-
-.left-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background-color: #4B5563; /* Customize the color as needed */
-    animation: leftBar 0.7s ease-out;
-}
-
-.fade-down {
-    animation: fadeDown 0.7s ease-out;
-}
-
-.dropdown-item:hover {
-    background-color: #E0F2FE; /* Light blue color */
 }

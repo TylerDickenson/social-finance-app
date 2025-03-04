@@ -1,64 +1,70 @@
 import { Transition } from '@headlessui/react';
 import { Link } from '@inertiajs/react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useRef, useEffect } from 'react';
 
 const DropdownContext = createContext();
 
 function Dropdown({ children }) {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
-    const toggle = () => setOpen(!open);
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownRef]);
 
     return (
-        <DropdownContext.Provider value={{ open, toggle }}>
-            <div className="relative">
+        <DropdownContext.Provider value={{ isOpen, handleToggle }}>
+            <div className="relative" ref={dropdownRef}>
                 {children}
             </div>
         </DropdownContext.Provider>
     );
 }
 
-function Trigger({ children }) {
-    const { toggle } = useContext(DropdownContext);
+Dropdown.Trigger = function Trigger({ children }) {
+    const { handleToggle } = useContext(DropdownContext);
+    return <div onClick={handleToggle}>{children}</div>;
+};
 
-    return (
-        <div onClick={toggle}>
-            {children}
-        </div>
-    );
-}
-
-function Content({ children, className = '' }) {
-    const { open } = useContext(DropdownContext);
-
+Dropdown.Content = function Content({ children, className }) {
+    const { isOpen } = useContext(DropdownContext);
     return (
         <Transition
-            show={open}
-            enter="transition ease-out duration-200"
-            enterFrom="transform opacity-0 translate-y-4"
-            enterTo="transform opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="transform opacity-100 translate-y-0"
-            leaveTo="transform opacity-0 translate-y-4"
-            className={`absolute bottom-full mb-2 ${className}`}
+            show={isOpen}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
         >
-            <div className="bg-white shadow-lg rounded-md overflow-hidden">
+            <div className={`absolute bottom-full mb-2 w-full text-right pr-8 ${className}`}>
                 {children}
+                <div className="vertical-line"></div> {/* Moved vertical line to the right */}
             </div>
         </Transition>
     );
-}
+};
 
-function LinkItem({ href, method = 'get', as = 'a', children }) {
+Dropdown.Link = function LinkComponent({ href, method, as, className, children, ...props }) {
     return (
-        <Link href={href} method={method} as={as} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100">
+        <Link href={href} method={method} as={as} className={`block text-right text-lg font-medium pr-4 dropdown-item ${className}`} {...props}>
             {children}
         </Link>
     );
-}
-
-Dropdown.Trigger = Trigger;
-Dropdown.Content = Content;
-Dropdown.Link = LinkItem;
+};
 
 export default Dropdown;

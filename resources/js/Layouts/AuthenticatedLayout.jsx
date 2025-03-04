@@ -24,7 +24,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     <NavLink
                         href={route('dashboard')}
                         active={route().current('dashboard')}
-                        className="text-2xl block py-6"
+                        className="text-2xl block py-6 pt-10"
                         style={{ fontSize: '2rem' }}
                         onClick={handleNavLinkClick}
                     >
@@ -43,6 +43,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="py-4"></div>
                     <NavLink
                         href={route('posts.create')}
+                        active={route().current('posts.create')}
                         className="text-2xl block py-6"
                         style={{ fontSize: '2rem' }}
                         onClick={handleNavLinkClick}
@@ -58,9 +59,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                     type="button"
                                     className="inline-flex items-center justify-between w-full rounded-md border border-transparent bg-white px-3 py-4 text-2xl font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                 >
-                                    {user.name}
+                                    <img
+                                        src={user.avatar_url} // Ensure the correct property name for the avatar URL
+                                        alt="User Avatar"
+                                        className="h-10 w-10 rounded-full me-1" // Reduced margin
+                                    />
+                                    <span className="truncate max-w-xs" style={{ lineHeight: '2rem' }}>{user.name}</span>
                                     <svg
-                                        className="-me-0.5 ms-2 h-6 w-6" // Increased size of the arrow
+                                        className="-me-0.5 ms-2 h-8 w-8" // Increased size
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20"
                                         fill="currentColor"
@@ -74,14 +80,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </button>
                             </span>
                         </Dropdown.Trigger>
-                        <Dropdown.Content className="w-full">
-                            <Dropdown.Link href={route('profile.show')} className="text-xl block py-4">
+                        <Dropdown.Content className="w-full text-right pr-4"> {/* Added padding-right */}
+                            <Dropdown.Link href={route('profile.show')} className="text-xl block py-4 dropdown-item font-semibold" index={1}> {/* Added font-semibold */}
                                 My Account
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-4">
+                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-4 dropdown-item font-semibold" index={2}> {/* Added font-semibold */}
                                 Edit Details
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-4">
+                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-4 dropdown-item font-semibold text-right w-full" index={3}> {/* Added font-semibold */}
                                 Log Out
                             </Dropdown.Link>
                         </Dropdown.Content>
@@ -106,8 +112,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold">{header}</h1>
+                    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                        <h1 className="text-4xl font-bold">{header}</h1>
                     </div>
                 </header>
 
