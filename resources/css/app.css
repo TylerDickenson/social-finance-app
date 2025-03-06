@@ -127,3 +127,15 @@
     border-left: 1px solid #ced4da;
     border-radius: 0 0.25rem 0.25rem 0;
 }
+
+.transition-max-height {
+    transition: max-height 0.5s ease-in-out;
+}
+
+.resize-none {
+    resize: none;
+}
+
+.transition-opacity {
+    transition: opacity 1s ease-in-out;
+}
