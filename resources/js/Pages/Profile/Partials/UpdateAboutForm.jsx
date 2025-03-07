@@ -44,7 +44,7 @@ export default function UpdateAboutForm({ about }) {
 
     return (
         <section className="space-y-6">
-            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center">
+            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
                 <div>
                     <h2 className="text-lg font-medium text-gray-900">About</h2>
                     <p className="mt-1 text-sm text-gray-600">

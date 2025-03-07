@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function FileUpload({ label, name, value, onChange, error }) {
+export default function FileUpload({ label, name, value, onChange, error, onImagePreviewUpdate }) {
     const [imagePreview, setImagePreview] = useState(value ? URL.createObjectURL(value) : null);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         onChange(file);
         setImagePreview(URL.createObjectURL(file));
+        if (onImagePreviewUpdate) {
+            onImagePreviewUpdate();
+        }
     };
+
+    useEffect(() => {
+        if (onImagePreviewUpdate) {
+            onImagePreviewUpdate();
+        }
+    }, [imagePreview, onImagePreviewUpdate]);
 
     return (
         <div className="mt-4">
