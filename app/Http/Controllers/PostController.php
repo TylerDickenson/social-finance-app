@@ -12,6 +12,7 @@ class PostController extends Controller
     {
         $posts = Post::with(['user', 'comments.user'])->get()->map(function ($post) {
             $post->image_url = $post->image_url;
+            $post->user->is_following = auth()->user()->isFollowing($post->user->id);
             return $post;
         });
         return Inertia::render('Dashboard', ['posts' => $posts]);
@@ -88,7 +89,10 @@ class PostController extends Controller
 
     public function following()
     {
-        $posts = Post::with(['user', 'comments.user'])->get();
+        $posts = Post::with(['user', 'comments.user'])->get()->map(function ($post) {
+            $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+            return $post;
+        });
         return Inertia::render('Following', ['posts' => $posts]);
     }
 }

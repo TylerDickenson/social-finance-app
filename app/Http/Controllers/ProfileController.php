@@ -20,6 +20,9 @@ class ProfileController extends Controller
         $user = $request->user()->load('followers', 'following');
         $posts = Post::where('user_id', $user->id)->with(['user', 'comments.user'])->get();
 
+        // Set the is_following attribute for the user
+        $user->is_following = auth()->user()->isFollowing($user->id);
+
         return Inertia::render('Profile/Show', [
             'user' => $user,
             'posts' => $posts,

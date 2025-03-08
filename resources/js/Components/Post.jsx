@@ -1,9 +1,10 @@
 import React from 'react';
 import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
+import FollowButton from './FollowButton';
 import { useForm } from '@inertiajs/react';
 
-export default function Post({ post, currentUserId }) {
+export default function Post({ post, currentUserId, onFollowChange }) {
     const { data, setData, post: postComment, delete: deletePost, processing } = useForm({
         content: '',
     });
@@ -25,9 +26,12 @@ export default function Post({ post, currentUserId }) {
     return (
         <div className="mb-6 p-6 border border-gray-300 rounded-lg shadow-sm">
             <div className="flex justify-between mb-4">
-                <div className="flex items-center">
+                <div className="flex items-center space-x-3">
                     <img src={post.user.avatar_url} alt={post.user.name} className="w-16 h-16 rounded-full mr-2" />
-                    <h4 className="text-3xl font-bold pl-2">{post.user.name}</h4>
+                    <h4 className="text-3xl font-bold">{post.user.name}</h4>
+                    {post.user.id !== currentUserId && (
+                        <FollowButton userId={post.user.id} isFollowing={post.user.is_following} onFollowChange={onFollowChange} />
+                    )}
                 </div>
                 <DateTimeDisplay timestamp={post.created_at} />
             </div>
