@@ -19,10 +19,10 @@ const Show = ({ user, posts }) => {
                                 Posts | {posts.length}
                             </p>
                             <p className="text-xl font-semibold text-gray-600">
-                                Followers | xxxx{/* Add the number of following here */}
+                                Followers | {user.followers ? user.followers.length : 0}
                             </p>
                             <p className="text-xl font-semibold text-gray-600">
-                                Following | x{/* Add the number of followers here */}
+                                Following | {user.following ? user.following.length : 0}
                             </p>
                         </div>
                     </div>

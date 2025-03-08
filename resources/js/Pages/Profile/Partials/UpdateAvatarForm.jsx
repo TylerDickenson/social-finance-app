@@ -6,20 +6,12 @@ export default function UpdateAvatarForm({ avatarUrl }) {
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({ avatar: null });
 
     const [isOpen, setIsOpen] = useState(false);
-    const [isClosing, setIsClosing] = useState(false); // Track the closing state
     const [showSaved, setShowSaved] = useState(false);
     const contentRef = useRef(null);
 
     // Toggle the open/close state
     const toggleOpen = () => {
-        if (!isOpen) {
-            setIsClosing(false); // Reset closing state when opening
-            setIsOpen(true); // Open the form
-        } else {
-            setIsClosing(true); // Set to closing state
-            // Wait for the closing transition to complete before fully closing
-            setTimeout(() => setIsOpen(false), 500); // Close after transition
-        }
+        setIsOpen(!isOpen);
     };
 
     // Handle file change for the avatar upload
@@ -34,8 +26,7 @@ export default function UpdateAvatarForm({ avatarUrl }) {
         post(route('profile.updateAvatar'), {
             forceFormData: true,
             onSuccess: () => {
-                setIsClosing(true); // Start closing animation
-                setTimeout(() => setIsOpen(false), 500); // Wait for the animation, then hide
+                setIsOpen(false);
                 setShowSaved(true);
                 setTimeout(() => setShowSaved(false), 5000); // Show "Saved" message for 5 seconds
             },
@@ -45,10 +36,17 @@ export default function UpdateAvatarForm({ avatarUrl }) {
     // Close the form when the "Saved" message is shown
     useEffect(() => {
         if (showSaved) {
-            setIsClosing(true);
-            setTimeout(() => setIsOpen(false), 500); // Close after the transition
+            setIsOpen(false);
         }
     }, [showSaved]);
+
+    useEffect(() => {
+        if (isOpen) {
+            contentRef.current.style.maxHeight = 'none'; // Allow the container to expand fully
+        } else {
+            contentRef.current.style.maxHeight = '0px';
+        }
+    }, [isOpen]);
 
     return (
         <section className="space-y-6">
@@ -80,7 +78,7 @@ export default function UpdateAvatarForm({ avatarUrl }) {
             <div
                 ref={contentRef}
                 className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                    isOpen && !isClosing ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                    isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
             >
                 <form onSubmit={submit} className="mt-6 space-y-4">
