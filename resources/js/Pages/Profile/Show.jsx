@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import Post from '@/Components/Post';
 
 const Show = ({ user, posts }) => {
+    const { auth } = usePage().props; // Get the authenticated user
+    const currentUserId = auth.user.id; // Get the current user's ID
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(''); // 'followers' or 'following'
 
@@ -82,7 +84,7 @@ const Show = ({ user, posts }) => {
                             <div className="mt-6 space-y-6">
                                 {posts && posts.length > 0 ? (
                                     posts.map((post) => (
-                                        <Post key={post.id} post={post} currentUserId={user.id} />
+                                        <Post key={post.id} post={post} currentUserId={currentUserId} />
                                     ))
                                 ) : (
                                     <p className="text-lg">No posts available.</p>

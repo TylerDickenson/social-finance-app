@@ -12,22 +12,24 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Post;
+use App\Models\User;
+
 
 class ProfileController extends Controller
 {
-    public function show(Request $request): Response
-    {
-        $user = $request->user()->load('followers', 'following');
-        $posts = Post::where('user_id', $user->id)->with(['user', 'comments.user'])->get();
+    public function show($id): Response
+{
+    $user = User::with('followers', 'following')->findOrFail($id); // Fetch user by ID
+    $posts = Post::where('user_id', $user->id)->with(['user', 'comments.user'])->get();
 
-        // Set the is_following attribute for the user
-        $user->is_following = auth()->user()->isFollowing($user->id);
+    // Check if the authenticated user is following this user
+    $user->is_following = auth()->check() ? auth()->user()->isFollowing($user->id) : false;
 
-        return Inertia::render('Profile/Show', [
-            'user' => $user,
-            'posts' => $posts,
-        ]);
-    }
+    return Inertia::render('Profile/Show', [
+        'user' => $user,
+        'posts' => $posts,
+    ]);
+}
 
     public function edit(Request $request): Response
     {

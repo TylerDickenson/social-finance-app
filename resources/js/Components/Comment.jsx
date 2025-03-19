@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import DateTimeDisplay from './DateTimeDisplay';
 
-export default function Comment({ comment, canDelete }) {
+export default function Comment({ comment, canEdit, canDelete }) {
     const { data, setData, patch, delete: destroy, processing } = useForm({
         content: comment.content,
     });
@@ -71,25 +71,29 @@ export default function Comment({ comment, canDelete }) {
                     {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500">(edited)</span>}
                 </p>
             )}
-            {canDelete && (
-                <div className="absolute bottom-2 right-2 flex items-center space-x-2"> {/* Added items-center to align icons */}
-                    <button
-                        onClick={handleEdit}
-                        className="text-blue-600 hover:text-blue-800"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM4 12v4h4v-2H6v-2H4z" />
-                        </svg>
-                    </button>
-                    <button
-                        onClick={handleDelete}
-                        disabled={processing}
-                        className="text-red-600 hover:text-red-800"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
-                        </svg>
-                    </button>
+            {(canEdit || canDelete) && (
+                <div className="absolute bottom-2 right-2 flex items-center space-x-2">
+                    {canEdit && (
+                        <button
+                            onClick={handleEdit}
+                            className="text-blue-600 hover:text-blue-800"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM4 12v4h4v-2H6v-2H4z" />
+                            </svg>
+                        </button>
+                    )}
+                    {canDelete && (
+                        <button
+                            onClick={handleDelete}
+                            disabled={processing}
+                            className="text-red-600 hover:text-red-800"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
             )}
         </div>

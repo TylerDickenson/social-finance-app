@@ -62,7 +62,12 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                         <h4 className="text-lg font-semibold">Comments</h4>
                         {post.comments && post.comments.length > 0 ? (
                             post.comments.map((comment) => (
-                                <Comment key={comment.id} comment={comment} canDelete={comment.user.id === currentUserId} />
+                                <Comment
+                                    key={comment.id}
+                                    comment={comment}
+                                    canEdit={comment.user.id === currentUserId} // Allow editing if the current user is the author
+                                    canDelete={comment.user.id === currentUserId} // Allow deleting if the current user is the author
+                                />
                             ))
                         ) : (
                             <p className="text-md text-gray-600">No comments available.</p>
