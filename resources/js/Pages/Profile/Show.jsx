@@ -57,6 +57,9 @@ const Show = ({ user, posts }) => {
                         </h1>
                         <p className="mt-2 text-xl text-gray-600">{user.about}</p>
                         <div className="flex items-center space-x-12 mt-4">
+                            <p className="text-xl font-semibold text-gray-600">
+                                Posts | {posts ? posts.length : 0}
+                            </p>
                             <p
                                 className="text-xl font-semibold text-gray-600 cursor-pointer hover:underline"
                                 onClick={() => openModal('followers')}
@@ -87,7 +90,7 @@ const Show = ({ user, posts }) => {
                                         <Post key={post.id} post={post} currentUserId={currentUserId} />
                                     ))
                                 ) : (
-                                    <p className="text-lg">No posts available.</p>
+                                    <p className="text-lg">No posts available.b</p>
                                 )}
                             </div>
                         </div>
