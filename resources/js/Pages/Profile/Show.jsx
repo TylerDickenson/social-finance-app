@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Post from '@/Components/Post';
+import UserModal from '@/Components/UserModal';
 
 const Show = ({ user, posts }) => {
-    const { auth } = usePage().props; // Get the authenticated user
-    const currentUserId = auth.user.id; // Get the current user's ID
+    const { auth } = usePage().props;
+    const currentUserId = auth.user.id;
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState(''); // 'followers' or 'following'
+    const [modalType, setModalType] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const openModal = (type) => {
         setModalType(type);
@@ -17,34 +19,10 @@ const Show = ({ user, posts }) => {
     const closeModal = () => {
         setIsModalOpen(false);
         setModalType('');
+        setSearchQuery('');
     };
 
-    const renderModalContent = () => {
-        const list = modalType === 'followers' ? user.followers : user.following;
-        return (
-            <div className="p-6">
-                <h2 className="text-2xl font-bold mb-4">
-                    {modalType === 'followers' ? 'Followers' : 'Following'}
-                </h2>
-                {list && list.length > 0 ? (
-                    <ul className="space-y-4">
-                        {list.map((person) => (
-                            <li key={person.id} className="flex items-center space-x-4">
-                                <img
-                                    src={person.avatar_url}
-                                    alt={person.name}
-                                    className="w-12 h-12 rounded-full"
-                                />
-                                <p className="text-lg font-medium">{person.name}</p>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-600">No {modalType} available.</p>
-                )}
-            </div>
-        );
-    };
+    const list = modalType === 'followers' ? user.followers : user.following;
 
     return (
         <AuthenticatedLayout
@@ -90,7 +68,7 @@ const Show = ({ user, posts }) => {
                                         <Post key={post.id} post={post} currentUserId={currentUserId} />
                                     ))
                                 ) : (
-                                    <p className="text-lg">No posts available.b</p>
+                                    <p className="text-lg">No posts available.</p>
                                 )}
                             </div>
                         </div>
@@ -98,26 +76,14 @@ const Show = ({ user, posts }) => {
                 </div>
             </div>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                    onClick={closeModal} // Close modal when clicking on the overlay
-                >
-                    <div
-                        className="bg-white rounded-lg shadow-lg max-w-md w-full"
-                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
-                    >
-                        <button
-                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                            onClick={closeModal}
-                        >
-                            &times;
-                        </button>
-                        {renderModalContent()}
-                    </div>
-                </div>
-            )}
+            <UserModal
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                modalType={modalType}
+                list={list}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+            />
         </AuthenticatedLayout>
     );
 };
