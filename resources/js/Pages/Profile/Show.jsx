@@ -7,6 +7,7 @@ import UserModal from '@/Components/UserModal';
 const Show = ({ user, posts }) => {
     const { auth } = usePage().props;
     const currentUserId = auth.user.id;
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -65,7 +66,11 @@ const Show = ({ user, posts }) => {
                             <div className="mt-6 space-y-6">
                                 {posts && posts.length > 0 ? (
                                     posts.map((post) => (
-                                        <Post key={post.id} post={post} currentUserId={currentUserId} />
+                                        <Post
+                                            key={post.id}
+                                            post={post}
+                                            currentUserId={currentUserId}
+                                        />
                                     ))
                                 ) : (
                                     <p className="text-lg">No posts available.</p>

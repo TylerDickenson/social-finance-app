@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import DateTimeDisplay from './DateTimeDisplay';
+import LikeButton from './LikeButton';
 
 export default function Comment({ comment, canEdit, canDelete }) {
     const { data, setData, patch, delete: destroy, processing } = useForm({
@@ -71,6 +72,12 @@ export default function Comment({ comment, canEdit, canDelete }) {
                     {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500">(edited)</span>}
                 </p>
             )}
+            <LikeButton
+                likeableId={comment.id}
+                likeableType="comments"
+                initialLikesCount={comment.likes_count}
+                initialIsLiked={comment.is_liked_by_user}
+            />
             {(canEdit || canDelete) && (
                 <div className="absolute bottom-2 right-2 flex items-center space-x-2">
                     {canEdit && (

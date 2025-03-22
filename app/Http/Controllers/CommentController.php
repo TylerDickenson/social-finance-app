@@ -54,4 +54,19 @@ class CommentController extends Controller
 
         return redirect()->back();
     }
+
+    public function like($id)
+    {
+        $comment = Comment::findOrFail($id);
+        $comment->likes()->create(['user_id' => auth()->id()]);
+        return response()->json(['success' => true]);
+    }
+
+    public function unlike($id)
+    {
+        $comment = Comment::findOrFail($id);
+        $comment->likes()->where('user_id', auth()->id())->delete();
+        return response()->json(['success' => true]);
+    }
+
 }

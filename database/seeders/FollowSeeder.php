@@ -10,42 +10,24 @@ class FollowSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
         DB::table('follows')->insert([
             [
-                'follower_id' => 9,
-                'following_id' => 1,
+                'follower_id' => 1, // Valid user ID
+                'following_id' => 2, // Valid user ID
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'follower_id' => 1,
-                'following_id' => 9,
+                'follower_id' => 2, // Valid user ID
+                'following_id' => 1, // Valid user ID
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'follower_id' => 9,
-                'following_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'follower_id' => 2,
-                'following_id' => 9,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'follower_id' => 9,
-                'following_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'follower_id' => 3,
-                'following_id' => 9,
+                'follower_id' => 3, // Valid user ID
+                'following_id' => 1, // Valid user ID
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

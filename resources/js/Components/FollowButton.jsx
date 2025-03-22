@@ -5,6 +5,7 @@ export default function FollowButton({ userId, isFollowing, onFollowChange }) {
     const [following, setFollowing] = useState(isFollowing);
     const { post, processing } = useForm();
 
+    // Synchronize local state with the parent prop
     useEffect(() => {
         setFollowing(isFollowing);
     }, [isFollowing]);
@@ -14,7 +15,12 @@ export default function FollowButton({ userId, isFollowing, onFollowChange }) {
             preserveScroll: true,
             onSuccess: () => {
                 setFollowing(true);
-                onFollowChange(userId, true);
+                if (onFollowChange) {
+                    onFollowChange(userId, true); // Notify parent component
+                }
+            },
+            onError: (error) => {
+                console.error('Error following user:', error);
             },
         });
     };
@@ -24,7 +30,12 @@ export default function FollowButton({ userId, isFollowing, onFollowChange }) {
             preserveScroll: true,
             onSuccess: () => {
                 setFollowing(false);
-                onFollowChange(userId, false);
+                if (onFollowChange) {
+                    onFollowChange(userId, false); // Notify parent component
+                }
+            },
+            onError: (error) => {
+                console.error('Error unfollowing user:', error);
             },
         });
     };

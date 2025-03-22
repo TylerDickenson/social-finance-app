@@ -17,19 +17,39 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function show($id): Response
-{
-    $user = User::with('followers', 'following')->findOrFail($id); // Fetch user by ID
-    $posts = Post::where('user_id', $user->id)->with(['user', 'comments.user'])->get();
+    public function show($id)
+    {
+        $user = User::with('followers', 'following')->findOrFail($id);
 
-    // Check if the authenticated user is following this user
-    $user->is_following = auth()->check() ? auth()->user()->isFollowing($user->id) : false;
+        // Add is_following for the profile user
+        $user->is_following = auth()->user()->isFollowing($user->id);
 
-    return Inertia::render('Profile/Show', [
-        'user' => $user,
-        'posts' => $posts,
-    ]);
-}
+        $posts = $user->posts()
+            ->with(['user', 'comments.user', 'comments.likes'])
+            ->withCount('likes')
+            ->get()
+            ->map(function ($post) {
+                // Add is_liked_by_user for the post
+                $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+
+                // Add is_following for the post's user
+                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+
+                // Add likes_count and is_liked_by_user for comments
+                $post->comments->map(function ($comment) {
+                    $comment->likes_count = $comment->likes->count();
+                    $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                    return $comment;
+                });
+
+                return $post;
+            });
+
+        return Inertia::render('Profile/Show', [
+            'user' => $user,
+            'posts' => $posts,
+        ]);
+    }
 
     public function edit(Request $request): Response
     {

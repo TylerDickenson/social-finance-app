@@ -2,6 +2,7 @@ import React from 'react';
 import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
+import LikeButton from './LikeButton';
 import { useForm } from '@inertiajs/react';
 
 export default function Post({ post, currentUserId, onFollowChange }) {
@@ -59,14 +60,22 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                     </div>
                     <hr className="my-4 border-gray-300" />
                     <div className="mt-4">
-                        <h4 className="text-lg font-semibold">Comments</h4>
+                        {/* Like Button */}
+                        <LikeButton
+                            likeableId={post.id}
+                            likeableType="posts"
+                            initialLikesCount={post.likes_count}
+                            initialIsLiked={post.is_liked_by_user}
+                        />
+
+                        <h4 className="text-lg font-semibold mt-4">Comments</h4>
                         {post.comments && post.comments.length > 0 ? (
                             post.comments.map((comment) => (
                                 <Comment
                                     key={comment.id}
                                     comment={comment}
-                                    canEdit={comment.user.id === currentUserId} // Allow editing if the current user is the author
-                                    canDelete={comment.user.id === currentUserId} // Allow deleting if the current user is the author
+                                    canEdit={comment.user.id === currentUserId}
+                                    canDelete={comment.user.id === currentUserId}
                                 />
                             ))
                         ) : (

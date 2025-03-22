@@ -10,12 +10,52 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::with(['user', 'comments.user'])->get()->map(function ($post) {
-            $post->image_url = $post->image_url;
-            $post->user->is_following = auth()->user()->isFollowing($post->user->id);
-            return $post;
-        });
+        $posts = Post::with(['user', 'comments.user', 'comments.likes'])
+            ->withCount('likes')
+            ->get()
+            ->map(function ($post) {
+                // Add is_liked_by_user for the post
+                $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+
+                // Add is_following for the post's user
+                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+
+                // Add likes_count and is_liked_by_user for comments
+                $post->comments->map(function ($comment) {
+                    $comment->likes_count = $comment->likes->count();
+                    $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                    return $comment;
+                });
+
+                return $post;
+            });
+
         return Inertia::render('Dashboard', ['posts' => $posts]);
+    }
+
+    public function following()
+    {
+        $posts = Post::with(['user', 'comments.user', 'comments.likes'])
+            ->withCount('likes')
+            ->get()
+            ->map(function ($post) {
+                // Add is_liked_by_user for the post
+                $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+
+                // Add is_following for the post's user
+                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+
+                // Add likes_count and is_liked_by_user for comments
+                $post->comments->map(function ($comment) {
+                    $comment->likes_count = $comment->likes->count();
+                    $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                    return $comment;
+                });
+
+                return $post;
+            });
+
+        return Inertia::render('Following', ['posts' => $posts]);
     }
 
     public function create()
@@ -87,12 +127,27 @@ class PostController extends Controller
         return redirect()->back();
     }
 
-    public function following()
+    public function like($id)
+{
+    $post = Post::findOrFail($id);
+
+    // Check if the user has already liked the post
+    $alreadyLiked = $post->likes()->where('user_id', auth()->id())->exists();
+
+    if ($alreadyLiked) {
+        return response()->json(['success' => false, 'message' => 'You have already liked this post.'], 400);
+    }
+
+    // Create a new like
+    $post->likes()->create(['user_id' => auth()->id()]);
+
+    return response()->json(['success' => true]);
+}
+
+    public function unlike($id)
     {
-        $posts = Post::with(['user', 'comments.user'])->get()->map(function ($post) {
-            $post->user->is_following = auth()->user()->isFollowing($post->user->id);
-            return $post;
-        });
-        return Inertia::render('Following', ['posts' => $posts]);
+        $post = Post::findOrFail($id);
+        $post->likes()->where('user_id', auth()->id())->delete();
+        return response()->json(['success' => true]);
     }
 }

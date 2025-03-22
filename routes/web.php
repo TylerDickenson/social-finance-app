@@ -38,6 +38,11 @@ Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->midd
 
 Route::post('/follow/{id}', [FollowController::class, 'follow'])->middleware(['auth', 'verified'])->name('follow');
 Route::post('/unfollow/{id}', [FollowController::class, 'unfollow'])->middleware(['auth', 'verified'])->name('unfollow');
+Route::post('/posts/{id}/like', [PostController::class, 'like'])->name('posts.like');
+Route::delete('/posts/{id}/like', [PostController::class, 'unlike'])->name('posts.unlike');
+Route::post('/comments/{id}/like', [CommentController::class, 'like'])->middleware(['auth', 'verified'])->name('comments.like');
+Route::delete('/comments/{id}/like', [CommentController::class, 'unlike'])->middleware(['auth', 'verified'])->name('comments.unlike');
+
 
 Route::middleware('auth')->group(function () {
 
