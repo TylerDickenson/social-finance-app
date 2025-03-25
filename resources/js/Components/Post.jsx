@@ -45,38 +45,30 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                     <div className="flex justify-between items-start">
                         <div className="flex-1">
                             <h3 className="text-xl font-bold">{post.title}</h3>
-                            <p className="text-lg">{post.content}</p>
+                            <p className="text-lg mt-2">{post.content}</p>
                         </div>
-                        {post.user.id === currentUserId && (
-                            <button
-                                onClick={handleDeletePost}
-                                className="text-red-600 hover:text-red-800 ml-4 self-end"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
-                                </svg>
-                            </button>
-                        )}
                     </div>
-                    <hr className="my-4 border-gray-300" />
-                    <div className="mt-4">
-                        {/* Like Button */}
+                    {/* Move LikeButton lower */}
+                    <div className="flex justify-end mt-4">
                         <LikeButton
                             likeableId={post.id}
                             likeableType="posts"
                             initialLikesCount={post.likes_count}
                             initialIsLiked={post.is_liked_by_user}
                         />
-
+                    </div>
+                    <hr className="my-4 border-gray-300" />
+                    <div className="mt-4">
                         <h4 className="text-lg font-semibold mt-4">Comments</h4>
                         {post.comments && post.comments.length > 0 ? (
                             post.comments.map((comment) => (
-                                <Comment
-                                    key={comment.id}
-                                    comment={comment}
-                                    canEdit={comment.user.id === currentUserId}
-                                    canDelete={comment.user.id === currentUserId}
-                                />
+                                <div key={comment.id} className="mb-4">
+                                    <Comment
+                                        comment={comment}
+                                        canEdit={comment.user.id === currentUserId}
+                                        canDelete={comment.user.id === currentUserId}
+                                    />
+                                </div>
                             ))
                         ) : (
                             <p className="text-md text-gray-600">No comments available.</p>

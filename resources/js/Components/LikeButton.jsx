@@ -2,32 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 
 export default function LikeButton({ likeableId, likeableType, initialLikesCount, initialIsLiked }) {
-    const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // Track the number of likes
-    const [isLiked, setIsLiked] = useState(initialIsLiked); // Track if the user has liked the item
-    const [animateLike, setAnimateLike] = useState(false); // Track animation state for liking
-    const [spin, setSpin] = useState(false); // Track spin animation for unliking
+    const [likesCount, setLikesCount] = useState(initialLikesCount || 0); 
+    const [isLiked, setIsLiked] = useState(initialIsLiked); 
+    const [animateLike, setAnimateLike] = useState(false); 
+    const [spin, setSpin] = useState(false); 
 
-    // Reinitialize isLiked state when initialIsLiked changes (e.g., after a page refresh)
     useEffect(() => {
         setIsLiked(initialIsLiked);
     }, [initialIsLiked]);
 
     const handleLikeToggle = () => {
-        const routeName = isLiked ? `${likeableType}.unlike` : `${likeableType}.like`; // Determine the route
-        const method = isLiked ? 'delete' : 'post'; // Determine the HTTP method
+        const routeName = isLiked ? `${likeableType}.unlike` : `${likeableType}.like`; 
+        const method = isLiked ? 'delete' : 'post'; 
 
         if (isLiked) {
-            setSpin(true); // Trigger spin animation for unliking
-            setTimeout(() => setSpin(false), 300); // Reset spin animation after 300ms
+            setSpin(true); 
+            setTimeout(() => setSpin(false), 300); 
         } else {
-            setAnimateLike(true); // Trigger like animation
-            setTimeout(() => setAnimateLike(false), 300); // Reset like animation after 300ms
+            setAnimateLike(true); 
+            setTimeout(() => setAnimateLike(false), 300); 
         }
 
         window.axios[method](route(routeName, { id: likeableId }))
             .then(() => {
-                setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1)); // Update the likes count
-                setIsLiked((prev) => !prev); // Toggle the like state
+                setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1)); 
+                setIsLiked((prev) => !prev);
             })
             .catch((error) => {
                 console.error('Error toggling like:', error);
@@ -45,20 +44,26 @@ export default function LikeButton({ likeableId, likeableType, initialLikesCount
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-6 w-6 transition-transform duration-300 ${
-                        isLiked ? 'text-red-500' : 'text-gray-500'
-                    } ${spin ? 'animate-spin-down' : ''}`} // Apply spin animation when unliking
-                    viewBox="0 0 20 20"
+                        isLiked ? 'text-blue-500' : 'text-gray-500'
+                    } ${spin ? 'animate-spin-down' : ''}`} 
+                    viewBox="0 0 24 24"
                     fill="currentColor"
                 >
+                    {/* Square border */}
+                    <rect x="2" y="2" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" />
+                    {/* Stock graph line */}
                     <path
-                        fillRule="evenodd"
-                        d="M10 18a1 1 0 01-1-1V7.414L5.707 10.707a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414L11 7.414V17a1 1 0 01-1 1z"
-                        clipRule="evenodd"
+                        d="M4 16l5-5 4 4 7-7"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                     />
                 </svg>
             </button>
             <span
-                className="text-base font-semibold mt-1 text-gray-700" // Ensure consistent size and styling
+                className="text-base font-semibold mt-1 text-gray-700" 
             >
                 {likesCount}
             </span>
