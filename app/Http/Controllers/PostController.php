@@ -46,7 +46,9 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        $this->authorizePost($post);
+        if ($post->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $post->delete();
 

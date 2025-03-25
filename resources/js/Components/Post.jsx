@@ -34,7 +34,7 @@ export default function Post({ post, currentUserId, onFollowChange }) {
 
     return (
         <div className="mb-6 p-6 border border-gray-300 rounded-lg shadow-sm">
-            <div className="flex justify-between mb-4">
+           <div className="flex justify-between mb-4">
                 <div className="flex items-center space-x-3">
                     <img src={post.user.avatar_url} alt={post.user.name} className="w-16 h-16 rounded-full mr-2" />
                     <h4 className="text-3xl font-bold">{post.user.name}</h4>
@@ -42,7 +42,20 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                         <FollowButton userId={post.user.id} isFollowing={post.user.is_following} onFollowChange={onFollowChange} />
                     )}
                 </div>
-                <DateTimeDisplay timestamp={post.created_at} />
+                <div className="flex items-center space-x-4">
+                    <DateTimeDisplay timestamp={post.created_at} />
+                    {post.user.id === currentUserId && ( // Show delete button only for the post owner
+                        <button
+                            onClick={handleDeletePost}
+                            disabled={processing}
+                            className="text-red-600 hover:text-red-800 mb-1"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 6h18v2H3V6zm2 2h14v14H5V8zm4-4h6v2H9V4z" />
+                            </svg>
+                        </button>
+                    )}
+                </div>
             </div>
             <hr className="my-4 border-gray-300" />
             <div className="flex">
