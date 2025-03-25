@@ -40,7 +40,7 @@ const LikeButton = forwardRef(({ likeableId, likeableType, initialLikesCount, in
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-6 w-6 transition-transform duration-300 ${
                         isLiked ? 'text-blue-500' : 'text-gray-500'
-                    } ${isUnliking ? 'animate-spin-down' : ''}`}
+                    } ${isUnliking ? 'animate-spin-down text-red-500' : ''}`}
                     viewBox="0 0 24 24"
                     fill="currentColor"
                 >

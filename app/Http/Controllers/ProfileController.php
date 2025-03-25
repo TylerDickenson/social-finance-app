@@ -13,37 +13,28 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Post;
 use App\Models\User;
+use App\Services\PostService;
 
 
 class ProfileController extends Controller
 {
+    protected $postService;
+
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
+    }
+
     public function show($id)
     {
         $user = User::with('followers', 'following')->findOrFail($id);
-
-        // Add is_following for the profile user
         $user->is_following = auth()->user()->isFollowing($user->id);
 
         $posts = $user->posts()
             ->with(['user', 'comments.user', 'comments.likes'])
             ->withCount('likes')
             ->get()
-            ->map(function ($post) {
-                // Add is_liked_by_user for the post
-                $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
-
-                // Add is_following for the post's user
-                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
-
-                // Add likes_count and is_liked_by_user for comments
-                $post->comments->map(function ($comment) {
-                    $comment->likes_count = $comment->likes->count();
-                    $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
-                    return $comment;
-                });
-
-                return $post;
-            });
+            ->map(fn($post) => $this->postService->transformPost($post));
 
         return Inertia::render('Profile/Show', [
             'user' => $user,

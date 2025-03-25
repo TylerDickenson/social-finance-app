@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -18,8 +19,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/discover', [PostController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/following', [PostController::class, 'following'])->middleware(['auth', 'verified'])->name('following');
+Route::get('/discover', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/following', [FollowController::class, 'following'])->middleware(['auth', 'verified'])->name('following');
 
 
 Route::post('/posts', [PostController::class, 'store'])->middleware(['auth', 'verified'])->name('posts.store');
