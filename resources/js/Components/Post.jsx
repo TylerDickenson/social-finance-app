@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
@@ -9,6 +9,9 @@ export default function Post({ post, currentUserId, onFollowChange }) {
     const { data, setData, post: postComment, delete: deletePost, processing } = useForm({
         content: '',
     });
+
+    // Create a ref for the LikeButton
+    const likeButtonRef = useRef(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -22,6 +25,12 @@ export default function Post({ post, currentUserId, onFollowChange }) {
         deletePost(route('posts.destroy', { id: post.id }), {
             preserveScroll: true,
         });
+    };
+
+    const handleImageDoubleTap = () => {
+        if (likeButtonRef.current) {
+            likeButtonRef.current.toggleLike(); 
+        }
     };
 
     return (
@@ -39,7 +48,13 @@ export default function Post({ post, currentUserId, onFollowChange }) {
             <hr className="my-4 border-gray-300" />
             <div className="flex">
                 {post.image_url && (
-                    <img src={post.image_url} alt={post.title} className="mb-4 max-w-full h-auto rounded-lg" style={{ maxWidth: '300px', objectFit: 'cover' }} />
+                    <img
+                        src={post.image_url}
+                        alt={post.title}
+                        className="mb-4 max-w-full h-auto rounded-lg cursor-pointer"
+                        style={{ maxWidth: '300px', objectFit: 'cover' }}
+                        onDoubleClick={handleImageDoubleTap} // Double-tap handler
+                    />
                 )}
                 <div className="ml-6 flex-1 relative">
                     <div className="flex justify-between items-start">
@@ -48,9 +63,9 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                             <p className="text-lg mt-2">{post.content}</p>
                         </div>
                     </div>
-                    {/* Move LikeButton lower */}
                     <div className="flex justify-end mt-4">
                         <LikeButton
+                            ref={likeButtonRef} // Pass the ref to the LikeButton
                             likeableId={post.id}
                             likeableType="posts"
                             initialLikesCount={post.likes_count}
