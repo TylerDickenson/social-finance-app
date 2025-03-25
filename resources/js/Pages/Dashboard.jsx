@@ -5,6 +5,7 @@ import Post from '@/Components/Post';
 
 export default function Dashboard({ posts: initialPosts, auth }) {
     const [posts, setPosts] = useState([]);
+    const [visiblePosts, setVisiblePosts] = useState(10); // Number of posts to display initially
 
     useEffect(() => {
         // Sort all posts from newest to oldest
@@ -12,12 +13,8 @@ export default function Dashboard({ posts: initialPosts, auth }) {
         setPosts(sortedPosts);
     }, [initialPosts]);
 
-    const handleFollowChange = (userId, isFollowing) => {
-        setPosts((prevPosts) =>
-            prevPosts.map((post) =>
-                post.user.id === userId ? { ...post, user: { ...post.user, is_following: isFollowing } } : post
-            )
-        );
+    const handleLoadMore = () => {
+        setVisiblePosts((prevVisiblePosts) => prevVisiblePosts + 10); // Load 4 more posts
     };
 
     return (
@@ -29,18 +26,36 @@ export default function Dashboard({ posts: initialPosts, auth }) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             {posts && posts.length > 0 ? (
-                                posts.map((post) => (
+                                posts.slice(0, visiblePosts).map((post) => (
                                     <Post
                                         key={post.id}
                                         post={post}
                                         currentUserId={auth.user.id}
-                                        onFollowChange={handleFollowChange}
+                                        onFollowChange={(userId, isFollowing) => {
+                                            setPosts((prevPosts) =>
+                                                prevPosts.map((p) =>
+                                                    p.user.id === userId
+                                                        ? { ...p, user: { ...p.user, is_following: isFollowing } }
+                                                        : p
+                                                )
+                                            );
+                                        }}
                                     />
                                 ))
                             ) : (
                                 <p className="text-lg">No posts available.</p>
                             )}
                         </div>
+                        {visiblePosts < posts.length && (
+                            <div className="p-6 text-center">
+                                <button
+                                    onClick={handleLoadMore}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
