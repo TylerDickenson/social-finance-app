@@ -1,16 +1,15 @@
 import React, { useRef } from 'react';
+import { useForm } from '@inertiajs/react'; // Import useForm
 import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
-import { useForm } from '@inertiajs/react';
 
 export default function Post({ post, currentUserId, onFollowChange }) {
     const { data, setData, post: postComment, delete: deletePost, processing } = useForm({
         content: '',
     });
 
-    // Create a ref for the LikeButton
     const likeButtonRef = useRef(null);
 
     const handleSubmit = (e) => {
@@ -29,7 +28,7 @@ export default function Post({ post, currentUserId, onFollowChange }) {
 
     const handleImageDoubleTap = () => {
         if (likeButtonRef.current) {
-            likeButtonRef.current.toggleLike(); 
+            likeButtonRef.current.toggleLike();
         }
     };
 
@@ -53,7 +52,7 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                         alt={post.title}
                         className="mb-4 max-w-full h-auto rounded-lg cursor-pointer"
                         style={{ maxWidth: '300px', objectFit: 'cover' }}
-                        onDoubleClick={handleImageDoubleTap} // Double-tap handler
+                        onDoubleClick={handleImageDoubleTap}
                     />
                 )}
                 <div className="ml-6 flex-1 relative">
@@ -62,15 +61,15 @@ export default function Post({ post, currentUserId, onFollowChange }) {
                             <h3 className="text-xl font-bold">{post.title}</h3>
                             <p className="text-lg mt-2">{post.content}</p>
                         </div>
-                    </div>
-                    <div className="flex justify-end mt-4">
-                        <LikeButton
-                            ref={likeButtonRef} // Pass the ref to the LikeButton
-                            likeableId={post.id}
-                            likeableType="posts"
-                            initialLikesCount={post.likes_count}
-                            initialIsLiked={post.is_liked_by_user}
-                        />
+                        <div className="ml-4">
+                            <LikeButton
+                                ref={likeButtonRef}
+                                likeableId={post.id}
+                                likeableType="posts"
+                                initialLikesCount={post.likes_count}
+                                initialIsLiked={post.is_liked_by_user}
+                            />
+                        </div>
                     </div>
                     <hr className="my-4 border-gray-300" />
                     <div className="mt-4">

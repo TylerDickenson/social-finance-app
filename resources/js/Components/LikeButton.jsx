@@ -29,7 +29,7 @@ const LikeButton = forwardRef(({ likeableId, likeableType, initialLikesCount, in
     }));
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 mt-2">
             <button
                 onClick={toggleLike}
                 className={`flex items-center space-x-1 focus:outline-none ${
