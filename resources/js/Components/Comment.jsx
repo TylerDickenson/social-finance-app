@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import axios from 'axios';
 import DateTimeDisplay from './DateTimeDisplay';
 import LikeButton from './LikeButton';
 
-export default function Comment({ comment, canEdit, canDelete }) {
-    const { data, setData, patch, delete: destroy, processing } = useForm({
-        content: comment.content,
-    });
+export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, onCommentDelete }) {
     const [isEditing, setIsEditing] = useState(false);
+    const [content, setContent] = useState(comment.content);
+    const [processing, setProcessing] = useState(false);
 
-    const handleDelete = () => {
-        destroy(route('comments.destroy', { id: comment.id }), {
-            preserveScroll: true,
-        });
+    const handleDelete = async () => {
+        setProcessing(true);
+        try {
+            await axios.delete(route('comments.destroy', { id: comment.id }));
+            onCommentDelete(comment.id);
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        } finally {
+            setProcessing(false);
+        }
     };
 
     const handleEdit = () => {
@@ -21,15 +26,28 @@ export default function Comment({ comment, canEdit, canDelete }) {
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setData('content', comment.content);
+        setContent(comment.content);
     };
 
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
-        patch(route('comments.update', { id: comment.id }), {
-            preserveScroll: true,
-            onSuccess: () => setIsEditing(false),
-        });
+        setProcessing(true);
+        try {
+            const response = await axios.patch(route('comments.update', { id: comment.id }), {
+                content: content
+            });
+            // Pass the entire updated comment data including timestamps
+            onCommentUpdate(comment.id, {
+                ...comment,
+                content: content,
+                updated_at: new Date().toISOString() // Add current timestamp
+            });
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating comment:', error);
+        } finally {
+            setProcessing(false);
+        }
     };
 
     return (
@@ -44,9 +62,8 @@ export default function Comment({ comment, canEdit, canDelete }) {
             {isEditing ? (
                 <form onSubmit={handleUpdate}>
                     <textarea
-                        name="content"
-                        value={data.content}
-                        onChange={(e) => setData('content', e.target.value)}
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
                         rows="3"
                     ></textarea>

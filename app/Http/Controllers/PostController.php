@@ -46,13 +46,14 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
+        // Ensure the user is authorized to delete the post
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
         $post->delete();
 
-        return redirect()->back()->with('status', 'Post deleted successfully.');
+        return response()->json(['success' => true]);
     }
 
     public function like($id)

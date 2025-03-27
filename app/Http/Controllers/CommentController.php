@@ -14,13 +14,21 @@ class CommentController extends Controller
             'postId' => 'required|exists:posts,id',
         ]);
 
-        Comment::create([
+        $comment = Comment::create([
             'user_id' => auth()->id(),
             'post_id' => $request->postId,
             'content' => $request->content,
         ]);
 
-        return back()->with('success', 'Comment added successfully.');
+        // Load the relationships needed for the frontend
+        $comment->load('user');
+        $comment->likes_count = 0;
+        $comment->is_liked_by_user = false;
+
+        return response()->json([
+            'success' => true,
+            'comment' => $comment
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -39,7 +47,10 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return back()->with('success', 'Comment updated successfully.');
+        return response()->json([
+            'success' => true,
+            'comment' => $comment
+        ]);
     }
 
     public function destroy($id)
@@ -52,7 +63,7 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return redirect()->back();
+        return response()->json(['success' => true]);
     }
 
     public function like($id)
