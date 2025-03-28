@@ -23,18 +23,24 @@ const Show = ({ user, posts }) => {
         setSearchQuery('');
     };
 
+    const formattedDate = new Date(user.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+    });
+
+
     const list = modalType === 'followers' ? user.followers : user.following;
 
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center space-x-8 py-2">
+                <div className="flex items-center space-x-8">
                     <img src={user.avatar_url} alt="User Avatar" className="w-48 h-48 ml-2 rounded-full" />
                     <div className="flex flex-col">
                         <h1 className="text-4xl font-bold leading-tight text-gray-800">
                             {user.name}
                         </h1>
-                        <p className="mt-2 text-xl text-gray-600">{user.about}</p>
+                        
                         <div className="flex items-center space-x-12 mt-4">
                             <p className="text-xl font-semibold text-gray-600">
                                 Posts | {posts ? posts.length : 0}
@@ -52,13 +58,15 @@ const Show = ({ user, posts }) => {
                                 Following | {user.following ? user.following.length : 0}
                             </p>
                         </div>
+                        <p className="mt-2 text-xl text-gray-600">{user.about}</p>
+                        <p className="mt-2 text-lg text-gray-600">FinSocial Member since | {formattedDate}</p>
                     </div>
                 </div>
             }
         >
             <Head title={`${user.name}`} />
 
-            <div className="py-48">
+            <div className="py-44">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-10 text-gray-900">

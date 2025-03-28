@@ -103,7 +103,7 @@ export default function AuthenticatedLayout({ header, children }) {
             )}
 
             <div className="flex-1 flex flex-col lg:ml-96">
-                <header className="fixed top-0 left-0 right-0 bg-white shadow flex items-center justify-between lg:justify-start z-50 lg:ml-96 backdrop-blur-md">
+                <header className="fixed top-0 left-0 right-0 bg-white/50 shadow flex items-center justify-between lg:justify-start z-50 lg:ml-96 backdrop-blur-md">
                     <button
                         onClick={() => setIsNavbarOpen(!isNavbarOpen)}
                         className="p-4 focus:outline-none lg:hidden"
