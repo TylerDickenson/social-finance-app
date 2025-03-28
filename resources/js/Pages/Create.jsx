@@ -32,7 +32,7 @@ export default function Create() {
 
     return (
         <AuthenticatedLayout header="Create a new post below">
-            <Head title="Create Post" />
+            <Head title="New Post" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

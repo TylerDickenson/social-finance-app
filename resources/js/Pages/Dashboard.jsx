@@ -66,7 +66,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
 
     return (
         <AuthenticatedLayout header="All Posts">
-            <Head title="Dashboard" />
+            <Head title="Discover" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

@@ -34,7 +34,7 @@ const Show = ({ user, posts }) => {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-8 -m-4">
                     <img src={user.avatar_url} alt="User Avatar" className="w-48 h-48 ml-2 rounded-full" />
                     <div className="flex flex-col">
                         <h1 className="text-4xl font-bold leading-tight text-gray-800">
