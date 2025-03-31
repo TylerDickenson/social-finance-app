@@ -5,6 +5,7 @@ import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
 import DeleteIcon from './Icons/DeleteIcon';
+import { Link } from '@inertiajs/react';
 
 export default function Post({ post, currentUserId, onFollowChange, onPostDelete }) {
     const [comments, setComments] = useState(post.comments);
@@ -67,13 +68,24 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         <div className="mb-6 p-6 border border-gray-300 rounded-lg shadow-sm">
             {/* Post Header */}
             <div className="flex justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                    <img src={post.user.avatar_url} alt={post.user.name} className="w-16 h-16 rounded-full mr-2" />
-                    <h4 className="text-3xl font-bold">{post.user.name}</h4>
-                    {post.user.id !== currentUserId && (
-                        <FollowButton userId={post.user.id} isFollowing={post.user.is_following} onFollowChange={onFollowChange} />
-                    )}
-                </div>
+                <div className="flex items-center space-x-4 ml-2"> 
+                    <div className="flex items-center hover:scale-105 transition-transform duration-500">
+                        <Link href={route('profile.show', { id: post.user.id })}>
+                                <img
+                                    src={post.user.avatar_url}
+                                    alt={post.user.name}
+                                    className="w-16 h-16 rounded-full mr-2 cursor-pointer"
+                                />
+                            </Link>
+                            {/* Link for Name */}
+                            <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold"> 
+                                {post.user.name}
+                            </Link>
+                        </div>
+                        {post.user.id !== currentUserId && (
+                                <FollowButton className="flex mb-5" userId={post.user.id} isFollowing={post.user.is_following} onFollowChange={onFollowChange} />
+                            )}
+                    </div>
                 <div className="flex items-center space-x-4">
                     {post.user.id === currentUserId && (
                         <button
@@ -93,7 +105,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         src={post.image_url}
                         alt={post.title}
                         className="mb-4 max-w-full h-auto rounded-lg cursor-pointer"
-                        style={{ maxWidth: '300px', objectFit: 'cover' }}
+                        style={{ maxWidth: '300px', contain: 'cover'}}
                         onDoubleClick={handleImageDoubleTap}
                     />
                 )}

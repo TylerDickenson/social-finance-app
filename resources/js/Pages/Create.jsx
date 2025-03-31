@@ -7,7 +7,7 @@ export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         content: '',
-        image: null, // Add image to the form data
+        image: null, 
     });
 
     const handleSubmit = (e) => {
