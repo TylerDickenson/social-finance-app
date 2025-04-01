@@ -104,8 +104,14 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     <img
                         src={post.image_url}
                         alt={post.title}
-                        className="mb-4 max-w-full h-auto rounded-lg cursor-pointer"
-                        style={{ maxWidth: '300px', contain: 'cover'}}
+                        className="mb-4 rounded-lg cursor-pointer"
+                        style={{
+                            maxWidth: '300px', // Limit the width to 300px
+                            maxHeight: '1000px', // Limit the height to 1000px
+                            objectFit: 'contain', // Maintain aspect ratio without stretching
+                            width: 'auto', // Allow the width to adjust automatically
+                            height: 'auto', // Allow the height to adjust automatically
+                        }}
                         onDoubleClick={handleImageDoubleTap}
                     />
                 )}

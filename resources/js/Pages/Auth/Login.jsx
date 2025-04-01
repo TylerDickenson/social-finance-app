@@ -80,19 +80,32 @@ export default function Login({ status, canResetPassword }) {
                     </label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
+                
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                <div className="mt-4 flex items-center justify-end">
+                    {/* Register Button on the Bottom Left */}
+                    
+
+                    {/* Forgot Password and Log In Buttons on the Right */}
+                    <div className="flex items-center space-x-4">
+                        {canResetPassword && (
+                            <Link
+                                href={route('password.request')}
+                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                Forgot your password?
+                            </Link>
+                        )}
+                        <Link
+                            href={route('register')}
+                            className="px-2 py-1.5 text-sm text-gray-600 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                            Register
+                        </Link>
+                        <PrimaryButton className="ms-4" disabled={processing}>
+                            Log in
+                        </PrimaryButton>
+                    </div>
                 </div>
             </form>
         </GuestLayout>
