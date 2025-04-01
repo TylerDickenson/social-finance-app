@@ -84,10 +84,13 @@ export default function AuthenticatedLayout({ header, children }) {
                             <Dropdown.Link href={route('profile.show', { id: user.id })} className="text-xl block py-4 dropdown-item font-semibold" index={1}> {/* Added font-semibold */}
                                 My Account
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-4 dropdown-item font-semibold" index={2}> {/* Added font-semibold */}
+                            <Dropdown.Link href={route('collections')} className="text-xl block py-4 dropdown-item font-semibold" index={2}> {/* Added font-semibold */}
+                                Collections
+                            </Dropdown.Link>
+                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-4 dropdown-item font-semibold" index={3}> {/* Added font-semibold */}
                                 Edit Details
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-4 dropdown-item font-semibold text-right w-full" index={3}> {/* Added font-semibold */}
+                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-4 dropdown-item font-semibold text-right w-full" index={4}> {/* Added font-semibold */}
                                 Log Out
                             </Dropdown.Link>
                         </Dropdown.Content>

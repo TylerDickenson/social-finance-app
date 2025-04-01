@@ -55,6 +55,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::get('/collections', function () {
+    return inertia('Collections');
+})->name('collections');
+
 
 
 
