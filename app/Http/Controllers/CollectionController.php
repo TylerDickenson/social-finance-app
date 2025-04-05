@@ -21,39 +21,51 @@ class CollectionController extends Controller
     }
 
     public function show($id)
-{
-    $collection = Collection::with('posts')->findOrFail($id);
+    {
+        $collection = Collection::with('posts')->findOrFail($id);
 
-    // Load posts with necessary relationships and count likes
-    $posts = Post::whereHas('collections', function ($query) use ($id) {
-        $query->where('collections.id', $id);
-    })
-        ->with(['user', 'comments.user', 'comments.likes'])
-        ->withCount('likes') // Count likes for each post
-        ->orderBy('created_at', 'desc')
-        ->get();
+        // Load posts with necessary relationships and count likes
+        $posts = Post::whereHas('collections', function ($query) use ($id) {
+            $query->where('collections.id', $id);
+        })
+            ->with(['user', 'comments.user', 'comments.likes'])
+            ->withCount('likes') // Count likes for each post
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // Transform posts to add additional flags
-    $posts->transform(function ($post) {
-        $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+        // Transform posts to add additional flags
+        $posts->transform(function ($post) {
+            $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
 
-        if (auth()->check()) {
-            $post->user->is_following = auth()->user()->isFollowing($post->user->id);
-        }
+            if (auth()->check()) {
+                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+            }
 
-        $post->comments->transform(function ($comment) {
-            $comment->likes_count = $comment->likes->count();
-            $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
-            return $comment;
+            $post->comments->transform(function ($comment) {
+                $comment->likes_count = $comment->likes->count();
+                $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                return $comment;
+            });
+
+            return $post;
         });
 
-        return $post;
-    });
+        return Inertia::render('CollectionPosts', [
+            'collection' => $collection,
+            'posts' => $posts,
+        ]);
+    }
 
-    return Inertia::render('CollectionPosts', [
-        'collection' => $collection,
-        'posts' => $posts,
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string|max:500',
     ]);
+
+    $collection = auth()->user()->collections()->create($validated);
+
+    return redirect()->route('collections.index')->with('success', 'Collection created successfully!');
 }
 
     
