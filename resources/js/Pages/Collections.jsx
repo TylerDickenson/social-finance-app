@@ -11,24 +11,29 @@ export default function Collections({ collections }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <h1 className="text-2xl font-bold">Your Collections</h1>
+                            <h1 className="text-2xl font-bold mb-6">Your Collections</h1>
                             {collections.length > 0 ? (
-                                <ul className="mt-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {collections.map((collection) => (
-                                        <li key={collection.id} className="mb-4">
+                                        <div
+                                            key={collection.id}
+                                            className="p-4 border border-gray-300 rounded-lg shadow hover:shadow-md transition-shadow"
+                                        >
                                             <Link
-                                                href={route('collections.show', { id: collection.id })} // Correct route name
-                                                className="text-blue-500 hover:underline"
+                                                href={route('collections.show', { id: collection.id })}
+                                                className="text-lg font-semibold text-blue-500 hover:underline"
                                             >
                                                 {collection.name}
                                             </Link>
-                                            <p className="text-sm text-gray-600">{collection.description}</p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-gray-600 mt-2">
+                                                {collection.description || 'No description available.'}
+                                            </p>
+                                            <p className="text-sm text-gray-500 mt-1">
                                                 {collection.posts_count} {collection.posts_count === 1 ? 'post' : 'posts'}
                                             </p>
-                                        </li>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             ) : (
                                 <p className="mt-4 text-gray-600">You have no collections yet.</p>
                             )}
