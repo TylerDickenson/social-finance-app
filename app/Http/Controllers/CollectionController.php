@@ -57,16 +57,29 @@ class CollectionController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string|max:500',
-    ]);
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+        ]);
 
-    $collection = auth()->user()->collections()->create($validated);
+        $collection = auth()->user()->collections()->create($validated);
 
-    return redirect()->route('collections.index')->with('success', 'Collection created successfully!');
-}
+        return redirect()->route('collections.index')->with('success', 'Collection created successfully!');
+    }
 
+    public function destroy($id)
+    {
+        $collection = Collection::findOrFail($id);
+
+        // Ensure the user is authorized to delete the collection
+        if ($collection->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $collection->delete();
+
+        return response()->json(['success' => true]);
+    }
     
 }

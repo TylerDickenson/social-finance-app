@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
     Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
+    Route::delete('/collections/{id}', [CollectionController::class, 'destroy'])->name('collections.destroy');
+    Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
    
 });
 

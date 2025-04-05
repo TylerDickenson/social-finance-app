@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import DeleteIcon from '@/Components/Icons/DeleteIcon'; // Import DeleteIcon
+import axios from 'axios'; // Import Axios for API requests
 
 export default function Collections({ collections }) {
     const { data, setData, post, processing, reset, errors } = useForm({
@@ -9,19 +11,36 @@ export default function Collections({ collections }) {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [collectionList, setCollectionList] = useState(collections); // Local state for collections
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('collections.store'), {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 reset();
                 setIsModalOpen(false); // Close the modal after successful submission
+    
+                // Update the collectionList state with the new collection
+                if (response.props.collections) {
+                    setCollectionList(response.props.collections);
+                }
             },
         });
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleDeleteCollection = async (collectionId) => {
+        if (!confirm('Are you sure you want to delete this collection?')) return;
+
+        try {
+            await axios.delete(route('collections.destroy', { id: collectionId }));
+            setCollectionList((prev) => prev.filter((collection) => collection.id !== collectionId)); // Update state
+        } catch (error) {
+            console.error('Error deleting collection:', error);
+        }
     };
 
     return (
@@ -37,11 +56,19 @@ export default function Collections({ collections }) {
                             {/* Collections Grid */}
                             <div className="relative">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {collections.map((collection) => (
+                                    {collectionList.map((collection) => (
                                         <div
                                             key={collection.id}
-                                            className="p-4 border border-gray-300 rounded-lg shadow hover:shadow-xl hover:shadow-blue-400 transition-shadow"
+                                            className="relative p-4 border border-gray-300 rounded-lg shadow hover:shadow-xl hover:shadow-blue-400 transition-shadow"
                                         >
+                                            {/* Delete Button */}
+                                            <button
+                                                onClick={() => handleDeleteCollection(collection.id)}
+                                                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                                            >
+                                                <DeleteIcon className="w-5 h-5" />
+                                            </button>
+
                                             <Link
                                                 href={route('collections.show', { id: collection.id })}
                                                 className="text-lg font-semibold text-blue-500 hover:underline"
