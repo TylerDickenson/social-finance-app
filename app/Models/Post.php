@@ -40,4 +40,9 @@ class Post extends Model
     {
         return $this->morphMany(Like::class, 'likeable');
     }
+
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class, 'collection_post');
+    }
 }

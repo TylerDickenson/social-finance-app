@@ -9,6 +9,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CollectionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -55,9 +56,14 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/collections', function () {
-    return inertia('Collections');
-})->name('collections');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
+    Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
+   
+});
+
+
 
 
 
