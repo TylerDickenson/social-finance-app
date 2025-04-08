@@ -15,7 +15,7 @@ class CollectionSeeder extends Seeder
     public function run(): void
     {
         // Check if user with ID 4 exists
-        $user = User::find(5);
+        $user = User::find(6);
 
         if (!$user) {
             $this->command->error('User with ID 4 does not exist. Please create the user first.');

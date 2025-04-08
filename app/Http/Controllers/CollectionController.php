@@ -9,16 +9,22 @@ use Inertia\Inertia;
 
 class CollectionController extends Controller
 {
-    public function index()
-    {
-        $collections = auth()->user()->collections()
-            ->withCount('posts') // Include the count of posts in each collection
-            ->get();
+    public function index(Request $request)
+{
+    $collections = auth()->user()->collections()
+        ->withCount('posts') // Include the count of posts in each collection
+        ->get();
 
-        return Inertia::render('Collections', [
-            'collections' => $collections,
-        ]);
+    // Return JSON if the request is an API call
+    if ($request->wantsJson()) {
+        return response()->json(['collections' => $collections]);
     }
+
+    // Default behavior for Inertia.js rendering
+    return Inertia::render('Collections', [
+        'collections' => $collections,
+    ]);
+}
 
     public function show($id)
     {
@@ -80,6 +86,26 @@ class CollectionController extends Controller
         $collection->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function addPost(Request $request)
+    {
+        $validated = $request->validate([
+            'collection_id' => 'required|exists:collections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $collection = Collection::findOrFail($validated['collection_id']);
+
+        // Ensure the user owns the collection
+        if ($collection->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Attach the post to the collection
+        $collection->posts()->syncWithoutDetaching($validated['post_id']);
+
+        return response()->json(['success' => true, 'message' => 'Post added to collection successfully.']);
     }
     
 }

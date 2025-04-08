@@ -4,14 +4,17 @@ import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
-import DeleteIcon from './Icons/DeleteIcon';
 import { Link } from '@inertiajs/react';
 
 export default function Post({ post, currentUserId, onFollowChange, onPostDelete }) {
     const [comments, setComments] = useState(post.comments);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
+    const [showModal, setShowModal] = useState(false); // State for modal visibility
+    const [collections, setCollections] = useState([]); // State for user's collections
     const likeButtonRef = useRef(null);
+    
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
@@ -19,9 +22,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         try {
             const response = await axios.post(route('comments.store'), {
                 content: commentContent,
-                postId: post.id
+                postId: post.id,
             });
-            setComments(prevComments => [...prevComments, response.data.comment]);
+            setComments((prevComments) => [...prevComments, response.data.comment]);
             setCommentContent('');
         } catch (error) {
             console.error('Error creating comment:', error);
@@ -30,37 +33,47 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         }
     };
 
-    const handleCommentUpdate = (commentId, updatedComment) => {
-        setComments(prevComments =>
-            prevComments.map(comment =>
-                comment.id === commentId
-                    ? { ...comment, ...updatedComment }
-                    : comment
-            )
-        );
-    };
-
-    const handleCommentDelete = (commentId) => {
-        setComments(prevComments =>
-            prevComments.filter(comment => comment.id !== commentId)
-        );
-    };
-
-    const handleDeletePost = async () => {
+    const fetchCollections = async () => {
         try {
-            await axios.delete(route('posts.destroy', { id: post.id }));
-            // Call the callback to remove the post from the parent state
-            if (onPostDelete) {
-                onPostDelete(post.id);
-            }
+            const response = await axios.get(route('collections.index'));
+            console.log('Fetched collections:', response.data.collections); // Debugging
+            setCollections(response.data.collections || []); // Ensure collections is always an array
+            setShowModal(true); // Show the modal
         } catch (error) {
-            console.error('Error deleting post:', error);
+            console.error('Error fetching collections:', error);
+            setCollections([]); // Set to an empty array on error
         }
     };
 
-    const handleImageDoubleTap = () => {
-        if (likeButtonRef.current) {
-            likeButtonRef.current.toggleLike();
+    const handleAddToCollection = async (collectionId) => {
+        try {
+            const response = await axios.post(route('collections.addPost'), {
+                collection_id: collectionId,
+                post_id: post.id,
+            });
+
+            console.log(response.data.message); // Success message
+            setShowModal(false); // Close the modal
+            setDropdownOpen(false); // Close the dropdown
+        } catch (error) {
+            console.error('Error adding post to collection:', error);
+        }
+    };
+
+    const toggleDropdown = () => {
+        setDropdownOpen((prev) => !prev);
+    };
+
+    const handleDeletePost = async () => {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+    
+        try {
+            await axios.delete(route('posts.destroy', { id: post.id }));
+            if (onPostDelete) {
+                onPostDelete(post.id); // Notify parent component about the deletion
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
         }
     };
 
@@ -68,34 +81,73 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         <div className="mb-6 p-6 border border-gray-300 rounded-lg shadow-sm">
             {/* Post Header */}
             <div className="flex justify-between mb-4">
-                <div className="flex items-center space-x-4 ml-2"> 
+                <div className="flex items-center space-x-4 ml-2">
                     <div className="flex items-center hover:scale-105 transition-transform duration-500">
                         <Link href={route('profile.show', { id: post.user.id })}>
-                                <img
-                                    src={post.user.avatar_url}
-                                    alt={post.user.name}
-                                    className="w-16 h-16 rounded-full mr-2 cursor-pointer"
-                                />
-                            </Link>
-                            {/* Link for Name */}
-                            <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold"> 
-                                {post.user.name}
-                            </Link>
-                        </div>
-                        {post.user.id !== currentUserId && (
-                                <FollowButton className="flex mb-5" userId={post.user.id} isFollowing={post.user.is_following} onFollowChange={onFollowChange} />
-                            )}
+                            <img
+                                src={post.user.avatar_url}
+                                alt={post.user.name}
+                                className="w-16 h-16 rounded-full mr-2 cursor-pointer"
+                            />
+                        </Link>
+                        <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold">
+                            {post.user.name}
+                        </Link>
                     </div>
-                <div className="flex items-center space-x-4">
-                    {post.user.id === currentUserId && (
-                        <button
-                            onClick={handleDeletePost}
-                            className="text-red-600 hover:text-red-800 transition-colors"
-                        >
-                            <DeleteIcon className="w-6 h-6" />
-                        </button>
+                    {post.user.id !== currentUserId && (
+                        <FollowButton
+                            className="flex mb-5"
+                            userId={post.user.id}
+                            isFollowing={post.user.is_following}
+                            onFollowChange={onFollowChange}
+                        />
                     )}
+                </div>
+                <div className="flex items-center space-x-4 relative">
                     <DateTimeDisplay timestamp={post.created_at} />
+
+                    {/* Dropdown Menu */}
+                    <div className="relative">
+                    <button
+                        onClick={toggleDropdown}
+                        className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 focus:outline-none"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            className="w-6 h-6"
+                        >
+                            <circle cx="12" cy="5" r="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <circle cx="12" cy="19" r="2" />
+                        </svg>
+                    </button>
+                        {dropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                                <ul className="py-1">
+                                    <li>
+                                        <button
+                                            onClick={fetchCollections}
+                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Add to Collection
+                                        </button>
+                                    </li>
+                                    {post.user.id === currentUserId && (
+                                        <li>
+                                            <button
+                                                onClick={handleDeletePost}
+                                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >
+                                                Delete Post
+                                            </button>
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <hr className="my-4 border-gray-300" />
@@ -106,13 +158,13 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         alt={post.title}
                         className="mb-4 rounded-lg cursor-pointer"
                         style={{
-                            maxWidth: '300px', // Limit the width to 300px
-                            maxHeight: '1000px', // Limit the height to 1000px
-                            objectFit: 'contain', // Maintain aspect ratio without stretching
-                            width: 'auto', // Allow the width to adjust automatically
-                            height: 'auto', // Allow the height to adjust automatically
+                            maxWidth: '300px',
+                            maxHeight: '1000px',
+                            objectFit: 'contain',
+                            width: 'auto',
+                            height: 'auto',
                         }}
-                        onDoubleClick={handleImageDoubleTap}
+                        onDoubleClick={() => likeButtonRef.current?.toggleLike()}
                     />
                 )}
                 <div className="ml-6 flex-1 relative">
@@ -141,8 +193,14 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     comment={comment}
                                     canEdit={comment.user.id === currentUserId}
                                     canDelete={comment.user.id === currentUserId}
-                                    onCommentUpdate={handleCommentUpdate}
-                                    onCommentDelete={handleCommentDelete}
+                                    onCommentUpdate={(commentId, updatedComment) =>
+                                        setComments((prev) =>
+                                            prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
+                                        )
+                                    }
+                                    onCommentDelete={(commentId) =>
+                                        setComments((prev) => prev.filter((c) => c.id !== commentId))
+                                    }
                                 />
                             ))
                         ) : (
@@ -167,6 +225,37 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     </div>
                 </div>
             </div>
+
+            {/* Modal for Selecting a Collection */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-bold mb-4">Select a Collection</h2>
+                        {Array.isArray(collections) && collections.length > 0 ? (
+                            <ul>
+                                {collections.map((collection) => (
+                                    <li key={collection.id} className="mb-2">
+                                        <button
+                                            onClick={() => handleAddToCollection(collection.id)}
+                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            {collection.name}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-600">No collections available.</p>
+                        )}
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

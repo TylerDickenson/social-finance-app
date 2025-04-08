@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
     Route::delete('/collections/{id}', [CollectionController::class, 'destroy'])->name('collections.destroy');
     Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
+    Route::post('/collections/addpost', [CollectionController::class, 'addPost'])->middleware('auth')->name('collections.addPost');
    
 });
 
