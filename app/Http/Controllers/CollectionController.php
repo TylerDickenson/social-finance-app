@@ -107,5 +107,25 @@ class CollectionController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Post added to collection successfully.']);
     }
+
+    public function removePost(Request $request)
+    {
+        $validated = $request->validate([
+            'collection_id' => 'required|exists:collections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $collection = Collection::findOrFail($validated['collection_id']);
+
+        // Ensure the user owns the collection
+        if ($collection->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Detach the post from the collection
+        $collection->posts()->detach($validated['post_id']);
+
+        return response()->json(['success' => true, 'message' => 'Post removed from collection successfully.']);
+    }
     
 }

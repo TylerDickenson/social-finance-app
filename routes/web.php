@@ -55,7 +55,9 @@ Route::middleware('auth')->group(function () {
     
 });
 
-
+Route::post('/collections/removepost', [CollectionController::class, 'removePost'])
+    ->middleware('auth')
+    ->name('collections.removePost');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');

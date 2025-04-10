@@ -16,6 +16,21 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const likeButtonRef = useRef(null);
     
 
+    const handleRemoveFromCollection = async (collectionId) => {
+        try {
+            const response = await axios.post(route('collections.removePost'), {
+                collection_id: collectionId,
+                post_id: post.id,
+            });
+    
+            console.log(response.data.message); // Success message
+            setDropdownOpen(false); // Close the dropdown
+        } catch (error) {
+            console.error('Error removing post from collection:', error);
+        }
+    };
+
+
     const handleSubmitComment = async (e) => {
         e.preventDefault();
         setProcessing(true);
@@ -134,6 +149,16 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                             Add to Collection
                                         </button>
                                     </li>
+                                    {collections.map((collection) => (
+                                        <li key={collection.id} className="mb-2">
+                                            <button
+                                                onClick={() => handleRemoveFromCollection(collection.id)}
+                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >
+                                                Remove from {collection.name}
+                                            </button>
+                                        </li>
+                                    ))}
                                     {post.user.id === currentUserId && (
                                         <li>
                                             <button
@@ -144,6 +169,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                             </button>
                                         </li>
                                     )}
+
                                 </ul>
                             </div>
                         )}
