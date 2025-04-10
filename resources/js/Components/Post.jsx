@@ -60,6 +60,17 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         }
     };
 
+    const isPostInCollection = (collection) => {
+        if (!Array.isArray(collection.posts)) {
+            console.log(`Collection ${collection.name} has no posts or posts is not an array.`);
+            return false;
+        }
+    
+        const isInCollection = collection.posts.some((postInCollection) => postInCollection.id === post.id);
+        console.log(`Post ${post.id} is ${isInCollection ? '' : 'not '}in collection ${collection.name}`);
+        return isInCollection;
+    };
+
     const handleAddToCollection = async (collectionId) => {
         try {
             const response = await axios.post(route('collections.addPost'), {
@@ -149,16 +160,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                             Add to Collection
                                         </button>
                                     </li>
-                                    {collections.map((collection) => (
-                                        <li key={collection.id} className="mb-2">
-                                            <button
-                                                onClick={() => handleRemoveFromCollection(collection.id)}
-                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                            >
-                                                Remove from {collection.name}
-                                            </button>
-                                        </li>
-                                    ))}
                                     {post.user.id === currentUserId && (
                                         <li>
                                             <button
@@ -252,21 +253,30 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </div>
             </div>
 
-            {/* Modal for Selecting a Collection */}
+            {/* Modal for Managing Collections */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-bold mb-4">Select a Collection</h2>
+                        <h2 className="text-xl font-bold mb-4">Manage Collections</h2>
                         {Array.isArray(collections) && collections.length > 0 ? (
                             <ul>
                                 {collections.map((collection) => (
                                     <li key={collection.id} className="mb-2">
-                                        <button
-                                            onClick={() => handleAddToCollection(collection.id)}
-                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        >
-                                            {collection.name}
-                                        </button>
+                                        {isPostInCollection(collection) ? (
+                                            <button
+                                                onClick={() => handleRemoveFromCollection(collection.id)}
+                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >
+                                                Remove from {collection.name}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleAddToCollection(collection.id)}
+                                                className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
+                                            >
+                                                Add to {collection.name}
+                                            </button>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -277,7 +287,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                             onClick={() => setShowModal(false)}
                             className="mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
                         >
-                            Cancel
+                            Close
                         </button>
                     </div>
                 </div>

@@ -10,21 +10,22 @@ use Inertia\Inertia;
 class CollectionController extends Controller
 {
     public function index(Request $request)
-{
-    $collections = auth()->user()->collections()
-        ->withCount('posts') // Include the count of posts in each collection
-        ->get();
+    {
+        $collections = auth()->user()->collections()
+            ->with('posts') // Include the posts relationship
+            ->withCount('posts') // Include the count of posts in each collection
+            ->get();
 
-    // Return JSON if the request is an API call
-    if ($request->wantsJson()) {
-        return response()->json(['collections' => $collections]);
+        // Return JSON if the request is an API call
+        if ($request->wantsJson()) {
+            return response()->json(['collections' => $collections]);
+        }
+
+        // Default behavior for Inertia.js rendering
+        return Inertia::render('Collections', [
+            'collections' => $collections,
+        ]);
     }
-
-    // Default behavior for Inertia.js rendering
-    return Inertia::render('Collections', [
-        'collections' => $collections,
-    ]);
-}
 
     public function show($id)
     {
