@@ -6,7 +6,7 @@ import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
 import { Link } from '@inertiajs/react';
 
-export default function Post({ post, currentUserId, onFollowChange, onPostDelete }) {
+export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove }) {
     const [comments, setComments] = useState(post.comments);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -23,8 +23,14 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 post_id: post.id,
             });
     
-            console.log(response.data.message); // Success message
-            setDropdownOpen(false); // Close the dropdown
+            console.log(response.data.message); 
+            setDropdownOpen(false); 
+            setShowModal(false); 
+            
+            if (onPostRemove) {
+                onPostRemove(post.id);
+            }
+
         } catch (error) {
             console.error('Error removing post from collection:', error);
         }
@@ -51,12 +57,12 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const fetchCollections = async () => {
         try {
             const response = await axios.get(route('collections.index'));
-            console.log('Fetched collections:', response.data.collections); // Debugging
-            setCollections(response.data.collections || []); // Ensure collections is always an array
-            setShowModal(true); // Show the modal
+            console.log('Fetched collections:', response.data.collections); 
+            setCollections(response.data.collections || []); 
+            setShowModal(true); 
         } catch (error) {
             console.error('Error fetching collections:', error);
-            setCollections([]); // Set to an empty array on error
+            setCollections([]); 
         }
     };
 
@@ -78,9 +84,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 post_id: post.id,
             });
 
-            console.log(response.data.message); // Success message
-            setShowModal(false); // Close the modal
-            setDropdownOpen(false); // Close the dropdown
+            console.log(response.data.message); 
+            setShowModal(false); 
+            setDropdownOpen(false); 
         } catch (error) {
             console.error('Error adding post to collection:', error);
         }

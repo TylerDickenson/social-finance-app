@@ -30,6 +30,10 @@ export default function CollectionPosts({ collection, posts: initialPosts, auth 
         }
     };
 
+    const handlePostRemove = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    }
+    
     return (
         <AuthenticatedLayout header={collection.name}>
             <Head title={collection.name} />
@@ -49,6 +53,7 @@ export default function CollectionPosts({ collection, posts: initialPosts, auth 
                                             post={post}
                                             currentUserId={auth.user.id}
                                             onLikeToggle={handleLikeToggle}
+                                            onPostRemove={handlePostRemove}
                                         />
                                     ))
                                 ) : (
