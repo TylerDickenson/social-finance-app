@@ -13,7 +13,7 @@ export default function CollectionPosts({ collection, posts: initialPosts, auth 
             } else {
                 await axios.delete(route('posts.unlike', { id: postId }));
             }
-
+            
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
                     post.id === postId
@@ -32,8 +32,8 @@ export default function CollectionPosts({ collection, posts: initialPosts, auth 
 
     const handlePostRemove = (postId) => {
         setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-    }
-    
+    };
+
     return (
         <AuthenticatedLayout header={collection.name}>
             <Head title={collection.name} />

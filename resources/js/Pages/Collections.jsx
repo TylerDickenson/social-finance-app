@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import DeleteIcon from '@/Components/Icons/DeleteIcon'; // Import DeleteIcon
-import axios from 'axios'; // Import Axios for API requests
+import DeleteIcon from '@/Components/Icons/DeleteIcon'; 
+import axios from 'axios'; 
 
 export default function Collections({ collections }) {
     const { data, setData, post, processing, reset, errors } = useForm({
@@ -11,16 +11,21 @@ export default function Collections({ collections }) {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [collectionList, setCollectionList] = useState(collections); // Local state for collections
+    const [collectionList, setCollectionList] = useState(collections); 
+
+    const sortedCollections = [...collectionList].sort((a, b) => {
+        if (a.name === 'Liked Posts') return -1; 
+        if (b.name === 'Liked Posts') return 1;
+        return a.name.localeCompare(b.name); 
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('collections.store'), {
             onSuccess: (response) => {
                 reset();
-                setIsModalOpen(false); // Close the modal after successful submission
-    
-                // Update the collectionList state with the new collection
+                setIsModalOpen(false); 
+
                 if (response.props.collections) {
                     setCollectionList(response.props.collections);
                 }
@@ -56,22 +61,28 @@ export default function Collections({ collections }) {
                             {/* Collections Grid */}
                             <div className="relative">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {collectionList.map((collection) => (
+                                    {sortedCollections.map((collection) => (
                                         <div
                                             key={collection.id}
-                                            className="relative p-4 border border-gray-300 rounded-lg shadow hover:shadow-xl hover:shadow-blue-400 transition-shadow"
+                                            className={`relative p-4 border ${
+                                                collection.name === 'Liked Posts'
+                                                    ? 'border-blue-500 bg-blue-50'
+                                                    : 'border-gray-300'
+                                            } rounded-lg shadow hover:shadow-4xl transition-shadow hover:`}
                                         >
                                             {/* Delete Button */}
-                                            <button
-                                                onClick={() => handleDeleteCollection(collection.id)}
-                                                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-                                            >
-                                                <DeleteIcon className="w-5 h-5" />
-                                            </button>
+                                            {collection.name !== 'Liked Posts' && (
+                                                <button
+                                                    onClick={() => handleDeleteCollection(collection.id)}
+                                                    className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                                                >
+                                                    <DeleteIcon className="w-5 h-5" />
+                                                </button>
+                                            )}
 
                                             <Link
                                                 href={route('collections.show', { id: collection.id })}
-                                                className="text-lg font-semibold text-blue-500 hover:underline"
+                                                className="text-lg font-semibold text-blue-500 hover:text-blue-600"
                                             >
                                                 {collection.name}
                                             </Link>
@@ -105,11 +116,11 @@ export default function Collections({ collections }) {
                     {isModalOpen && (
                         <div
                             className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                            onClick={closeModal} // Close modal when clicking outside
+                            onClick={closeModal} 
                         >
                             <div
                                 className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full"
-                                onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+                                onClick={(e) => e.stopPropagation()}
                             >
                                 <h2 className="text-xl font-bold mb-4">Create New Collection</h2>
                                 <form onSubmit={handleSubmit}>
@@ -142,7 +153,7 @@ export default function Collections({ collections }) {
                                             id="description"
                                             value={data.description}
                                             onChange={(e) => setData('description', e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-24 resize-none" // Fixed height and no resizing
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-24 resize-none" 
                                         ></textarea>
                                         {errors.description && (
                                             <p className="text-red-500 text-sm mt-1">{errors.description}</p>

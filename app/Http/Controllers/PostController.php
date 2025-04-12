@@ -66,6 +66,13 @@ class PostController extends Controller
 
         $post->likes()->create(['user_id' => auth()->id()]);
 
+        $likedCollection = auth()->user()->collections()->firstOrCreate(
+            ['name' => 'Liked Posts'],
+            ['description' => 'A collection of all the posts you have liked.']
+        );
+
+        $likedCollection->posts()->syncWithoutDetaching([$post->id]);
+
         return response()->json(['success' => true, 'message' => 'Post liked successfully.']);
     }
 
@@ -75,10 +82,16 @@ class PostController extends Controller
 
         $post->likes()->where('user_id', auth()->id())->delete();
 
+
+        $likedCollection = auth()->user()->collections()->where('name', 'Liked Posts')->first();
+
+        if ($likedCollection) {
+            $likedCollection->posts()->detach($post->id);
+        }
+
         return response()->json(['success' => true, 'message' => 'Post unliked successfully.']);
     }
 
-    // Helper Methods
     private function validatePost(Request $request)
     {
         return $request->validate([
@@ -91,16 +104,13 @@ class PostController extends Controller
     private function handleImageUpload(Request $request, $existingImagePath = null)
     {
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
             if ($existingImagePath) {
                 \Storage::disk('public')->delete($existingImagePath);
             }
 
-            // Store the new image
             return $request->file('image')->store('images', 'public');
         }
 
-        // Return the existing image path if no new image is uploaded
         return $existingImagePath;
     }
 

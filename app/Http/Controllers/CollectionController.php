@@ -11,6 +11,14 @@ class CollectionController extends Controller
 {
     public function index(Request $request)
     {
+
+        $user = auth()->user();
+
+        $defaultCollection = $user->collections()->firstOrCreate(
+            ['name' => 'Liked Posts'],
+            ['description' => 'A collection of all the posts you have liked.']
+        );
+
         $collections = auth()->user()->collections()
             ->with('posts') // Include the posts relationship
             ->withCount('posts') // Include the count of posts in each collection
@@ -118,15 +126,17 @@ class CollectionController extends Controller
 
         $collection = Collection::findOrFail($validated['collection_id']);
 
-        // Ensure the user owns the collection
         if ($collection->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Detach the post from the collection
+        
         $collection->posts()->detach($validated['post_id']);
 
         return response()->json(['success' => true, 'message' => 'Post removed from collection successfully.']);
     }
+
+    
+    
     
 }
