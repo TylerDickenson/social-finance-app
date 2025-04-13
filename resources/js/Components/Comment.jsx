@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import DateTimeDisplay from './DateTimeDisplay';
 import LikeButton from './LikeButton';
@@ -9,6 +9,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
     const [isEditing, setIsEditing] = useState(false);
     const [content, setContent] = useState(comment.content);
     const [processing, setProcessing] = useState(false);
+    const editRef = useRef(null);
 
     const handleDelete = async () => {
         setProcessing(true);
@@ -38,11 +39,10 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
             const response = await axios.patch(route('comments.update', { id: comment.id }), {
                 content: content
             });
-            // Pass the entire updated comment data including timestamps
             onCommentUpdate(comment.id, {
                 ...comment,
                 content: content,
-                updated_at: new Date().toISOString() // Add current timestamp
+                updated_at: new Date().toISOString()
             });
             setIsEditing(false);
         } catch (error) {
@@ -51,6 +51,22 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
             setProcessing(false);
         }
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (editRef.current && !editRef.current.contains(event.target)) {
+                handleCancelEdit();
+            }
+        };
+
+        if (isEditing) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isEditing]);
 
     return (
         <div className="relative mt-2 p-3 border border-gray-200 rounded-lg">
@@ -62,13 +78,14 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
             {isEditing ? (
-                <form onSubmit={handleUpdate} className="relative">
+                <form onSubmit={handleUpdate} className="relative" ref={editRef}>
                     <div className="flex">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
                             rows="3"
+                            style={{ resize: 'none' }}
                         ></textarea>
                         <div className="flex flex-col items-center justify-start ml-2 space-y-2">
                             <button
