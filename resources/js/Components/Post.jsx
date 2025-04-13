@@ -266,25 +266,27 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         <h2 className="text-xl font-bold mb-4">Manage Collections</h2>
                         {Array.isArray(collections) && collections.length > 0 ? (
                             <ul>
-                                {collections.map((collection) => (
-                                    <li key={collection.id} className="mb-2">
-                                        {isPostInCollection(collection) ? (
-                                            <button
-                                                onClick={() => handleRemoveFromCollection(collection.id)}
-                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                            >
-                                                Remove from {collection.name}
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleAddToCollection(collection.id)}
-                                                className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
-                                            >
-                                                Add to {collection.name}
-                                            </button>
-                                        )}
-                                    </li>
-                                ))}
+                                {collections
+                                    .filter((collection) => collection.name !== 'Liked Posts')
+                                    .map((collection) => (
+                                        <li key={collection.id} className="mb-2">
+                                            {isPostInCollection(collection) ? (
+                                                <button
+                                                    onClick={() => handleRemoveFromCollection(collection.id)}
+                                                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                                >
+                                                    Remove from {collection.name}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleAddToCollection(collection.id)}
+                                                    className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
+                                                >
+                                                    Add to {collection.name}
+                                                </button>
+                                            )}
+                                        </li>
+                                    ))}
                             </ul>
                         ) : (
                             <p className="text-gray-600">No collections available.</p>
