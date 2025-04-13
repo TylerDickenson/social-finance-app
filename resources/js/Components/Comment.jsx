@@ -62,28 +62,30 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
             {isEditing ? (
-                <form onSubmit={handleUpdate}>
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
-                        rows="3"
-                    ></textarea>
-                    <div className="mt-2 flex space-x-2">
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Save
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleCancelEdit}
-                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                        >
-                            Cancel
-                        </button>
+                <form onSubmit={handleUpdate} className="relative">
+                    <div className="flex">
+                        <textarea
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
+                            rows="3"
+                        ></textarea>
+                        <div className="flex flex-col items-center justify-start ml-2 space-y-2">
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-20"
+                            >
+                                Save
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 text-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </form>
             ) : (
