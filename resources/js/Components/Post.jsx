@@ -14,6 +14,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const [showModal, setShowModal] = useState(false); // State for modal visibility
     const [collections, setCollections] = useState([]); // State for user's collections
     const likeButtonRef = useRef(null);
+    const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false); // State for comment box visibility
     
 
     const handleRemoveFromCollection = async (collectionId) => {
@@ -47,6 +48,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
             });
             setComments((prevComments) => [...prevComments, response.data.comment]);
             setCommentContent('');
+            setIsCommentBoxVisible(false);
         } catch (error) {
             console.error('Error creating comment:', error);
         } finally {
@@ -239,22 +241,41 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         ) : (
                             <p className="text-md text-gray-600">No comments available.</p>
                         )}
-                        <form onSubmit={handleSubmitComment} className="mt-4 relative">
-                            <textarea
-                                value={commentContent}
-                                onChange={(e) => setCommentContent(e.target.value)}
-                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none"
-                                rows="3"
-                                placeholder="Add a comment..."
-                            ></textarea>
+                         {/* Add Comment Section */}
+                         {!isCommentBoxVisible ? (
                             <button
-                                type="submit"
-                                disabled={processing}
-                                className="absolute bottom-4 right-2 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2"
+                                onClick={() => setIsCommentBoxVisible(true)}
+                                className="mt-4 ml-3 text-blue-600 hover:underline"
                             >
-                                Post Comment
+                                Add a comment...
                             </button>
-                        </form>
+                        ) : (
+                            <form onSubmit={handleSubmitComment} className="mt-4 relative">
+                                <textarea
+                                    value={commentContent}
+                                    onChange={(e) => setCommentContent(e.target.value)}
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none"
+                                    rows="3"
+                                    placeholder="Write your comment here..."
+                                ></textarea>
+                                <div className="flex justify-end mt-2 space-x-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCommentBoxVisible(false)}
+                                        className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-md font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    >
+                                        Post Comment
+                                    </button>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>
