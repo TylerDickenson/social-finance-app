@@ -83,6 +83,26 @@ class CollectionController extends Controller
         return redirect()->route('collections.index')->with('success', 'Collection created successfully!');
     }
 
+    public function update(Request $request, $id)
+    {
+        $collection = Collection::findOrFail($id);
+
+        // Ensure the user is authorized to update the collection
+        if ($collection->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $collection->update($validated);
+
+        // Return the updated collection as a JSON response
+        return response()->json(['success' => true, 'collection' => $collection]);
+    }
+
     public function destroy($id)
     {
         $collection = Collection::findOrFail($id);
