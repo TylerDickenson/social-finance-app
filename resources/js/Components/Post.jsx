@@ -242,7 +242,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                             <p className="text-md text-gray-600">No comments available.</p>
                         )}
                          {/* Add Comment Section */}
-                         {!isCommentBoxVisible ? (
+                        {!isCommentBoxVisible ? (
                             <button
                                 onClick={() => setIsCommentBoxVisible(true)}
                                 className="mt-4 ml-3 text-blue-600 hover:underline"
@@ -250,7 +250,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 Add a comment...
                             </button>
                         ) : (
-                            <form onSubmit={handleSubmitComment} className="mt-4 relative">
+                            <form onSubmit={handleSubmitComment} className="mt-4 relative flex items-start">
                                 <textarea
                                     value={commentContent}
                                     onChange={(e) => setCommentContent(e.target.value)}
@@ -258,20 +258,20 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     rows="3"
                                     placeholder="Write your comment here..."
                                 ></textarea>
-                                <div className="flex justify-end mt-2 space-x-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsCommentBoxVisible(false)}
-                                        className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-md font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-                                    >
-                                        Cancel
-                                    </button>
+                                <div className="flex flex-col items-center justify-start ml-2 space-y-2">
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20"
                                     >
-                                        Post Comment
+                                        Post
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCommentBoxVisible(false)}
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
+                                    >
+                                        Cancel
                                     </button>
                                 </div>
                             </form>
