@@ -88,7 +88,7 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 relative">
                             {/* Edit/Delete Buttons */}
-                            <div className="absolute top-4 right-4 flex space-x-2">
+                            <div className="absolute top-8 right-9 flex space-x-2">
                                 <button
                                     onClick={() => setIsEditing(!isEditing)}
                                     className="text-blue-600 hover:text-blue-800"
@@ -128,7 +128,7 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
                                                 placeholder="Enter collection description..."
                                             ></textarea>
                                         </div>
-                                        <div className="flex flex-col justify-end space-y-2 w-20 ml-6 mb-2">
+                                        <div className="flex flex-col justify-end space-y-2 w-20 ml-2 mb-2">
                                             <button
                                                 type="submit"
                                                 disabled={processing}
@@ -149,8 +149,8 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
                             ) : (
                                 <>
                                     {/* Display collection data from state */}
-                                    <h1 className="text-2xl font-bold">{collection.name}</h1>
-                                    <p className="mt-2 text-gray-600">{collection.description || 'No description provided.'}</p>
+                                    <h1 className="text-2xl font-bold m-2">{collection.name}</h1>
+                                    <p className="mt-2 m-2 text-gray-600">{collection.description || 'No description provided.'}</p>
                                 </>
                             )}
 
