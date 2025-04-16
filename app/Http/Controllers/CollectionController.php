@@ -36,26 +36,34 @@ class CollectionController extends Controller
         ]);
     }
 
-   public function show($id)
+    public function show($id)
     {
         $collection = Collection::with([
             'posts' => function ($query) {
                 $query->with([
-                        'user',
+                        'user', // Eager load the post author
                         'comments.user',
-                        'comments.likes', 
-                        'likes' 
+                        'comments.likes',
+                        'likes'
                       ])
                       ->withCount('likes', 'comments')
                       ->orderBy('created_at', 'desc');
             }
         ])->findOrFail($id);
+
         if (($collection->is_private || $collection->name === 'Liked Posts') && $collection->user_id !== auth()->id()) {
             abort(403, 'This collection is private or inaccessible.');
         }
 
         $posts = $collection->posts->map(function ($post) {
             $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+
+            if (auth()->check() && $post->relationLoaded('user')) {
+                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+            } elseif ($post->relationLoaded('user')) {
+                $post->user->is_following = false;
+            }
+
             $post->comments->each(function ($comment) {
                  if ($comment->relationLoaded('likes')) {
                     $comment->likes_count = $comment->likes->count();
@@ -66,13 +74,13 @@ class CollectionController extends Controller
                  }
             });
 
-            return $post; 
+            return $post;
         });
 
 
         return Inertia::render('CollectionPosts', [
-            'collection' => $collection, 
-            'posts' => $posts, 
+            'collection' => $collection,
+            'posts' => $posts,
         ]);
     }
 
