@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
     
     protected $fillable = [
@@ -25,9 +24,9 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function likes()
     {
         return $this->morphMany(Like::class, 'likeable');
     }
-    
 }

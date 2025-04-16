@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Collection extends Model
 {
-    /** @use HasFactory<\Database\Factories\CollectionFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'user_id'];
+    protected $fillable = [
+        'name',
+        'description', 
+        'user_id', 
+        'is_private'
+    ];
 
     public function user()
     {

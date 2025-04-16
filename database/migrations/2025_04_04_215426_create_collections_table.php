@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Owner of the collection
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            $table->boolean("is_private")->default(false);
             $table->timestamps();
         });
     }
