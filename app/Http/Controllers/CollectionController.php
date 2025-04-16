@@ -16,20 +16,22 @@ class CollectionController extends Controller
 
         $defaultCollection = $user->collections()->firstOrCreate(
             ['name' => 'Liked Posts'],
-            ['description' => 'A collection of all the posts you have liked.']
+            [
+                'description' => 'A collection of all the posts you have liked.',
+                'is_private' => true
+            ]
         );
 
         $collections = auth()->user()->collections()
-            ->with('posts') // Include the posts relationship
-            ->withCount('posts') // Include the count of posts in each collection
+            ->with('posts')
+            ->withCount('posts') 
             ->get();
 
-        // Return JSON if the request is an API call
         if ($request->wantsJson()) {
             return response()->json(['collections' => $collections]);
         }
 
-        // Default behavior for Inertia.js rendering
+        // Inertia.js rendering the page
         return Inertia::render('Collections', [
             'collections' => $collections,
         ]);
@@ -37,45 +39,40 @@ class CollectionController extends Controller
 
     public function show($id)
     {
-        $collection = Collection::with('posts')->findOrFail($id);
-
-        // Load posts with necessary relationships and count likes
-        $posts = Post::whereHas('collections', function ($query) use ($id) {
-            $query->where('collections.id', $id);
-        })
-            ->with(['user', 'comments.user', 'comments.likes'])
-            ->withCount('likes') // Count likes for each post
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Transform posts to add additional flags
-        $posts->transform(function ($post) {
-            $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
-
-            if (auth()->check()) {
-                $post->user->is_following = auth()->user()->isFollowing($post->user->id);
+        $collection = Collection::with([
+            'posts' => function ($query) {
+                $query->with(['user', 'comments.user', 'likes'])
+                      ->withCount('likes', 'comments') 
+                      ->orderBy('created_at', 'desc'); 
             }
+        ])->findOrFail($id);
 
-            $post->comments->transform(function ($comment) {
-                $comment->likes_count = $comment->likes->count();
-                $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
-                return $comment;
+        if ($collection->is_private && $collection->user_id !== auth()->id()) {
+            abort(403, 'This collection is private.');
+        }
+
+        $posts = $collection->posts->map(function ($post) {
+            $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+            $post->comments->each(function ($comment) {
+                 $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
             });
-
             return $post;
         });
 
+
         return Inertia::render('CollectionPosts', [
             'collection' => $collection,
-            'posts' => $posts,
+            'posts' => $posts, // Pass the prepared posts
         ]);
     }
+
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
+            'is_private' => 'required|boolean',
         ]);
 
         $collection = auth()->user()->collections()->create($validated);
@@ -95,6 +92,7 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
+            'is_private' => 'required|boolean',
         ]);
 
         $collection->update($validated);

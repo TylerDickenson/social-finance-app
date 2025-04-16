@@ -1,64 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react'; // Added useMemo
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import DeleteIcon from '@/Components/Icons/DeleteIcon'; 
-import axios from 'axios'; 
+import { Head, Link, useForm, router } from '@inertiajs/react'; // Added router
+import DeleteIcon from '@/Components/Icons/DeleteIcon';
+import LockClosedIcon from '@/Components/Icons/LockClosedIcon'; // Assuming this exists now
+import Checkbox from '@/Components/Checkbox'; // Assuming this exists
+import InputLabel from '@/Components/InputLabel'; // Assuming this exists
+import TextInput from '@/Components/TextInput'; // Assuming this exists
+import TextArea from '@/Components/TextArea'; // Assuming this exists
+import PrimaryButton from '@/Components/PrimaryButton'; // Assuming this exists
+import Modal from '@/Components/Modal'; // Assuming this exists
+import InputError from '@/Components/InputError'; // Assuming this exists
+import axios from 'axios';
 
-export default function Collections({ collections }) {
+export default function Collections({ auth, collections: initialCollections }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
         description: '',
+        is_private: false, 
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [collectionList, setCollectionList] = useState(collections); 
+    const sortedCollections = useMemo(() => {
+        if (!Array.isArray(initialCollections)) {
+            console.warn("Collections prop is not an array:", initialCollections);
+            return [];
+        }
+        return [...initialCollections].sort((a, b) => {
+            if (a.name === 'Liked Posts') return -1;
+            if (b.name === 'Liked Posts') return 1;
+            return (a.name || '').localeCompare(b.name || '');
+        });
+    }, [initialCollections]);
 
-    const sortedCollections = [...collectionList].sort((a, b) => {
-        if (a.name === 'Liked Posts') return -1; 
-        if (b.name === 'Liked Posts') return 1;
-        return a.name.localeCompare(b.name); 
-    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('collections.store'), {
-            onSuccess: (response) => {
+            onSuccess: () => { 
                 reset();
-                setIsModalOpen(false); 
-
-                if (response.props.collections) {
-                    setCollectionList(response.props.collections);
-                }
+                setIsModalOpen(false);
             },
+            onError: (errs) => {
+                console.error("Error creating collection:", errs);
+            }
         });
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        reset();
     };
 
-    const handleDeleteCollection = async (collectionId) => {
-        if (!confirm('Are you sure you want to delete this collection?')) return;
-
-        try {
-            await axios.delete(route('collections.destroy', { id: collectionId }));
-            setCollectionList((prev) => prev.filter((collection) => collection.id !== collectionId)); // Update state
-        } catch (error) {
-            console.error('Error deleting collection:', error);
+    const handleDeleteCollection = (id) => {
+        if (confirm('Are you sure you want to delete this collection? This cannot be undone.')) {
+            router.delete(route('collections.destroy', id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    console.log(`Collection ${id} deleted`);
+                },
+                onError: (errors) => {
+                    console.error("Error deleting collection:", errors);
+                    alert('Failed to delete collection.');
+                }
+            });
         }
     };
 
+
     return (
-        <AuthenticatedLayout header="Collections">
+        // Pass user prop if AuthenticatedLayout requires it
+        <AuthenticatedLayout user={auth?.user} header="My Collections">
             <Head title="Collections" />
 
             <div className="py-12">
                 <div className="relative mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="bg-white shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <h1 className="text-2xl font-bold mb-6">Your Collections</h1>
+                            <h2 className="text-2xl font-bold mb-6">Your Collections</h2>
 
-                            {/* Collections Grid */}
                             <div className="relative">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {sortedCollections.map((collection) => (
@@ -68,37 +87,41 @@ export default function Collections({ collections }) {
                                                 collection.name === 'Liked Posts'
                                                     ? 'border-blue-500 bg-blue-50'
                                                     : 'border-gray-300'
-                                            } rounded-lg shadow hover:shadow-4xl transition-shadow hover:`}
+                                            } rounded-lg shadow hover:shadow-md transition-shadow flex flex-col justify-between`} // Use flex column
                                         >
-                                            {/* Delete Button */}
-                                            {collection.name !== 'Liked Posts' && (
-                                                <button
-                                                    onClick={() => handleDeleteCollection(collection.id)}
-                                                    className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-                                                >
-                                                    <DeleteIcon className="w-5 h-5" />
-                                                </button>
-                                            )}
+                                            <div> {/* Content wrapper */}
+                                                {collection.name !== 'Liked Posts' && (
+                                                    <button
+                                                        onClick={() => handleDeleteCollection(collection.id)}
+                                                        className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100"
+                                                        aria-label="Delete collection"
+                                                    >
+                                                        <DeleteIcon className="w-5 h-5" />
+                                                    </button>
+                                                )}
 
-                                            <Link
-                                                href={route('collections.show', { id: collection.id })}
-                                                className="text-lg font-semibold text-blue-500 hover:text-blue-600"
-                                            >
-                                                {collection.name}
-                                            </Link>
-                                            <p className="text-sm text-gray-600 mt-2">
-                                                {collection.description || 'No description available.'}
-                                            </p>
-                                            <p className="text-sm text-gray-500 mt-1">
+                                                <Link
+                                                    href={route('collections.show', { id: collection.id })}
+                                                    className="flex items-center text-lg font-semibold text-blue-600 hover:text-blue-800 mb-1"
+                                                >
+                                                    {collection.name}
+                                                    {collection.is_private ? (
+                                                        <LockClosedIcon className="w-4 h-4 ml-2 text-gray-500 flex-shrink-0" />
+                                                    ) : null}
+                                                </Link>
+                                                <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                                    {collection.description || <i>No description</i>}
+                                                </p>
+                                            </div>
+                                            <p className="text-sm text-gray-500 mt-auto pt-2">
                                                 {collection.posts_count} {collection.posts_count === 1 ? 'post' : 'posts'}
                                             </p>
                                         </div>
                                     ))}
-
-                                    {/* Add New Collection Button */}
-                                    <div
+                                    {/* Add New Collection Button - Using dashed style */}
+                                    <button
                                         onClick={() => setIsModalOpen(true)}
-                                        className="flex items-center justify-center p-4 border border-gray-300 rounded-lg shadow hover:shadow-xl hover:shadow-blue-400 transition-shadow cursor-pointer h-28"
+                                        className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition h-32"
                                     >
                                         <div className="flex flex-col items-center">
                                             <p className="text-lg font-semibold text-gray-500 mt-2">
@@ -106,79 +129,67 @@ export default function Collections({ collections }) {
                                             </p>
                                             <span className="text-5xl text-gray-500 -mt-2">+</span>
                                         </div>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Modal for adding a new collection*/}
-                    {isModalOpen && (
-                        <div
-                            className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                            onClick={closeModal} 
-                        >
-                            <div
-                                className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <h2 className="text-xl font-bold mb-4">Create New Collection</h2>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="name"
-                                            className="block text-sm font-medium text-gray-700"
-                                        >
-                                            Collection Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        />
-                                        {errors.name && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                                        )}
-                                    </div>
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="description"
-                                            className="block text-sm font-medium text-gray-700"
-                                        >
-                                            Description
-                                        </label>
-                                        <textarea
-                                            id="description"
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-24 resize-none" 
-                                        ></textarea>
-                                        {errors.description && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-                                        )}
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <button
-                                            type="button"
-                                            onClick={closeModal}
-                                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                        >
-                                            Create
-                                        </button>
-                                    </div>
-                                </form>
+                    {/* Use Modal Component */}
+                    <Modal show={isModalOpen} onClose={closeModal}>
+                        <form onSubmit={handleSubmit} className="p-6">
+                            <h2 className="text-lg font-medium text-gray-900">
+                                Create New Collection
+                            </h2>
+                            <div className="mt-4">
+                                <InputLabel htmlFor="name" value="Name" />
+                                <TextInput
+                                    id="name"
+                                    name="name"
+                                    value={data.name}
+                                    className="mt-1 block w-full"
+                                    autoComplete="off"
+                                    isFocused={true}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    required
+                                />
+                                <InputError message={errors.name} className="mt-2" />
                             </div>
-                        </div>
-                    )}
+
+                            <div className="mt-4">
+                                <InputLabel htmlFor="description" value="Description (Optional)" />
+                                <TextArea
+                                    id="description"
+                                    name="description"
+                                    value={data.description}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('description', e.target.value)}
+                                />
+                                <InputError message={errors.description} className="mt-2" />
+                            </div>
+                            <div className="block mt-4">
+                                <label className="flex items-center">
+                                    <Checkbox
+                                        name="is_private"
+                                        checked={data.is_private}
+                                        onChange={(e) => setData('is_private', e.target.checked)}
+                                    />
+                                    <span className="ms-2 text-sm text-gray-600">Make this collection private</span>
+                                </label>
+                                <p className="text-xs text-gray-500 ml-6">Only you will be able to see it.</p>
+                                <InputError message={errors.is_private} className="mt-2" />
+                            </div>
+                            <div className="mt-6 flex justify-end">
+                                <button type="button" onClick={closeModal} className="mr-3 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Cancel
+                                </button>
+                                <PrimaryButton disabled={processing}>
+                                    Create Collection
+                                </PrimaryButton>
+                            </div>
+                        </form>
+                    </Modal>
+
                 </div>
             </div>
         </AuthenticatedLayout>

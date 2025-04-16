@@ -7,7 +7,7 @@ import EditIcon from '@/Components/Icons/EditIcon';
 import axios from 'axios';
 
 export default function CollectionPosts({ collection: initialCollection, posts: initialPosts, auth }) {
- 
+
     const [collection, setCollection] = useState(initialCollection);
     const [posts, setPosts] = useState(initialPosts);
     const [isEditing, setIsEditing] = useState(false);
