@@ -1,33 +1,49 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import Post from '@/Components/Post';
+import axios from 'axios';
 
 export default function Dashboard({ posts: paginatedPosts, auth }) {
     const [allPosts, setAllPosts] = useState(paginatedPosts.data);
     const [currentPage, setCurrentPage] = useState(paginatedPosts.current_page);
+    const [lastPage, setLastPage] = useState(paginatedPosts.last_page);
     const [loading, setLoading] = useState(false);
     const observerRef = useRef(null);
 
-    const handleLoadMore = () => {
-        if (loading || currentPage >= paginatedPosts.last_page) return;
+    useEffect(() => {
+        setLastPage(paginatedPosts.last_page);
+    }, [paginatedPosts.last_page]);
+
+    const handleLoadMore = async () => {
+        if (loading || currentPage >= lastPage) return;
 
         setLoading(true);
         const nextPage = currentPage + 1;
+        const url = `/discover?page=${nextPage}`;
 
-        router.get(
-            route('dashboard', { page: nextPage }),
-            {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: (response) => {
-                    setAllPosts((prevPosts) => [...prevPosts, ...response.props.posts.data]);
-                    setCurrentPage(nextPage);
-                    setLoading(false);
-                },
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            });
+
+            const newPostsData = response.data.posts;
+
+            if (newPostsData && newPostsData.data && newPostsData.data.length > 0) {
+                setAllPosts((prevPosts) => [...prevPosts, ...newPostsData.data]);
+                setCurrentPage(newPostsData.current_page);
+                setLastPage(newPostsData.last_page);
+            } else {
+                setCurrentPage(nextPage);
             }
-        );
+        } catch (error) {
+            console.error("Error loading more posts:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handlePostDelete = (postId) => {
@@ -39,7 +55,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
             observerRef.current.disconnect();
         }
 
-        if (node && currentPage < paginatedPosts.last_page && !loading) {
+        if (node && currentPage < lastPage && !loading) {
             observerRef.current = new IntersectionObserver(
                 (entries) => {
                     if (entries[0].isIntersecting) {
@@ -54,7 +70,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
 
             observerRef.current.observe(node);
         }
-    }, [currentPage, paginatedPosts.last_page, loading]);
+    }, [currentPage, lastPage, loading]);
 
     useEffect(() => {
         return () => {
@@ -65,7 +81,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
     }, []);
 
     return (
-        <AuthenticatedLayout header="All Posts">
+        <AuthenticatedLayout user={auth.user} header="All Posts">
             <Head title="Discover" />
 
             <div className="py-12">
@@ -82,17 +98,17 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
                                         >
                                             <Post
                                                 post={post}
-                                                currentUserId={auth.user.id}
+                                                currentUserId={auth.user ? auth.user.id : null}
                                                 onFollowChange={(userId, isFollowing) => {
                                                     setAllPosts((prevPosts) =>
                                                         prevPosts.map((p) =>
-                                                            p.user.id === userId
+                                                            p.user && p.user.id === userId
                                                                 ? { ...p, user: { ...p.user, is_following: isFollowing } }
                                                                 : p
                                                         )
                                                     );
                                                 }}
-                                                onPostDelete={handlePostDelete} 
+                                                onPostDelete={handlePostDelete}
                                             />
                                         </div>
                                     ))}
@@ -102,14 +118,14 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
                                             <p className="mt-2 text-gray-600">Loading more posts...</p>
                                         </div>
                                     )}
-                                    {!loading && currentPage < paginatedPosts.last_page && (
-                                        <div className="text-center text-gray-600 mt-4">
-                                            Scroll for more posts
-                                        </div>
+                                    {!loading && currentPage >= lastPage && allPosts.length > 0 && (
+                                         <div className="text-center text-gray-600 mt-4 py-4">
+                                             You've reached the end!
+                                         </div>
                                     )}
                                 </>
                             ) : (
-                                <p className="text-lg">No posts available.</p>
+                                <p className="text-lg text-center text-gray-600 py-8">No posts available.</p>
                             )}
                         </div>
                     </div>
