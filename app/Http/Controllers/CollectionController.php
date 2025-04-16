@@ -31,38 +31,48 @@ class CollectionController extends Controller
             return response()->json(['collections' => $collections]);
         }
 
-        // Inertia.js rendering the page
         return Inertia::render('Collections', [
             'collections' => $collections,
         ]);
     }
 
-    public function show($id)
+   public function show($id)
     {
         $collection = Collection::with([
             'posts' => function ($query) {
-                $query->with(['user', 'comments.user', 'likes'])
-                      ->withCount('likes', 'comments') 
-                      ->orderBy('created_at', 'desc'); 
+                $query->with([
+                        'user',
+                        'comments.user',
+                        'comments.likes', 
+                        'likes' 
+                      ])
+                      ->withCount('likes', 'comments')
+                      ->orderBy('created_at', 'desc');
             }
         ])->findOrFail($id);
-
-        if ($collection->is_private && $collection->user_id !== auth()->id()) {
-            abort(403, 'This collection is private.');
+        if (($collection->is_private || $collection->name === 'Liked Posts') && $collection->user_id !== auth()->id()) {
+            abort(403, 'This collection is private or inaccessible.');
         }
 
         $posts = $collection->posts->map(function ($post) {
             $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
             $post->comments->each(function ($comment) {
-                 $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                 if ($comment->relationLoaded('likes')) {
+                    $comment->likes_count = $comment->likes->count();
+                    $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+                 } else {
+                    $comment->likes_count = 0;
+                    $comment->is_liked_by_user = false;
+                 }
             });
-            return $post;
+
+            return $post; 
         });
 
 
         return Inertia::render('CollectionPosts', [
-            'collection' => $collection,
-            'posts' => $posts, // Pass the prepared posts
+            'collection' => $collection, 
+            'posts' => $posts, 
         ]);
     }
 
@@ -84,7 +94,6 @@ class CollectionController extends Controller
     {
         $collection = Collection::findOrFail($id);
 
-        // Ensure the user is authorized to update the collection
         if ($collection->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -97,7 +106,6 @@ class CollectionController extends Controller
 
         $collection->update($validated);
 
-        // Return the updated collection as a JSON response
         return response()->json(['success' => true, 'collection' => $collection]);
     }
 
@@ -105,7 +113,6 @@ class CollectionController extends Controller
     {
         $collection = Collection::findOrFail($id);
 
-        // Ensure the user is authorized to delete the collection
         if ($collection->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -124,12 +131,10 @@ class CollectionController extends Controller
 
         $collection = Collection::findOrFail($validated['collection_id']);
 
-        // Ensure the user owns the collection
         if ($collection->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Attach the post to the collection
         $collection->posts()->syncWithoutDetaching($validated['post_id']);
 
         return response()->json(['success' => true, 'message' => 'Post added to collection successfully.']);
