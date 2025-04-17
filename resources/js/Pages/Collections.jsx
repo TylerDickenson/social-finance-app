@@ -72,114 +72,109 @@ export default function Collections({ auth, collections: initialCollections }) {
         <AuthenticatedLayout user={auth?.user} header="My Collections">
             <Head title="Collections" />
 
-            <div className="py-12">
+            <div className="py-8">
                 <div className="relative mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <h2 className="text-2xl font-bold mb-6">Your Collections</h2>
-
-                            <div className="relative">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {sortedCollections.map((collection) => (
-                                        <div
-                                            key={collection.id}
-                                            className={`relative p-4 border ${
-                                                collection.name === 'Liked Posts'
-                                                    ? 'border-blue-500 bg-blue-300'
-                                                    : 'border-gray-300'
-                                            } rounded-lg shadow hover:shadow-md transition-shadow flex flex-col justify-between`} // Use flex column
-                                        >
-                                            <div> {/* Content wrapper */}
-                                                <Link
-                                                    href={route('collections.show', { id: collection.id })}
-                                                    className="flex items-center text-lg font-semibold text-blue-600 hover:text-blue-800 mb-1"
-                                                >
-                                                    {collection.name}
-                                                    {collection.is_private ? (
-                                                        <LockClosedIcon className=" absolute top-4 right-4 w-6 h-6 ml-2 text-gray-500 flex-shrink-0" />
-                                                    ) : null}
-                                                </Link>
-                                                <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                                                    {collection.description || <i>No description</i>}
-                                                </p>
-                                            </div>
-                                            <p className="text-sm text-gray-500 mt-auto pt-2">
-                                                {collection.posts_count} {collection.posts_count === 1 ? 'post' : 'posts'}
-                                            </p>
-                                        </div>
-                                    ))}
-                                    <button
-                                        onClick={() => setIsModalOpen(true)}
-                                        className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition h-32"
+                    <div className="p-6 text-gray-900 " >
+                        <div className="relative">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {sortedCollections.map((collection) => (
+                                    <div
+                                        key={collection.id}
+                                        className={`relative p-4 border bg-white ${
+                                            collection.name === 'Liked Posts'
+                                                ? 'border-blue-500 bg-blue-300'
+                                                : 'border-gray-300'
+                                        } rounded-lg shadow hover:shadow-md transition-shadow flex flex-col justify-between`} // Use flex column
                                     >
-                                        <div className="flex flex-col items-center">
-                                            <p className="text-lg font-semibold text-gray-500 mt-2">
-                                                Create New Collection
+                                        <div> {/* Content wrapper */}
+                                            <Link
+                                                href={route('collections.show', { id: collection.id })}
+                                                className="flex items-center text-lg font-semibold text-blue-600 hover:text-blue-800 mb-1"
+                                            >
+                                                {collection.name}
+                                                {collection.is_private ? (
+                                                    <LockClosedIcon className=" absolute top-4 right-4 w-6 h-6 ml-2 text-gray-500 flex-shrink-0" />
+                                                ) : null}
+                                            </Link>
+                                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                                {collection.description || <i>No description</i>}
                                             </p>
-                                            <span className="text-5xl text-gray-500 -mt-2">+</span>
                                         </div>
-                                    </button>
-                                </div>
+                                        <p className="text-sm text-gray-500 mt-auto pt-2">
+                                            {collection.posts_count} {collection.posts_count === 1 ? 'post' : 'posts'}
+                                        </p>
+                                    </div>
+                                ))}
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="flex items-center justify-center p-4 border-2 border-dashed bg-white border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition h-32"
+                                >
+                                    <div className="flex flex-col items-center">
+                                        <p className="text-lg font-semibold text-gray-500 mt-2 bg-white">
+                                            Create New Collection
+                                        </p>
+                                        <span className="text-5xl text-gray-500 -mt-2">+</span>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    {/* Use Modal Component */}
-                    <Modal show={isModalOpen} onClose={closeModal}>
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <h2 className="text-lg font-medium text-gray-900">
-                                Create New Collection
-                            </h2>
-                            <div className="mt-4">
-                                <InputLabel htmlFor="name" value="Name" />
-                                <TextInput
-                                    id="name"
-                                    name="name"
-                                    value={data.name}
-                                    className="mt-1 block w-full"
-                                    autoComplete="off"
-                                    isFocused={true}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    required
-                                />
-                                <InputError message={errors.name} className="mt-2" />
-                            </div>
-
-                            <div className="mt-4">
-                                <InputLabel htmlFor="description" value="Description (Optional)" />
-                                <TextArea
-                                    id="description"
-                                    name="description"
-                                    value={data.description}
-                                    className="mt-1 block w-full"
-                                    onChange={(e) => setData('description', e.target.value)}
-                                />
-                                <InputError message={errors.description} className="mt-2" />
-                            </div>
-                            <div className="block mt-4">
-                                <label className="flex items-center">
-                                    <Checkbox
-                                        name="is_private"
-                                        checked={data.is_private}
-                                        onChange={(e) => setData('is_private', e.target.checked)}
-                                    />
-                                    <span className="ms-2 text-sm text-gray-600">Make this collection private</span>
-                                </label>
-                                <p className="text-xs text-gray-500 ml-6">Only you will be able to see it.</p>
-                                <InputError message={errors.is_private} className="mt-2" />
-                            </div>
-                            <div className="mt-6 flex justify-end">
-                                <button type="button" onClick={closeModal} className="mr-3 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Cancel
-                                </button>
-                                <PrimaryButton disabled={processing}>
-                                    Create Collection
-                                </PrimaryButton>
-                            </div>
-                        </form>
-                    </Modal>
-
                 </div>
+
+                {/* Use Modal Component */}
+                <Modal show={isModalOpen} onClose={closeModal}>
+                    <form onSubmit={handleSubmit} className="p-6">
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Create New Collection
+                        </h2>
+                        <div className="mt-4">
+                            <InputLabel htmlFor="name" value="Name" />
+                            <TextInput
+                                id="name"
+                                name="name"
+                                value={data.name}
+                                className="mt-1 block w-full"
+                                autoComplete="off"
+                                isFocused={true}
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                            />
+                            <InputError message={errors.name} className="mt-2" />
+                        </div>
+
+                        <div className="mt-4">
+                            <InputLabel htmlFor="description" value="Description (Optional)" />
+                            <TextArea
+                                id="description"
+                                name="description"
+                                value={data.description}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('description', e.target.value)}
+                            />
+                            <InputError message={errors.description} className="mt-2" />
+                        </div>
+                        <div className="block mt-4">
+                            <label className="flex items-center">
+                                <Checkbox
+                                    name="is_private"
+                                    checked={data.is_private}
+                                    onChange={(e) => setData('is_private', e.target.checked)}
+                                />
+                                <span className="ms-2 text-sm text-gray-600">Make this collection private</span>
+                            </label>
+                            <p className="text-xs text-gray-500 ml-6">Only you will be able to see it.</p>
+                            <InputError message={errors.is_private} className="mt-2" />
+                        </div>
+                        <div className="mt-6 flex justify-end">
+                            <button type="button" onClick={closeModal} className="mr-3 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancel
+                            </button>
+                            <PrimaryButton disabled={processing}>
+                                Create Collection
+                            </PrimaryButton>
+                        </div>
+                    </form>
+                </Modal>
             </div>
         </AuthenticatedLayout>
     );

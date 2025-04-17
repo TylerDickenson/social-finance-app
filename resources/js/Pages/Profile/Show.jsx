@@ -66,11 +66,10 @@ const Show = ({ user, posts }) => {
         >
             <Head title={`${user.name}`} />
 
-            <div className="py-44">
+            <div className="py-28">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden  shadow-sm sm:rounded-lg">
                         <div className="p-10 text-gray-900">
-                            <h2 className="mt-4 text-2xl font-semibold">Posts</h2>
                             <div className="mt-6 space-y-6">
                                 {posts && posts.length > 0 ? (
                                     posts.map((post) => (

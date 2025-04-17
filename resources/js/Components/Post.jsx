@@ -112,7 +112,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     };
 
     return (
-        <div className="mb-6 p-6 border border-gray-300 rounded-lg shadow-sm">
+        <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow-sm bg-neutral-50" >
             {/* Post Header */}
             <div className="flex justify-between mb-4">
                 <div className="flex items-center space-x-4 ml-2">

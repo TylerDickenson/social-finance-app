@@ -142,7 +142,7 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
         >
             <Head title={collection.name} />
 
-            <div className="py-12">
+            <div className="py-8">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 relative">
@@ -263,7 +263,7 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
                                     </form>
                                 ) : (
                                     <div className="mr-16">
-                                        <p className="mt-1 text-gray-600 text-xl font-bold">{collection.description || <i>No description provided.</i>}</p>
+                                        <p className="mt-1 text-gray-600 text-xl">{collection.description || <i>No description provided.</i>}</p>
                                         {collection.is_private ? (
                                             <div className="flex items-center text-medium text-gray-500">
                                                 <LockClosedIcon className="w-4 h-4 mr-1 flex-shrink-0" />
