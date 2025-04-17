@@ -29,9 +29,12 @@ export default function TagShow({ tag, posts }) {
         >
             <Head title={`Tag: $${tag.name}`} />
             <div className="py-8">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {renderPosts()}
-
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden">
+                        <div className="p-6 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                            {renderPosts()}
+                        </div>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
