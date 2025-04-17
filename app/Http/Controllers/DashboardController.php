@@ -4,42 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Inertia\Inertia;
-use Illuminate\Http\Request; // Import Request
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    // Inject Request
     public function index(Request $request)
     {
-        $posts = Post::with(['user', 'comments.user', 'comments.likes'])
-            ->withCount('likes')
+        $posts = Post::with([
+                'user',
+                'comments' => function ($query) {
+                    $query->with('user', 'likes')->withCount('likes')->orderBy('created_at', 'asc');
+                },
+            ])
+            ->withCount('likes') 
             ->orderBy('created_at', 'desc')
-            ->paginate(10); // Adjust pagination size if needed
+            ->paginate(10);
 
-        // Transform the collection for both Inertia and JSON responses
         $posts->getCollection()->transform(function ($post) {
-            // Ensure auth check happens before accessing user id
-            $post->is_liked_by_user = auth()->check() ? $post->likes->contains('user_id', auth()->id()) : false;
+            $isLoggedIn = auth()->check();
+            $userId = $isLoggedIn ? auth()->id() : null;
 
-            // Check if user and auth exist before checking following status
-            if (auth()->check() && $post->user) {
+            $post->is_liked_by_user = $isLoggedIn ? $post->likes->contains('user_id', $userId) : false;
+
+            if ($isLoggedIn && $post->user) {
                  $post->user->is_following = auth()->user()->following->contains($post->user_id);
             } else if ($post->user) {
-                 // Set default if not logged in or post has no user (though unlikely)
                  $post->user->is_following = false;
             }
+
+            if ($post->comments) {
+                foreach ($post->comments as $comment) {
+                    $comment->is_liked_by_user = $isLoggedIn ? $comment->likes->contains('user_id', $userId) : false;
+                }
+            }
+
             return $post;
         });
 
-        // Check if the request wants JSON (AJAX call from manual fetch)
         if ($request->wantsJson()) {
-            // Return the paginator object directly, Laravel handles JSON conversion
             return response()->json(['posts' => $posts]);
         }
 
-        // Default Inertia response for initial page load
         return Inertia::render('Dashboard', [
-            'posts' => $posts, // Pass the full paginator object
+            'posts' => $posts,
         ]);
     }
 }
