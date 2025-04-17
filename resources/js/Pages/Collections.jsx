@@ -85,28 +85,18 @@ export default function Collections({ auth, collections: initialCollections }) {
                                             key={collection.id}
                                             className={`relative p-4 border ${
                                                 collection.name === 'Liked Posts'
-                                                    ? 'border-blue-500 bg-blue-50'
+                                                    ? 'border-blue-500 bg-blue-300'
                                                     : 'border-gray-300'
                                             } rounded-lg shadow hover:shadow-md transition-shadow flex flex-col justify-between`} // Use flex column
                                         >
                                             <div> {/* Content wrapper */}
-                                                {collection.name !== 'Liked Posts' && (
-                                                    <button
-                                                        onClick={() => handleDeleteCollection(collection.id)}
-                                                        className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100"
-                                                        aria-label="Delete collection"
-                                                    >
-                                                        <DeleteIcon className="w-5 h-5" />
-                                                    </button>
-                                                )}
-
                                                 <Link
                                                     href={route('collections.show', { id: collection.id })}
                                                     className="flex items-center text-lg font-semibold text-blue-600 hover:text-blue-800 mb-1"
                                                 >
                                                     {collection.name}
                                                     {collection.is_private ? (
-                                                        <LockClosedIcon className="w-4 h-4 ml-2 text-gray-500 flex-shrink-0" />
+                                                        <LockClosedIcon className=" absolute top-4 right-4 w-6 h-6 ml-2 text-gray-500 flex-shrink-0" />
                                                     ) : null}
                                                 </Link>
                                                 <p className="text-sm text-gray-600 mb-2 line-clamp-2">
@@ -118,7 +108,6 @@ export default function Collections({ auth, collections: initialCollections }) {
                                             </p>
                                         </div>
                                     ))}
-                                    {/* Add New Collection Button - Using dashed style */}
                                     <button
                                         onClick={() => setIsModalOpen(true)}
                                         className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition h-32"

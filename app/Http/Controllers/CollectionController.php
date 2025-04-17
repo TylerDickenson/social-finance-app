@@ -5,6 +5,7 @@ use App\Models\Collection;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
 
 
 class CollectionController extends Controller
@@ -114,7 +115,7 @@ class CollectionController extends Controller
 
         $collection->update($validated);
 
-        return response()->json(['success' => true, 'collection' => $collection]);
+        return Redirect::back()->with('success', 'Collection updated successfully!');
     }
 
     public function destroy($id)
@@ -127,7 +128,7 @@ class CollectionController extends Controller
 
         $collection->delete();
 
-        return response()->json(['success' => true]);
+        return Redirect::route('collections.index')->with('success', 'Collection deleted successfully.');
     }
 
     public function addPost(Request $request)
