@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Models\Tag;
 
 class CommentController extends Controller
 {
@@ -20,10 +21,12 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        // Load the relationships needed for the frontend
-        $comment->load('user');
+        $comment->load('user', 'tags');
         $comment->likes_count = 0;
         $comment->is_liked_by_user = false;
+
+        $this->syncTags($comment, $request->content);
+        $comment->load('user', 'tags');
 
         return response()->json([
             'success' => true,
@@ -46,6 +49,10 @@ class CommentController extends Controller
         $comment->update([
             'content' => $request->content,
         ]);
+
+        $this->syncTags($comment, $request->content);
+
+        $comment->load('user', 'tags');
 
         return response()->json([
             'success' => true,
@@ -79,5 +86,24 @@ class CommentController extends Controller
         $comment->likes()->where('user_id', auth()->id())->delete();
         return response()->json(['success' => true]);
     }
+
+
+    private function syncTags(Comment $comment, string $textToScan): void
+    {
+        preg_match_all('/\$([A-Za-z0-9]+)/', $textToScan, $matches);
+
+        $tagNames = array_unique(array_map('strtoupper', $matches[1]));
+
+        $tagIds = [];
+        foreach ($tagNames as $tagName) {
+            if (!empty($tagName)) {
+                $tag = Tag::firstOrCreate(['name' => $tagName]);
+                $tagIds[] = $tag->id;
+            }
+        }
+
+        $comment->tags()->sync($tagIds);
+    }
+
 
 }

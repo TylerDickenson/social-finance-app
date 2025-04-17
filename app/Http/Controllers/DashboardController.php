@@ -11,14 +11,18 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $posts = Post::with([
-                'user',
-                'comments' => function ($query) {
-                    $query->with('user', 'likes')->withCount('likes')->orderBy('created_at', 'asc');
-                },
-                'tags',
-            ])
-            ->withCount('likes') 
-            ->orderBy('created_at', 'desc')
+            'user',
+            'likes',
+            'tags',
+            'comments' => function ($query) {
+                // *** Ensure 'tags' is loaded for comments ***
+                $query->with(['user', 'likes', 'tags'])
+                      ->withCount('likes')
+                      ->orderBy('created_at', 'asc');
+            }
+        ])
+        ->withCount(['likes', 'comments'])
+        ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         $posts->getCollection()->transform(function ($post) {

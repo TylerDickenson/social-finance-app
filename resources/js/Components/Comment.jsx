@@ -4,6 +4,7 @@ import DateTimeDisplay from './DateTimeDisplay';
 import LikeButton from './LikeButton';
 import DeleteIcon from './Icons/DeleteIcon';
 import EditIcon from './Icons/EditIcon';
+import { Link } from '@inertiajs/react';
 
 export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, onCommentDelete }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +12,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
     const [processing, setProcessing] = useState(false);
     const editRef = useRef(null);
 
+    // ... (handleDelete, handleEdit, handleCancelEdit, handleUpdate, useEffect) ...
     const handleDelete = async () => {
         setProcessing(true);
         try {
@@ -39,11 +41,8 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
             const response = await axios.patch(route('comments.update', { id: comment.id }), {
                 content: content
             });
-            onCommentUpdate(comment.id, {
-                ...comment,
-                content: content,
-                updated_at: new Date().toISOString()
-            });
+            // Use the comment data from the response to ensure tags are updated if content changed
+            onCommentUpdate(comment.id, response.data.comment);
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating comment:', error);
@@ -52,7 +51,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
         }
     };
 
-    useEffect(() => {
+     useEffect(() => {
         const handleClickOutside = (event) => {
             if (editRef.current && !editRef.current.contains(event.target)) {
                 handleCancelEdit();
@@ -68,8 +67,11 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
         };
     }, [isEditing]);
 
+
     return (
-        <div className="relative mt-2 p-3 border border-gray-200 rounded-2xl">
+        // Removed relative positioning from the main container unless needed for other elements
+        <div className="mt-2 p-3 border border-gray-200 dark:border-gray-700 rounded-2xl">
+            {/* Top section: User info and timestamp */}
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
                     <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
@@ -77,13 +79,16 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                 </div>
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
+
+            {/* Middle section: Content or Edit Form */}
             {isEditing ? (
-                <form onSubmit={handleUpdate} className="relative" ref={editRef}>
-                    <div className="flex">
+                <form onSubmit={handleUpdate} className="relative mb-2" ref={editRef}> {/* Added mb-2 */}
+                    {/* ... (textarea and save/cancel buttons) ... */}
+                     <div className="flex">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-500 dark:text-white"
+                            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-700 dark:text-white"
                             rows="3"
                             style={{ resize: 'none' }}
                         ></textarea>
@@ -98,7 +103,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                             <button
                                 type="button"
                                 onClick={handleCancelEdit}
-                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 text-md font-medium text-white shadow-sm hover:bg-gray-700 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
                             >
                                 Cancel
                             </button>
@@ -106,37 +111,62 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                     </div>
                 </form>
             ) : (
-                <p className="text-md dark:text-white">
-                    {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500 dark:text-white">(edited)</span>}
+                <p className="text-md dark:text-white mb-2"> {/* Added mb-2 */}
+                    {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500 dark:text-gray-400">(edited)</span>}
                 </p>
             )}
-            <LikeButton
-                likeableId={comment.id}
-                likeableType="comments"
-                initialLikesCount={comment.likes_count}
-                initialIsLiked={comment.is_liked_by_user}
-            />
-            {(canEdit || canDelete) && (
-                <div className="absolute bottom-2 right-2 flex items-center space-x-2">
-                    {canEdit && (
-                        <button
-                            onClick={handleEdit}
-                            className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
-                        >
-                            <EditIcon className="h-5 w-5" />
-                        </button>
-                    )}
-                    {canDelete && (
-                        <button
-                            onClick={handleDelete}
-                            disabled={processing}
-                            className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
-                        >
-                            <DeleteIcon className="h-5 w-5" /> 
-                        </button>
+
+            {/* Bottom section: Likes, Tags, Edit/Delete */}
+            <div className="flex items-center justify-between mt-2"> {/* Main bottom row container */}
+                {/* Left side: Like button and Tags */}
+                <div className="flex items-center space-x-4"> {/* Container for likes and tags */}
+                    <LikeButton
+                        likeableId={comment.id}
+                        likeableType="comments"
+                        initialLikesCount={comment.likes_count}
+                        initialIsLiked={comment.is_liked_by_user}
+                    />
+                    {comment.tags && comment.tags.length > 0 && (
+                        <div className="flex flex-wrap items-center space-x-1 mt-2"> {/* Tags container */}
+                            {comment.tags.map((tag) => (
+                                <Link
+                                    key={tag.id}
+                                    href={route('tags.show', { tagName: tag.name })}
+                                    className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 border border-blue-500 dark:border-blue-400 rounded px-1.5 py-0.5 hover:bg-blue-100 dark:hover:bg-blue-900"
+                                >
+                                    ${tag.name}
+                                </Link>
+                            ))}
+                        </div>
                     )}
                 </div>
-            )}
+
+                {/* Right side: Edit/Delete buttons */}
+                {(canEdit || canDelete) && (
+                    // Removed absolute positioning, now part of the flex layout
+                    <div className="flex items-center space-x-2">
+                        {canEdit && (
+                            <button
+                                onClick={handleEdit}
+                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                                aria-label="Edit comment"
+                            >
+                                <EditIcon className="h-5 w-5" />
+                            </button>
+                        )}
+                        {canDelete && (
+                            <button
+                                onClick={handleDelete}
+                                disabled={processing}
+                                className="text-red-600 hover:text-red-800 dark:text-red-400"
+                                aria-label="Delete comment"
+                            >
+                                <DeleteIcon className="h-5 w-5" />
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

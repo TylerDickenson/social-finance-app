@@ -28,11 +28,21 @@ class ProfileController extends Controller
     public function show($id)
     {
         $user = User::with('followers', 'following')->findOrFail($id);
-        $user->is_following = auth()->user()->isFollowing($user->id);
+        $user->is_following = auth()->check() ? auth()->user()->isFollowing($user->id) : false;
 
         $posts = $user->posts()
-            ->with(['user', 'comments.user', 'comments.likes', 'tags'])
-            ->withCount('likes')
+            ->with([
+                'user',
+                'likes',
+                'tags',
+                'comments' => function ($query) {
+                    $query->with(['user', 'likes', 'tags'])
+                          ->withCount('likes')
+                          ->orderBy('created_at', 'asc');
+                }
+            ])
+            ->withCount(['likes', 'comments'])
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn($post) => $this->postService->transformPost($post));
 

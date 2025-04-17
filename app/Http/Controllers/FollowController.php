@@ -20,8 +20,21 @@ class FollowController extends Controller
 
     public function following()
     {
-        $posts = Post::with(['user', 'comments.user', 'comments.likes', 'tags'])
-            ->withCount('likes')
+        $followingIds = Auth::user()->following()->pluck('users.id');
+
+        $posts = Post::whereIn('user_id', $followingIds)
+            ->with([
+                'user',
+                'likes',
+                'tags',
+                'comments' => function ($query) {
+                    $query->with(['user', 'likes', 'tags'])
+                          ->withCount('likes')
+                          ->orderBy('created_at', 'asc');
+                }
+            ])
+            ->withCount(['likes', 'comments'])
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn($post) => $this->postService->transformPost($post));
 
