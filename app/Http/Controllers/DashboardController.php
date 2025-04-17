@@ -15,6 +15,7 @@ class DashboardController extends Controller
                 'comments' => function ($query) {
                     $query->with('user', 'likes')->withCount('likes')->orderBy('created_at', 'asc');
                 },
+                'tags',
             ])
             ->withCount('likes') 
             ->orderBy('created_at', 'desc')

@@ -7,36 +7,30 @@ import LikeButton from './LikeButton';
 import { Link } from '@inertiajs/react';
 
 export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove }) {
-    const [comments, setComments] = useState(post.comments);
+    const [comments, setComments] = useState(post.comments || []);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false); 
-    const [showModal, setShowModal] = useState(false); 
-    const [collections, setCollections] = useState([]); 
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [collections, setCollections] = useState([]);
     const likeButtonRef = useRef(null);
-    const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false); 
-    
+    const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
 
     const handleRemoveFromCollection = async (collectionId) => {
         try {
-            const response = await axios.post(route('collections.removePost'), {
+            await axios.post(route('collections.removePost'), {
                 collection_id: collectionId,
                 post_id: post.id,
             });
-    
-            console.log(response.data.message); 
-            setDropdownOpen(false); 
-            setShowModal(false); 
-            
+            setShowModal(false);
+            setDropdownOpen(false);
             if (onPostRemove) {
                 onPostRemove(post.id);
             }
-
         } catch (error) {
             console.error('Error removing post from collection:', error);
         }
     };
-
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
@@ -59,36 +53,29 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const fetchCollections = async () => {
         try {
             const response = await axios.get(route('collections.index'));
-            console.log('Fetched collections:', response.data.collections); 
-            setCollections(response.data.collections || []); 
-            setShowModal(true); 
+            setCollections(response.data.collections || []);
+            setShowModal(true);
         } catch (error) {
             console.error('Error fetching collections:', error);
-            setCollections([]); 
+            setCollections([]);
         }
     };
 
-    const isPostInCollection = (collection) => {
-        if (!Array.isArray(collection.posts)) {
-            console.log(`Collection ${collection.name} has no posts or posts is not an array.`);
+     const isPostInCollection = (collection) => {
+        if (!collection || !Array.isArray(collection.posts)) {
             return false;
         }
-    
-        const isInCollection = collection.posts.some((postInCollection) => postInCollection.id === post.id);
-        console.log(`Post ${post.id} is ${isInCollection ? '' : 'not '}in collection ${collection.name}`);
-        return isInCollection;
-    };
+        return collection.posts.some((postInCollection) => postInCollection.id === post.id);
+     };
 
     const handleAddToCollection = async (collectionId) => {
         try {
-            const response = await axios.post(route('collections.addPost'), {
+            await axios.post(route('collections.addPost'), {
                 collection_id: collectionId,
                 post_id: post.id,
             });
-
-            console.log(response.data.message); 
-            setShowModal(false); 
-            setDropdownOpen(false); 
+            setShowModal(false);
+            setDropdownOpen(false);
         } catch (error) {
             console.error('Error adding post to collection:', error);
         }
@@ -100,11 +87,11 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
 
     const handleDeletePost = async () => {
         if (!confirm('Are you sure you want to delete this post?')) return;
-    
+
         try {
             await axios.delete(route('posts.destroy', { id: post.id }));
             if (onPostDelete) {
-                onPostDelete(post.id); // Notify parent component about the deletion
+                onPostDelete(post.id);
             }
         } catch (error) {
             console.error('Error deleting post:', error);
@@ -113,10 +100,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
 
     return (
         <div className="mb-6 p-6 border-2 border-gray-200 rounded-3xl shadow-sm bg-neutral-50 dark:bg-slate-700 dark:border-gray-400" >
-            {/* Post Header */}
             <div className="flex justify-between mb-4">
-                <div className="flex items-center space-x-4 ml-2">
-                    <div className="flex items-center hover:scale-105 transition-transform duration-500">
+                 <div className="flex items-center space-x-4 ml-2">
+                     <div className="flex items-center hover:scale-105 transition-transform duration-500">
                         <Link href={route('profile.show', { id: post.user.id })}>
                             <img
                                 src={post.user.avatar_url}
@@ -128,7 +114,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                             {post.user.name}
                         </Link>
                     </div>
-                    {post.user.id !== currentUserId && (
+                    {currentUserId && post.user.id !== currentUserId && (
                         <FollowButton
                             className="flex mb-5"
                             userId={post.user.id}
@@ -139,46 +125,30 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </div>
                 <div className="flex items-center space-x-4 relative">
                     <DateTimeDisplay timestamp={post.created_at} />
-
-                    {/* Dropdown Menu */}
                     <div className="relative">
-                    <button
-                        onClick={toggleDropdown}
-                        className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-100 hoverfocus:outline-none"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                            className="w-6 h-6"
+                        <button
+                            onClick={toggleDropdown}
+                            className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-100 hoverfocus:outline-none"
                         >
-                            <circle cx="12" cy="5" r="2" />
-                            <circle cx="12" cy="12" r="2" />
-                            <circle cx="12" cy="19" r="2" />
-                        </svg>
-                    </button>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6">
+                                <circle cx="12" cy="5" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="12" cy="19" r="2" />
+                            </svg>
+                        </button>
                         {dropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
                                 <ul className="py-1">
                                     <li>
-                                        <button
-                                            onClick={fetchCollections}
-                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        >
+                                        <button onClick={fetchCollections} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             Add to Collection
                                         </button>
                                     </li>
                                     {post.user.id === currentUserId && (
                                         <li>
-                                            <button
-                                                onClick={handleDeletePost}
-                                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                            >
+                                            <button onClick={handleDeletePost} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                 Delete Post
                                             </button>
                                         </li>
                                     )}
-
                                 </ul>
                             </div>
                         )}
@@ -192,13 +162,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         src={post.image_url}
                         alt={post.title}
                         className="mb-4 rounded-lg cursor-pointer"
-                        style={{
-                            maxWidth: '300px',
-                            maxHeight: '1000px',
-                            objectFit: 'contain',
-                            width: 'auto',
-                            height: 'auto',
-                        }}
+                        style={{ maxWidth: '300px', maxHeight: '1000px', objectFit: 'contain', width: 'auto', height: 'auto' }}
                         onDoubleClick={() => likeButtonRef.current?.toggleLike()}
                     />
                 )}
@@ -206,6 +170,19 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     <div className="flex justify-between items-start">
                         <div className="flex-1 dark:text-gray-50">
                             <h3 className="text-xl font-bold ">{post.title}</h3>
+                            {post.tags && post.tags.length > 0 && (
+                                <div className="mt-1 space-x-1">
+                                    {post.tags.map(tag => (
+                                        <Link
+                                            key={tag.id}
+                                            href={route('tags.show', { tagName: tag.name })}
+                                            className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 border border-blue-500 dark:border-blue-400 rounded px-1.5 py-0.5 hover:bg-blue-100 dark:hover:bg-blue-900"
+                                        >
+                                            ${tag.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                             <p className="text-lg mt-2">{post.content}</p>
                         </div>
                         <div className="ml-4">
@@ -226,8 +203,8 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 <Comment
                                     key={comment.id}
                                     comment={comment}
-                                    canEdit={comment.user.id === currentUserId}
-                                    canDelete={comment.user.id === currentUserId}
+                                    canEdit={currentUserId && comment.user.id === currentUserId}
+                                    canDelete={currentUserId && comment.user.id === currentUserId}
                                     onCommentUpdate={(commentId, updatedComment) =>
                                         setComments((prev) =>
                                             prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
@@ -241,12 +218,8 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         ) : (
                             <p className="text-md text-gray-600 dark:text-gray-100">No comments available.</p>
                         )}
-                         {/* Add Comment Section */}
                         {!isCommentBoxVisible ? (
-                            <button
-                                onClick={() => setIsCommentBoxVisible(true)}
-                                className="mt-4 ml-3 text-blue-600 dark:text-blue-400 hover:underline"
-                            >
+                            <button onClick={() => setIsCommentBoxVisible(true)} className="mt-4 ml-3 text-blue-600 dark:text-blue-400 hover:underline">
                                 Add a comment...
                             </button>
                         ) : (
@@ -259,18 +232,10 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     placeholder="Write your comment here..."
                                 ></textarea>
                                 <div className="flex flex-col items-center justify-start ml-2 space-y-2">
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-600 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20"
-                                    >
+                                    <button type="submit" disabled={processing} className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-600 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20">
                                         Post
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsCommentBoxVisible(false)}
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
-                                    >
+                                    <button type="button" onClick={() => setIsCommentBoxVisible(false)} className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20">
                                         Cancel
                                     </button>
                                 </div>
@@ -280,7 +245,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </div>
             </div>
 
-            {/* Modal for Managing Collections */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -292,17 +256,11 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     .map((collection) => (
                                         <li key={collection.id} className="mb-2">
                                             {isPostInCollection(collection) ? (
-                                                <button
-                                                    onClick={() => handleRemoveFromCollection(collection.id)}
-                                                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                                >
+                                                <button onClick={() => handleRemoveFromCollection(collection.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                     Remove from {collection.name}
                                                 </button>
                                             ) : (
-                                                <button
-                                                    onClick={() => handleAddToCollection(collection.id)}
-                                                    className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
-                                                >
+                                                <button onClick={() => handleAddToCollection(collection.id)} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
                                                     Add to {collection.name}
                                                 </button>
                                             )}
@@ -312,10 +270,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         ) : (
                             <p className="text-gray-600">No collections available.</p>
                         )}
-                        <button
-                            onClick={() => setShowModal(false)}
-                            className="mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                        >
+                        <button onClick={() => setShowModal(false)} className="mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Close
                         </button>
                     </div>

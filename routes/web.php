@@ -10,6 +10,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\TagController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -66,9 +67,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
     Route::post('/collections/addpost', [CollectionController::class, 'addPost'])->middleware('auth')->name('collections.addPost');
     Route::patch('/collections/{id}', [CollectionController::class, 'update'])->name('collections.update');
-   
 });
 
+
+Route::get('/tag/{tagName}', [TagController::class, 'show'])->name('tags.show');
 
 
 

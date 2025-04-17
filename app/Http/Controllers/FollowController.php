@@ -20,7 +20,7 @@ class FollowController extends Controller
 
     public function following()
     {
-        $posts = Post::with(['user', 'comments.user', 'comments.likes'])
+        $posts = Post::with(['user', 'comments.user', 'comments.likes', 'tags'])
             ->withCount('likes')
             ->get()
             ->map(fn($post) => $this->postService->transformPost($post));

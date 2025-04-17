@@ -45,4 +45,9 @@ class Post extends Model
     {
         return $this->belongsToMany(Collection::class, 'collection_post');
     }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
 }

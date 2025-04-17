@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -19,27 +22,14 @@ class PostController extends Controller
 
         $imagePath = $this->handleImageUpload($request);
 
-        Post::create(array_merge($validated, [
+        $post = Post::create(array_merge($validated, [
             'user_id' => auth()->id(),
             'image' => $imagePath,
         ]));
 
+        $this->syncTags($post, $validated['title'] . ' ' . $validated['content']);
+
         return redirect()->route('dashboard')->with('status', 'Post created successfully.');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $post = Post::findOrFail($id);
-
-        $this->authorizePost($post);
-
-        $validated = $this->validatePost($request);
-
-        $imagePath = $this->handleImageUpload($request, $post->image);
-
-        $post->update(array_merge($validated, ['image' => $imagePath]));
-
-        return response()->json(['success' => 'Post updated successfully.']);
     }
 
     public function destroy($id)
@@ -119,5 +109,23 @@ class PostController extends Controller
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
+    }
+
+    private function syncTags(Post $post, string $textToScan): void
+    {
+  
+        preg_match_all('/\$([A-Za-z0-9]+)/', $textToScan, $matches);
+
+        $tagNames = array_unique(array_map('strtoupper', $matches[1]));
+
+        $tagIds = [];
+        foreach ($tagNames as $tagName) {
+            if (!empty($tagName)) { 
+                $tag = Tag::firstOrCreate(['name' => $tagName]);
+                $tagIds[] = $tag->id;
+            }
+        }
+
+        $post->tags()->sync($tagIds);
     }
 }

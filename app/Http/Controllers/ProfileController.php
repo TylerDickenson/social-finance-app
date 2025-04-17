@@ -31,7 +31,7 @@ class ProfileController extends Controller
         $user->is_following = auth()->user()->isFollowing($user->id);
 
         $posts = $user->posts()
-            ->with(['user', 'comments.user', 'comments.likes'])
+            ->with(['user', 'comments.user', 'comments.likes', 'tags'])
             ->withCount('likes')
             ->get()
             ->map(fn($post) => $this->postService->transformPost($post));
