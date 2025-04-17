@@ -121,7 +121,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                     {canEdit && (
                         <button
                             onClick={handleEdit}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
                         >
                             <EditIcon className="h-5 w-5" />
                         </button>
@@ -130,7 +130,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                         <button
                             onClick={handleDelete}
                             disabled={processing}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
                         >
                             <DeleteIcon className="h-5 w-5" /> 
                         </button>
