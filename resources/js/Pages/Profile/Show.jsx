@@ -34,32 +34,32 @@ const Show = ({ user, posts }) => {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center space-x-8 -m-4">
+                <div className="flex items-center space-x-8 -m-4 ">
                     <img src={user.avatar_url} alt="User Avatar" className="w-48 h-48 ml-2 rounded-full" />
                     <div className="flex flex-col">
-                        <h1 className="text-4xl font-bold leading-tight text-gray-800">
+                        <h1 className="text-4xl font-bold leading-tight text-gray-800 dark:text-white">
                             {user.name}
                         </h1>
                         
                         <div className="flex items-center space-x-12 mt-4">
-                            <p className="text-xl font-semibold text-gray-600">
+                            <p className="text-xl font-semibold text-gray-600 dark:text-white">
                                 Posts | {posts ? posts.length : 0}
                             </p>
                             <p
-                                className="text-xl font-semibold text-gray-600 cursor-pointer hover:underline"
+                                className="text-xl font-semibold text-gray-600 dark:text-white cursor-pointer hover:underline"
                                 onClick={() => openModal('followers')}
                             >
                                 Followers | {user.followers ? user.followers.length : 0}
                             </p>
                             <p
-                                className="text-xl font-semibold text-gray-600 cursor-pointer hover:underline"
+                                className="text-xl font-semibold text-gray-600 dark:text-white cursor-pointer hover:underline"
                                 onClick={() => openModal('following')}
                             >
                                 Following | {user.following ? user.following.length : 0}
                             </p>
                         </div>
-                        <p className="mt-2 text-xl text-gray-600">{user.about}</p>
-                        <p className="mt-2 text-lg text-gray-600">FinSocial Member since | {formattedDate}</p>
+                        <p className="mt-2 text-xl text-gray-600 dark:text-white">{user.about}</p>
+                        <p className="mt-2 text-lg text-gray-600 dark:text-white">FinSocial Member since | {formattedDate}</p>
                     </div>
                 </div>
             }
@@ -68,7 +68,7 @@ const Show = ({ user, posts }) => {
 
             <div className="py-28">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden  shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden  ===">
                         <div className="p-10 text-gray-900">
                             <div className="mt-6 space-y-6">
                                 {posts && posts.length > 0 ? (
@@ -80,7 +80,7 @@ const Show = ({ user, posts }) => {
                                         />
                                     ))
                                 ) : (
-                                    <p className="text-lg">No posts available.</p>
+                                    <p className="text-2xl dark:text-white ">No posts available.</p>
                                 )}
                             </div>
                         </div>

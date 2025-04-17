@@ -10,11 +10,11 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const [comments, setComments] = useState(post.comments);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
-    const [showModal, setShowModal] = useState(false); // State for modal visibility
-    const [collections, setCollections] = useState([]); // State for user's collections
+    const [dropdownOpen, setDropdownOpen] = useState(false); 
+    const [showModal, setShowModal] = useState(false); 
+    const [collections, setCollections] = useState([]); 
     const likeButtonRef = useRef(null);
-    const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false); // State for comment box visibility
+    const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false); 
     
 
     const handleRemoveFromCollection = async (collectionId) => {
@@ -112,7 +112,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     };
 
     return (
-        <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow-sm bg-neutral-50" >
+        <div className="mb-6 p-6 border-2 border-gray-200 rounded-3xl shadow-sm bg-neutral-50 dark:bg-slate-700 dark:border-gray-400" >
             {/* Post Header */}
             <div className="flex justify-between mb-4">
                 <div className="flex items-center space-x-4 ml-2">
@@ -124,7 +124,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 className="w-16 h-16 rounded-full mr-2 cursor-pointer"
                             />
                         </Link>
-                        <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold">
+                        <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold dark:text-gray-50">
                             {post.user.name}
                         </Link>
                     </div>
@@ -144,7 +144,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     <div className="relative">
                     <button
                         onClick={toggleDropdown}
-                        className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 focus:outline-none"
+                        className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-100 hoverfocus:outline-none"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -204,8 +204,8 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 )}
                 <div className="ml-6 flex-1 relative">
                     <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                            <h3 className="text-xl font-bold">{post.title}</h3>
+                        <div className="flex-1 dark:text-gray-50">
+                            <h3 className="text-xl font-bold ">{post.title}</h3>
                             <p className="text-lg mt-2">{post.content}</p>
                         </div>
                         <div className="ml-4">
@@ -220,7 +220,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     </div>
                     <hr className="my-4 border-gray-300" />
                     <div className="mt-4">
-                        <h4 className="text-lg font-semibold mt-4">Comments</h4>
+                        <h4 className="text-lg font-semibold mt-4 dark:text-white">Comments</h4>
                         {comments && comments.length > 0 ? (
                             comments.map((comment) => (
                                 <Comment
@@ -239,13 +239,13 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 />
                             ))
                         ) : (
-                            <p className="text-md text-gray-600">No comments available.</p>
+                            <p className="text-md text-gray-600 dark:text-gray-100">No comments available.</p>
                         )}
                          {/* Add Comment Section */}
                         {!isCommentBoxVisible ? (
                             <button
                                 onClick={() => setIsCommentBoxVisible(true)}
-                                className="mt-4 ml-3 text-blue-600 hover:underline"
+                                className="mt-4 ml-3 text-blue-600 dark:text-blue-400 hover:underline"
                             >
                                 Add a comment...
                             </button>
@@ -254,7 +254,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 <textarea
                                     value={commentContent}
                                     onChange={(e) => setCommentContent(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none dark:bg-gray-500 dark:text-white"
                                     rows="3"
                                     placeholder="Write your comment here..."
                                 ></textarea>
@@ -262,14 +262,14 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20"
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-600 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20"
                                     >
                                         Post
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setIsCommentBoxVisible(false)}
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
                                     >
                                         Cancel
                                     </button>

@@ -69,11 +69,11 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
     }, [isEditing]);
 
     return (
-        <div className="relative mt-2 p-3 border border-gray-200 rounded-lg">
+        <div className="relative mt-2 p-3 border border-gray-200 rounded-2xl">
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
                     <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
-                    <h5 className="text-md font-semibold">{comment.user.name}</h5>
+                    <h5 className="text-md font-semibold dark:text-white">{comment.user.name}</h5>
                 </div>
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
@@ -83,7 +83,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-500 dark:text-white"
                             rows="3"
                             style={{ resize: 'none' }}
                         ></textarea>
@@ -91,14 +91,14 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-20"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 text-md font-medium text-white shadow-sm hover:bg-blue-600 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-20"
                             >
                                 Save
                             </button>
                             <button
                                 type="button"
                                 onClick={handleCancelEdit}
-                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 text-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20"
                             >
                                 Cancel
                             </button>
@@ -106,8 +106,8 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                     </div>
                 </form>
             ) : (
-                <p className="text-md">
-                    {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500">(edited)</span>}
+                <p className="text-md dark:text-white">
+                    {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500 dark:text-white">(edited)</span>}
                 </p>
             )}
             <LikeButton
