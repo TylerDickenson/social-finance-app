@@ -20,7 +20,7 @@ export default function FileUpload({ label, name, value, onChange, error, onImag
 
     return (
         <div className="mt-4">
-            <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+            <label htmlFor={name} className="block text-lg ml-2 mb-2 font-bold text-gray-700 dark:text-white">
                 {label}
             </label>
             <div className="relative">
@@ -31,7 +31,7 @@ export default function FileUpload({ label, name, value, onChange, error, onImag
                     onChange={handleFileChange}
                     className="custom-file-input"
                 />
-                <label className="custom-file-label" htmlFor={name}>
+                <label className="custom-file-label dark:bg-gray-500 dark:text-white" htmlFor={name}>
                     {value ? value.name : 'Choose file'}
                 </label>
             </div>

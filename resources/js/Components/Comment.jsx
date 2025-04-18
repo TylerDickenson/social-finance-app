@@ -69,9 +69,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
 
 
     return (
-        // Removed relative positioning from the main container unless needed for other elements
         <div className="mt-2 p-3 border border-gray-200 dark:border-gray-700 rounded-2xl">
-            {/* Top section: User info and timestamp */}
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
                     <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
@@ -83,12 +81,11 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
             {/* Middle section: Content or Edit Form */}
             {isEditing ? (
                 <form onSubmit={handleUpdate} className="relative mb-2" ref={editRef}> {/* Added mb-2 */}
-                    {/* ... (textarea and save/cancel buttons) ... */}
                      <div className="flex">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-700 dark:text-white"
+                            className="w-full rounded-md border-gray-300 dark:border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-500 dark:text-white"
                             rows="3"
                             style={{ resize: 'none' }}
                         ></textarea>
