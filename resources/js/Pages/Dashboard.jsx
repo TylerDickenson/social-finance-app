@@ -86,7 +86,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
 
             <div className="py-8">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidde shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
                             {allPosts && allPosts.length > 0 ? (
                                 <>

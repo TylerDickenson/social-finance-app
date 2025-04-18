@@ -99,7 +99,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     };
 
     return (
-        <div className="mb-6 p-6 border-2 border-gray-200 rounded-3xl shadow-sm bg-neutral-50 dark:bg-slate-700 dark:border-gray-400" >
+        <div className="mb-6 p-6 border-2 border-gray-200 rounded-3xl shadow-lg bg-neutral-50 dark:bg-slate-700 dark:border-gray-400" >
             <div className="flex justify-between mb-4">
                  <div className="flex items-center space-x-4 ml-2">
                      <div className="flex items-center hover:scale-105 transition-transform duration-500">
