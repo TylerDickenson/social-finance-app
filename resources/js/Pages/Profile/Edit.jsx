@@ -25,7 +25,7 @@ export default function Edit({ mustVerifyEmail, status, about, avatarUrl }) {
                     </div>
 
                     <div className="bg-white p-4 shadow-lg sm:rounded-3xl sm:p-8 border-2 border-gray-200 dark:border-gray-400 dark:bg-slate-700 dark:text-white">
-                        <UpdatePasswordForm className="max-w-xl " />
+                        <UpdatePasswordForm />
                     </div>
 
                     <div className="bg-white p-4 shadow-lg sm:rounded-3xl sm:p-8 border-2 border-gray-200 dark:border-gray-400 dark:bg-slate-700 dark:text-white">
