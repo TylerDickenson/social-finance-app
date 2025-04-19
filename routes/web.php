@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/tag/{tagName}', [TagController::class, 'show'])->name('tags.show');
+Route::get('/tag/{tagName}', [TagController::class, 'show'])->middleware(['auth', 'verified'])->name('tags.show');
 
 
 

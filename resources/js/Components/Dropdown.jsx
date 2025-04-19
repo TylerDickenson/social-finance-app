@@ -57,7 +57,7 @@ Dropdown.Content = function Content({ children, className }) {
         >
             <div className={`absolute bottom-full mb-2 w-full text-right pr-8 ${className}`}>
                 {children}
-                <div className="vertical-line"></div> {/* Moved vertical line to the right */}
+                <div className="vertical-line"></div>
             </div>
         </Transition>
     );

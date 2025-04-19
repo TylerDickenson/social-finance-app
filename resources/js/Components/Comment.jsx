@@ -140,7 +140,6 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
 
                 {/* Right side: Edit/Delete buttons */}
                 {(canEdit || canDelete) && (
-                    // Removed absolute positioning, now part of the flex layout
                     <div className="flex items-center space-x-2">
                         {canEdit && (
                             <button

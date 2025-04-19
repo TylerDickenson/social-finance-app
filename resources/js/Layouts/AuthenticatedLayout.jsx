@@ -127,7 +127,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     />
                                     <span className="truncate max-w-xs dark:text-gray-50" style={{ lineHeight: '2rem' }}>{user.name}</span>
                                     <svg
-                                        className="-me-0.5 ms-2 h-8 w-8"
+                                        className="-me-0.5 ms-2 h-8 w-8 dark:text-gray-50"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20"
                                         fill="currentColor"

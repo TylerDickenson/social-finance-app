@@ -64,7 +64,8 @@ export default function Create() {
                                         rows="4"
                                         value={data.content}
                                         onChange={(e) => setData('content', e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-500 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        className="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-500 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
+                                        
                                     ></textarea>
                                     {errors.content && <div className="text-red-600 dark:text-red-500 mt-1">{errors.content}</div>}
                                 </div>

@@ -227,7 +227,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                 <textarea
                                     value={commentContent}
                                     onChange={(e) => setCommentContent(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none dark:bg-gray-500 dark:text-white"
+                                    className="w-full rounded-md border-gray-300 shadow-sm dark:placeholder:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none dark:bg-gray-500 dark:text-white"
                                     rows="3"
                                     placeholder="Write your comment here..."
                                 ></textarea>
