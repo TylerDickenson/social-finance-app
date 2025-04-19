@@ -69,7 +69,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
 
 
     return (
-        <div className="mt-2 p-3 border border-gray-200 dark:border-gray-700 rounded-2xl">
+        <div className="mt-2 p-3 border-2 border-gray-200 dark:border-gray-400 rounded-2xl">
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
                     <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
