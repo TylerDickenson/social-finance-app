@@ -125,7 +125,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </button>
                             </span>
                         </Dropdown.Trigger>
-                        <Dropdown.Content className="w-full text-right pr-4"> {/* Added padding-right */}
+                        <Dropdown.Content className="w-full text-right pr-4 text-gray-700 dark:text-white"> {/* Added padding-right */}
                             <Dropdown.Link href={route('profile.show', { id: user.id })} className="text-xl block py-4 dropdown-item font-semibold" index={1}> {/* Added font-semibold */}
                                 My Account
                             </Dropdown.Link>
@@ -168,7 +168,6 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="pr-4 sm:pr-6 lg:pr-8">
                          <button
                             onClick={toggleTheme}
-                            // Adjusted classes for icon-only button
                             className="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-700 dark:focus:text-gray-200 transition duration-150 ease-in-out"
                             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                         >
