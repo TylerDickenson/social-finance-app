@@ -1,5 +1,8 @@
 import { useForm } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
+import PrimaryButton from '@/Components/PrimaryButton';
+
+import { Transition } from '@headlessui/react';
 
 export default function UpdateAboutForm({ about }) {
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
@@ -21,8 +24,8 @@ export default function UpdateAboutForm({ about }) {
             onSuccess: () => {
                 setIsOpen(false);
                 setShowSaved(true);
-                setTimeout(() => setShowSaved(false), 5000); // Show "Saved" message for 5 seconds
-                window.scrollTo(0, scrollPosition); // Preserve scroll position
+                setTimeout(() => setShowSaved(false), 5000); 
+                window.scrollTo(0, scrollPosition); 
             },
         });
     };
@@ -30,7 +33,7 @@ export default function UpdateAboutForm({ about }) {
     useEffect(() => {
         if (recentlySuccessful) {
             setShowSaved(true);
-            setTimeout(() => setShowSaved(false), 5000); // Show "Saved" message for 5 seconds
+            setTimeout(() => setShowSaved(false), 5000); 
         }
     }, [recentlySuccessful]);
 
@@ -46,14 +49,14 @@ export default function UpdateAboutForm({ about }) {
         <section className="space-y-6">
             <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
                 <div>
-                    <h2 className="text-lg font-medium text-gray-900">About</h2>
-                    <p className="mt-1 text-sm text-gray-600">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">About</h2>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-100">
                         Update your profile's about section.
                     </p>
                 </div>
                 <div className="flex items-center">
                     {showSaved && !isOpen && (
-                        <p className="text-sm text-gray-600 mr-2 transition-opacity duration-1000">Saved.</p>
+                        <p className="text-sm text-gray-600 mr-2 transition-opacity duration-1000 dark:text-white">Saved.</p>
                     )}
                     <svg
                         className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -70,26 +73,31 @@ export default function UpdateAboutForm({ about }) {
             <div ref={contentRef} className="transition-max-height duration-1000 overflow-hidden max-h-0">
                 <form onSubmit={submit} className="mt-6 relative">
                     <div>
-                        <label htmlFor="about" className="block text-sm font-medium text-gray-700">
-                            About
+                        <label htmlFor="about" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                            Your About section
                         </label>
                         <textarea
                             id="about"
-                            className="mt-1 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
+                            className="mt-1 block w-full h-24 rounded-md border-2 border-gray-300 dark:bg-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
                             value={data.about}
                             onChange={(e) => setData('about', e.target.value)}
                         />
                         {errors.about && <div className="mt-2 text-sm text-red-600">{errors.about}</div>}
                     </div>
 
-                    <button
-                        type="submit"
-                        className="absolute bottom-2 right-2 inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2"
-                        disabled={processing}
-                    >
-                        Save
-                    </button>
+                    <div className="flex items-center gap-4 mt-6">
+                        <PrimaryButton
+                            className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" // Added dark mode styles
+                            disabled={processing}
+                        >
+                            Save
+                        </PrimaryButton>
+
+                    </div>
+                    
                 </form>
+
+                
             </div>
         </section>
     );
