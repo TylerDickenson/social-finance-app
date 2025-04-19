@@ -61,58 +61,45 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="min-h-screen flex dark:text-gray-100 bg-slate-50 dark:bg-slate-700" style={{ backgroundImage: 'url("/images/Backgrounds/topography2.svg")' }}>
-            <nav className={`fixed inset-y-0 left-0 w-96 bg-white border-r  border-gray-100 z-50 dark:bg-slate-600 dark:border-gray-300 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col`}>
+            <nav className={`fixed inset-y-0 left-0 w-64 bg-white border-r-4  border-gray-300 z-50 dark:bg-slate-600 dark:border-gray-400 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col`}>
                 <div className="h-48 flex items-center justify-center">
                     <Link href="/">
                         <ApplicationLogo className="block h-40 w-auto fill-current text-gray-800" />
                     </Link>
                 </div>
-                <div className="flex flex-col items-center px-8 py-4 space-y-4 flex-grow dark:text-white">
+                <div className="flex flex-col items-center px-8 py-2 space-y-4 flex-grow dark:text-white">
                     <NavLink
                         href={route('dashboard')}
                         active={route().current('dashboard')}
-                        className="text-2xl block dark:text-white hover:dark:text-blue-300 py-6 pt-10"
+                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4 pt-4"
                         style={{ fontSize: '2rem' }}
                         onClick={handleNavLinkClick}
                     >
                         Discover
                     </NavLink>
-                    <div className="py-4"></div>
+                    <div className="py-2"></div>
                     <NavLink
                         href={route('following')}
                         active={route().current('following')}
-                        className="text-2xl block dark:text-white hover:dark:text-blue-300 py-6"
+                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4"
                         style={{ fontSize: '2rem' }}
                         onClick={handleNavLinkClick}
                     >
                         Following
                     </NavLink>
-                    <div className="py-4"></div>
+                    <div className="py-2"></div>
                     <NavLink
                         href={route('posts.create')}
                         active={route().current('posts.create')}
-                        className="text-2xl block dark:text-white hover:dark:text-blue-300 py-6"
+                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4"
                         style={{ fontSize: '2rem' }}
                         onClick={handleNavLinkClick}
                     >
-                        Make a New Post
+                        Create Post
                     </NavLink>
                 </div>
 
-
-                <div className="px-8 py-4">
-                     <button
-                        onClick={toggleTheme}
-                        className="w-full flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-700 dark:focus:text-gray-200 transition duration-150 ease-in-out"
-                        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                    >
-                        {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-                        <span className="ml-2">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-                    </button>
-                </div>
-
-
-                <div className="mt-auto px-8 py-4 dark:text-gray-50">
+                <div className="mt-auto py-2 dark:text-gray-50">
                     <Dropdown>
                         <Dropdown.Trigger>
                             <span className="inline-flex rounded-md w-full">
@@ -127,16 +114,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     />
                                     <span className="truncate max-w-xs dark:text-gray-50" style={{ lineHeight: '2rem' }}>{user.name}</span>
                                     <svg
-                                        className="-me-0.5 ms-2 h-8 w-8 dark:text-gray-50"
+                                        className="-me-0.5 ms-2 h-8 w-8 dark:text-gray-50" // Adjusted size slightly (h-6 w-6)
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
                                     >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 01.707 1.707l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clipRule="evenodd"
-                                        />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </button>
                             </span>
@@ -166,8 +150,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 ></div>
             )}
 
-            <div className="flex-1 flex flex-col lg:ml-96">
-                <header className="fixed top-0 left-0 right-0 bg-white/50 dark:bg-slate-600/75 shadow flex items-center justify-between lg:justify-start z-50 lg:ml-96 backdrop-blur-md">
+            <div className="flex-1 flex flex-col lg:ml-64">
+                <header className="fixed top-0 left-0 right-0 border-b-4 border-gray-400 bg-white/50 dark:bg-slate-600/75 shadow flex items-center justify-between lg:justify-start z-50 lg:ml-64 backdrop-blur-md">
                     <button
                         onClick={() => setIsNavbarOpen(!isNavbarOpen)}
                         className="p-4 focus:outline-none lg:hidden"
@@ -176,10 +160,22 @@ export default function AuthenticatedLayout({ header, children }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                        <h1 className="text-4xl font-bold">{header}</h1>
+                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <h1 className="text-4xl font-bold text-gray-700 dark:text-gray-200">{header}</h1>
                     </div>
 
+
+                    <div className="pr-4 sm:pr-6 lg:pr-8">
+                         <button
+                            onClick={toggleTheme}
+                            // Adjusted classes for icon-only button
+                            className="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-700 dark:focus:text-gray-200 transition duration-150 ease-in-out"
+                            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                        >
+                            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                        </button>
+                    </div>
+                    
                     
                 </header>
 
