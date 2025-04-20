@@ -35,31 +35,6 @@
     }
 }
 
-.dropdown-item {
-    position: relative;
-    opacity: 0;
-    animation: fadeInUp 0.7s forwards; /* Increased duration for emphasis */
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition for opacity and transform */
-}
-
-.dropdown-item::after {
-    content: '';
-    position: absolute;
-    right: 0; /* Position the triangle right next to the vertical line */
-    top: 50%;
-    transform: translateY(-50%) rotate(180deg); /* Rotate the triangle to point left */
-    width: 0;
-    height: 0;
-    border-top: 8px solid transparent; /* Increased size */
-    border-bottom: 8px solid transparent; /* Increased size */
-    border-left: 8px solid #000; /* Color of the triangle */
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
-}
-
-.dropdown-item:hover::after {
-    opacity: 1;
-}
 
 @keyframes fadeInUp {
     from {

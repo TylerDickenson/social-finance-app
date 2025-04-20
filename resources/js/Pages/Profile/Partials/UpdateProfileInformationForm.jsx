@@ -1,11 +1,9 @@
-
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react'; // Import hooks
+import { useState, useEffect, useRef } from 'react';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -13,9 +11,9 @@ export default function UpdateProfileInformation({
     className = '',
 }) {
     const user = usePage().props.auth.user;
-    const [isOpen, setIsOpen] = useState(true); // Start open by default or false if preferred
+    const [isOpen, setIsOpen] = useState(false);
+    const [showSaved, setShowSaved] = useState(false);
     const contentRef = useRef(null);
-    const timeoutRef = useRef(null);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
@@ -32,49 +30,48 @@ export default function UpdateProfileInformation({
         patch(route('profile.update'), {
             preserveScroll: true,
             onSuccess: () => {
-                // Optionally close on success: setIsOpen(false);
+                if (isOpen) setIsOpen(false);
+                setShowSaved(true);
+                setTimeout(() => setShowSaved(false), 5000);
             },
             onError: () => {
-                if (!isOpen) setIsOpen(true); // Open if there are errors
+                if (!isOpen) setIsOpen(true);
             }
         });
     };
 
-    const updateMaxHeight = () => {
-        if (contentRef.current) {
-            if (isOpen) {
-                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
-            } else {
-                 if (contentRef.current.style.maxHeight !== '0px') {
-                    contentRef.current.style.maxHeight = '0px';
-                 }
-            }
+    useEffect(() => {
+        if (recentlySuccessful) {
+            setShowSaved(true);
+            const timer = setTimeout(() => setShowSaved(false), 5000);
+            return () => clearTimeout(timer);
         }
-    };
+    }, [recentlySuccessful]);
 
     useEffect(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        updateMaxHeight();
+        const element = contentRef.current;
+        if (!element) return;
+        
         if (isOpen) {
-             // Add a slight delay to ensure scrollHeight is calculated correctly after opening
-             timeoutRef.current = setTimeout(() => {
-                updateMaxHeight();
-             }, 50);
+            element.style.maxHeight = 'none'; 
+            const height = element.scrollHeight;
+            element.style.maxHeight = '0px';
+            
+            element.offsetHeight;
+            
+            element.style.maxHeight = `${height}px`;
+        } else {
+            element.style.maxHeight = '0px';
         }
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, [isOpen, errors]); // Re-calculate height if errors appear/disappear while open
-
+    }, [isOpen, errors]);
 
     return (
         <section className={`${className} space-y-6`}>
-            {/* Make header clickable and add icon */}
-            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
+            {/* Header - Match UpdatePasswordForm.jsx with -mb-5 */}
+            <header 
+                onClick={toggleOpen} 
+                className="cursor-pointer flex justify-between items-center -mb-5"
+            >
                 <div className="flex-grow">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                         Profile Information
@@ -83,16 +80,10 @@ export default function UpdateProfileInformation({
                         Update your account's profile information and email address.
                     </p>
                 </div>
-                 <div className="flex items-center ml-4">
-                    <Transition
-                        show={recentlySuccessful && !isOpen}
-                        enter="transition ease-in-out duration-300"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out duration-300"
-                        leaveTo="opacity-0"
-                    >
+                <div className="flex items-center ml-4">
+                    {showSaved && !isOpen && (
                         <p className="text-sm text-gray-600 dark:text-white mr-2">Saved.</p>
-                    </Transition>
+                    )}
                     <svg
                         className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'} dark:stroke-white`}
                         fill="none"
@@ -105,11 +96,10 @@ export default function UpdateProfileInformation({
                 </div>
             </header>
 
-            {/* Wrap form in collapsible div */}
             <div
                 ref={contentRef}
-                style={{ maxHeight: isOpen ? '1000px' : '0px' }} // Initial max-height if starting open
                 className="overflow-hidden transition-max-height duration-700 ease-in-out"
+                style={{ maxHeight: '0px' }}
             >
                 <form onSubmit={submit} className="mt-6 space-y-6">
                     <div>
@@ -120,7 +110,7 @@ export default function UpdateProfileInformation({
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             required
-                            isFocused={isOpen} // Only focus if section is open
+                            isFocused={isOpen}
                             autoComplete="name"
                         />
                         <InputError className="mt-2 dark:text-red-400" message={errors.name} />
@@ -142,20 +132,20 @@ export default function UpdateProfileInformation({
 
                     {mustVerifyEmail && user.email_verified_at === null && (
                         <div>
-                            <p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
+                            <p className="text-sm mt-2 text-gray-800 dark:text-gray-200">
                                 Your email address is unverified.
                                 <Link
                                     href={route('verification.send')}
                                     method="post"
                                     as="button"
-                                    className="ml-1 rounded-md text-sm text-gray-600 dark:text-gray-300 underline hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 ml-1"
                                 >
                                     Click here to re-send the verification email.
                                 </Link>
                             </p>
 
                             {status === 'verification-link-sent' && (
-                                <div className="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
+                                <div className="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
                                     A new verification link has been sent to your email address.
                                 </div>
                             )}
@@ -164,17 +154,11 @@ export default function UpdateProfileInformation({
 
                     <div className="flex items-center gap-4">
                         <PrimaryButton className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" disabled={processing}>Save</PrimaryButton>
-                        <Transition
-                            show={recentlySuccessful && isOpen} // Show "Saved." inside when open
-                            enter="transition ease-in-out duration-300"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out duration-300"
-                            leaveTo="opacity-0"
-                        >
+                        {showSaved && isOpen && (
                             <p className="text-sm text-gray-600 dark:text-white">
                                 Saved.
                             </p>
-                        </Transition>
+                        )}
                     </div>
                 </form>
             </div>

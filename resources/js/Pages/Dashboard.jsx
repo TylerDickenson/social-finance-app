@@ -84,7 +84,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
         <AuthenticatedLayout user={auth.user} header="All Posts">
             <Head title="Discover" />
 
-            <div className="py-8">
+            <div>
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
