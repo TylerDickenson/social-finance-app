@@ -26,7 +26,7 @@ export default function Following({ posts: initialPosts, auth }) {
         <AuthenticatedLayout header="Posts from People You Follow">
             <Head title="Following" />
 
-            <div className="py-8">
+            <div className="">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
@@ -40,7 +40,9 @@ export default function Following({ posts: initialPosts, auth }) {
                                     />
                                 ))
                             ) : (
-                                <p className="text-lg">No posts available.</p>
+                                <div className="bg-white dark:bg-slate-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-8">
+                                    <p className="text-gray-500 dark:text-gray-400 text-center">No posts in this collection yet.</p>
+                                </div>
                             )}
                         </div>
                     </div>

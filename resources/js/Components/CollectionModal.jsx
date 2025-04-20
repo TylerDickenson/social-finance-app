@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
+import CollectionIcon from './Icons/CollectionIcon';
 
 export default function CollectionModal({ 
     isOpen, 
@@ -26,17 +27,17 @@ export default function CollectionModal({
                 <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                 <div className="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div className="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div className="sm:flex sm:items-start">
-                            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
+                        <div className="sm:flex sm:items-start ">
                             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+
+                            <div className="mt-2 flex items-center">
+                                <CollectionIcon className="w-8 h-8 mr-2 text-gray-500 dark:text-gray-400" />
                                 <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
                                     Save to Collection
                                 </h3>
-                                <div className="mt-4">
+                            </div>
+
+                                <div className="mt-4 w-full">
                                     {Array.isArray(collections) && collections.length > 0 ? (
                                         <ul className="divide-y divide-gray-200 dark:divide-gray-700 -mx-4">
                                             {collections

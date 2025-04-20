@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'; // Added useMemo
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react'; // Added router
-import DeleteIcon from '@/Components/Icons/DeleteIcon';
 import LockClosedIcon from '@/Components/Icons/LockClosedIcon'; // Assuming this exists now
 import Checkbox from '@/Components/Checkbox'; // Assuming this exists
 import InputLabel from '@/Components/InputLabel'; // Assuming this exists
@@ -10,7 +9,6 @@ import TextArea from '@/Components/TextArea'; // Assuming this exists
 import PrimaryButton from '@/Components/PrimaryButton'; // Assuming this exists
 import Modal from '@/Components/Modal'; // Assuming this exists
 import InputError from '@/Components/InputError'; // Assuming this exists
-import axios from 'axios';
 
 export default function Collections({ auth, collections: initialCollections }) {
     const { data, setData, post, processing, reset, errors } = useForm({
@@ -50,22 +48,6 @@ export default function Collections({ auth, collections: initialCollections }) {
         setIsModalOpen(false);
         reset();
     };
-
-    const handleDeleteCollection = (id) => {
-        if (confirm('Are you sure you want to delete this collection? This cannot be undone.')) {
-            router.delete(route('collections.destroy', id), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    console.log(`Collection ${id} deleted`);
-                },
-                onError: (errors) => {
-                    console.error("Error deleting collection:", errors);
-                    alert('Failed to delete collection.');
-                }
-            });
-        }
-    };
-
 
     return (
         <AuthenticatedLayout user={auth?.user} header="My Collections">

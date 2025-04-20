@@ -91,18 +91,14 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
     };
 
     const handleDeleteCollection = async () => {
-        if (isLikedPostsCollection) {
-            alert('The "Liked Posts" collection cannot be deleted.');
-            return;
-        }
-        if (confirm('Are you sure you want to delete this collection? This cannot be undone.')) {
-            router.delete(route('collections.destroy', { id: collection.id }), {
-                onError: (errors) => {
-                    console.error('Error deleting collection:', errors);
-                    alert(errors.error || 'Failed to delete collection.');
-                }
-            });
-        }
+        
+        router.delete(route('collections.destroy', { id: collection.id }), {
+            onError: (errors) => {
+                console.error('Error deleting collection:', errors);
+                alert(errors.error || 'Failed to delete collection.');
+            }
+        });
+        
         setCollectionDropdownOpen(false);
     };
 
