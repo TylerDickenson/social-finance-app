@@ -2,16 +2,17 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { Transition } from '@headlessui/react';
 
 const SunIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-6.364-.386 1.591-1.591M3 12h2.25m.386-6.364 1.591 1.591M12 12a2.25 2.25 0 0 0-2.25 2.25 2.25 2.25 0 0 0 2.25 2.25 2.25 2.25 0 0 0 2.25-2.25A2.25 2.25 0 0 0 12 12Z" />
     </svg>
 );
 
 const MoonIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
     </svg>
 );
@@ -24,8 +25,6 @@ export default function AuthenticatedLayout({ header, children }) {
         setIsNavbarOpen(false);
     };
 
-    
-
     const [theme, setTheme] = useState(() => {
         // Check localStorage first, then system preference, then default to 'light'
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -37,7 +36,7 @@ export default function AuthenticatedLayout({ header, children }) {
         return 'light';
     });
 
-    // --- Effect to apply theme class and save preference ---
+    // Effect to apply theme class and save preference
     useEffect(() => {
         const root = document.documentElement;
         if (theme === 'dark') {
@@ -51,103 +50,139 @@ export default function AuthenticatedLayout({ header, children }) {
         }
     }, [theme]);
 
-    // --- Toggle Function ---
     const toggleTheme = () => {
         setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 
-
-
-
     return (
-        <div className="min-h-screen flex dark:text-gray-100 bg-slate-50 dark:bg-slate-700" style={{ backgroundImage: 'url("/images/Backgrounds/topography2.svg")' }}>
-            <nav className={`fixed inset-y-0 left-0 w-64 bg-white border-r-4  border-gray-300 z-50 dark:bg-slate-600 dark:border-gray-400 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col`}>
-                <div className="h-48 flex items-center justify-center">
-                    <Link href="/">
-                        <ApplicationLogo className="block h-40 w-auto fill-current text-gray-800" />
+        <div className="min-h-screen flex bg-gray-50 dark:bg-slate-800" 
+             style={{ 
+                 backgroundImage: 'url("/images/Backgrounds/topography2.svg")', 
+                 backgroundBlendMode: 'soft-light',
+                 backgroundSize: '400px'
+             }}>
+            <nav className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col shadow-lg`}>
+                <div className="px-6 py-7 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                    <Link href="/" className="flex items-center gap-3">
+                        <ApplicationLogo className="h-10 w-auto fill-current text-blue-600 dark:text-blue-400" />
+                        <span className="text-xl font-bold text-gray-900 dark:text-white">FinSocial</span>
                     </Link>
                 </div>
-                <div className="flex flex-col items-center px-8 py-2 space-y-4 flex-grow dark:text-white">
-                    <NavLink
-                        href={route('dashboard')}
-                        active={route().current('dashboard')}
-                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4 pt-4"
-                        style={{ fontSize: '2rem' }}
-                        onClick={handleNavLinkClick}
-                    >
-                        Discover
-                    </NavLink>
-                    <div className="py-2"></div>
-                    <NavLink
-                        href={route('following')}
-                        active={route().current('following')}
-                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4"
-                        style={{ fontSize: '2rem' }}
-                        onClick={handleNavLinkClick}
-                    >
-                        Following
-                    </NavLink>
-                    <div className="py-2"></div>
-                    <NavLink
-                        href={route('posts.create')}
-                        active={route().current('posts.create')}
-                        className="text-xl block dark:text-white hover:dark:text-blue-300 py-4"
-                        style={{ fontSize: '2rem' }}
-                        onClick={handleNavLinkClick}
-                    >
-                        Create Post
-                    </NavLink>
+                
+                <div className="flex-1 overflow-y-auto px-6 py-8">
+                    <div className="flex flex-col space-y-2">
+                        <NavLink
+                            href={route('dashboard')}
+                            active={route().current('dashboard')}
+                            className={({ isActive }) => `group flex items-center px-4 py-4 ${
+                                isActive 
+                                    ? 'bg-blue-50/40 text-blue-600 dark:bg-inherit dark:text-blue-400' 
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50/40 dark:hover:bg-slate-700/20'
+                            }`}
+                            onClick={handleNavLinkClick}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
+                            <span className="text-base font-medium">Discover</span>
+                        </NavLink>
+                        
+                        <NavLink
+                            href={route('following')}
+                            active={route().current('following')}
+                            className={({ isActive }) => `group flex items-center px-4 py-4 ${
+                                isActive 
+                                    ? 'bg-blue-50/40 text-blue-600 dark:inherit dark:text-blue-400' 
+                                    : 'text-gray-700 dark:text-gray-300 dark:hover:bg-slate-700/20'
+                            }`}
+                            onClick={handleNavLinkClick}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <span className="text-base font-medium">Following</span>
+                        </NavLink>
+                        
+                        <NavLink
+                            href={route('posts.create')}
+                            active={route().current('posts.create')}
+                            className={({ isActive }) => `group flex items-center px-4 py-4 ${
+                                isActive 
+                                    ? 'bg-blue-50/40 text-blue-600 dark:bg-inherit dark:text-blue-400' 
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50/40 dark:hover:bg-slate-700/20'
+                            }`}
+                            onClick={handleNavLinkClick}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span className="text-base font-medium">Create Post</span>
+                        </NavLink>
+                    </div>
                 </div>
 
-                <div className="mt-auto py-2 dark:text-gray-50">
+                {/* User Profile Section */}
+                <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                     <Dropdown>
                         <Dropdown.Trigger>
-                            <span className="inline-flex rounded-md w-full">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center justify-between w-full rounded-md border border-transparent dark:bg-slate-600 px-3 py-4 text-lg font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                >
-                                    <img
-                                        src={user.avatar_url}
-                                        alt="User Avatar"
-                                        className="h-10 w-10 rounded-full me-1" 
-                                    />
-                                    <span className="truncate max-w-xs dark:text-gray-50" style={{ lineHeight: '2rem' }}>{user.name}</span>
-                                    <svg
-                                        className="-me-0.5 ms-2 h-8 w-8 dark:text-gray-50"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                    
-                                </button>
-                            </span>
+                            <button type="button" className="w-full flex items-center p-2 rounded-lg text-left hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200">
+                                <img 
+                                    src={user.avatar_url} 
+                                    alt={`${user.name}'s avatar`} 
+                                    className="h-10 w-10 rounded-full object-cover border border-gray-200 dark:border-gray-600" 
+                                />
+                                <div className="ml-3 flex-1">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">View account</p>
+                                </div>
+                                <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
                         </Dropdown.Trigger>
-                        <Dropdown.Content className="w-full text-right text-gray-700 dark:text-white"> {/* Added padding-right */}
-                            <Dropdown.Link href={route('profile.show', { id: user.id })} className="text-xl block py-2 dropdown-item font-semibold" index={1}> 
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6 mr-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        <Dropdown.Content align="top" width="72" contentClasses="w-72 rounded-md shadow-lg py-1 bg-slate-400 dark:bg-slate-700 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Dropdown.Link 
+                                href={route('profile.show', { id: user.id })} 
+                                className="group flex items-center py-2 text-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                                 My Account
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('collections.index')} className="text-xl block py-2 dropdown-item font-semibold" index={2}> {/* Added font-semibold */}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className="size-6 mr-2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+
+                            <Dropdown.Link 
+                                href={route('collections.index')} 
+                                className="group flex items-center py-2 text-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
-                                Collections
+                                My Collections
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('profile.edit')} className="text-xl block py-2 dropdown-item font-semibold" index={3}> {/* Added font-semibold */}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-6 mr-2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            
+                            <Dropdown.Link 
+                                href={route('profile.edit')} 
+                                className="group flex items-center py-2 text-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
-                                Edit Details
+                                Edit Profile
                             </Dropdown.Link>
-                            <Dropdown.Link href={route('logout')} method="post" as="button" className="text-xl block py-2 dropdown-item font-semibold text-right w-full" index={4}> {/* Added font-semibold */}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-6 mr-2 hover:fill-white">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                            
+                           
+                            
+                            <div className="border-t border-gray-100 dark:border-gray-600 mt-1"></div>
+                            
+                            <Dropdown.Link 
+                                href={route('logout')} 
+                                method="post" 
+                                as="button"
+                                className="group flex w-full items-center border-t border-gray-500 mb-0 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                                 Log Out
                             </Dropdown.Link>
@@ -156,43 +191,90 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             </nav>
 
-            {isNavbarOpen && (
-                <div
-                    className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+            {/* Mobile nav backdrop */}
+            <Transition
+                show={isNavbarOpen}
+                as={Fragment}
+                enter="transition-opacity ease-linear duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity ease-linear duration-300"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+            >
+                <div 
+                    className="fixed inset-0 bg-gray-600/75 dark:bg-gray-900/80 z-40 lg:hidden backdrop-blur-sm"
                     onClick={() => setIsNavbarOpen(false)}
                 ></div>
-            )}
+            </Transition>
 
-            <div className="flex-1 flex flex-col lg:ml-64">
-                <header className="fixed top-0 left-0 right-0 border-b-4 border-gray-400 bg-white/50 dark:bg-slate-600/75 shadow flex items-center justify-between lg:justify-start z-50 lg:ml-64 backdrop-blur-md">
-                    <button
-                        onClick={() => setIsNavbarOpen(!isNavbarOpen)}
-                        className="p-4 focus:outline-none lg:hidden"
-                    >
-                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-                        </svg>
-                    </button>
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <h1 className="text-4xl font-bold text-gray-700 dark:text-gray-200">{header}</h1>
+            <div className="flex-1 flex flex-col lg:pl-72">
+            {typeof header === 'string' ? (
+    <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+        <div className="relative pt-7 pb-8">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
+                <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
+                    onClick={() => setIsNavbarOpen(true)}
+                >
+                    <span className="sr-only">Open menu</span>
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                <button
+                    onClick={toggleTheme}
+                    className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                    {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                </button>
+            </div>
+            
+            <div className="flex-1 flex justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{header}</h1>
+            </div>
+        </div>
+    </header>
+) : (
+    <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+        <div className="relative pt-7 pb-8">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
+                <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
+                    onClick={() => setIsNavbarOpen(true)}
+                >
+                    <span className="sr-only">Open menu</span>
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                <button
+                    onClick={toggleTheme}
+                    className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                    {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                </button>
+            </div>
+            
+            {header}
+        </div>
+    </header>
+)}
+
+                <main className="flex-1 pb-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                        {children}
                     </div>
-
-
-                    <div className="pr-4 sm:pr-6 lg:pr-8">
-                         <button
-                            onClick={toggleTheme}
-                            className="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-700 dark:focus:text-gray-200 transition duration-150 ease-in-out"
-                            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                        >
-                            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-                        </button>
-                    </div>
-                    
-                    
-                </header>
-
-                <main className="flex-1 p-4 mt-24 lg:mt-32">
-                    {children}
                 </main>
             </div>
         </div>

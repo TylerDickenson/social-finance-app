@@ -5,6 +5,7 @@ import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
 import { Link } from '@inertiajs/react';
+import CollectionModal from './CollectionModal';
 
 export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove }) {
     const [comments, setComments] = useState(post.comments || []);
@@ -15,22 +16,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const [collections, setCollections] = useState([]);
     const likeButtonRef = useRef(null);
     const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
-
-    const handleRemoveFromCollection = async (collectionId) => {
-        try {
-            await axios.post(route('collections.removePost'), {
-                collection_id: collectionId,
-                post_id: post.id,
-            });
-            setShowModal(false);
-            setDropdownOpen(false);
-            if (onPostRemove) {
-                onPostRemove(post.id);
-            }
-        } catch (error) {
-            console.error('Error removing post from collection:', error);
-        }
-    };
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
@@ -61,13 +46,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         }
     };
 
-     const isPostInCollection = (collection) => {
-        if (!collection || !Array.isArray(collection.posts)) {
-            return false;
-        }
-        return collection.posts.some((postInCollection) => postInCollection.id === post.id);
-     };
-
     const handleAddToCollection = async (collectionId) => {
         try {
             await axios.post(route('collections.addPost'), {
@@ -79,6 +57,29 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         } catch (error) {
             console.error('Error adding post to collection:', error);
         }
+    };
+    
+    const handleRemoveFromCollection = async (collectionId) => {
+        try {
+            await axios.post(route('collections.removePost'), {
+                collection_id: collectionId,
+                post_id: post.id,
+            });
+            setShowModal(false);
+            setDropdownOpen(false);
+            if (onPostRemove) {
+                onPostRemove(post.id);
+            }
+        } catch (error) {
+            console.error('Error removing post from collection:', error);
+        }
+    };
+
+    const isPostInCollection = (collection) => {
+        if (!collection || !Array.isArray(collection.posts)) {
+            return false;
+        }
+        return collection.posts.some((postInCollection) => postInCollection.id === post.id);
     };
 
     const toggleDropdown = () => {
@@ -99,107 +100,186 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     };
 
     return (
-        <div className="mb-6 p-6 border-2 border-gray-200 rounded-3xl shadow-lg bg-neutral-50 dark:bg-slate-700 dark:border-gray-400" >
-            <div className="flex justify-between mb-4">
-                 <div className="flex items-center space-x-4 ml-2">
-                     <div className="flex items-center hover:scale-105 transition-transform duration-500">
-                        <Link href={route('profile.show', { id: post.user.id })}>
-                            <img
-                                src={post.user.avatar_url}
-                                alt={post.user.name}
-                                className="w-16 h-16 rounded-full mr-2 cursor-pointer"
-                            />
-                        </Link>
-                        <Link href={route('profile.show', { id: post.user.id })} className="text-3xl font-bold dark:text-gray-50">
+        <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300 hover:shadow-md">
+            {/* Post Header */}
+            <div className="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex items-center space-x-4">
+                    <Link 
+                        href={route('profile.show', { id: post.user.id })} 
+                        className="group"
+                    >
+                        <img
+                            src={post.user.avatar_url}
+                            alt={post.user.name}
+                            className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
+                        />
+                    </Link>
+                    <div>
+                        <Link 
+                            href={route('profile.show', { id: post.user.id })}
+                            className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                        >
                             {post.user.name}
                         </Link>
+                        <DateTimeDisplay 
+                            timestamp={post.created_at} 
+                            className="text-sm text-gray-500 dark:text-gray-400" 
+                        />
                     </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
                     {currentUserId && post.user.id !== currentUserId && (
                         <FollowButton
-                            className="flex mb-5"
                             userId={post.user.id}
                             isFollowing={post.user.is_following}
                             onFollowChange={onFollowChange}
+                            className="mr-2"
                         />
                     )}
-                </div>
-                <div className="flex items-center space-x-4 relative">
-                    <DateTimeDisplay timestamp={post.created_at} />
+                    
                     <div className="relative">
                         <button
                             onClick={toggleDropdown}
-                            className="-ml-2 mt-1 text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-100 hoverfocus:outline-none"
+                            className="p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            aria-label="Post options"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6">
-                                <circle cx="12" cy="5" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="12" cy="19" r="2" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 11 0-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 11 0-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 11 0-1.5.75.75 0 010 1.5z" />
                             </svg>
                         </button>
+                        
                         {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                                <ul className="py-1">
-                                    <li>
-                                        <button onClick={fetchCollections} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            Add to Collection
-                                        </button>
-                                    </li>
-                                    {post.user.id === currentUserId && (
-                                        <li>
-                                            <button onClick={handleDeletePost} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                                Delete Post
-                                            </button>
-                                        </li>
-                                    )}
-                                </ul>
+                            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-md shadow-lg z-10 border border-gray-100 dark:border-gray-600 overflow-hidden">
+                                <button 
+                                    onClick={fetchCollections} 
+                                    className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                    </svg>
+                                    Add to Collection
+                                </button>
+                                
+                                {post.user.id === currentUserId && (
+                                    <button 
+                                        onClick={handleDeletePost} 
+                                        className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                        Delete Post
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-            <hr className="my-4 border-gray-300" />
-            <div className="flex">
-                {post.image_url && (
-                    <img
-                        src={post.image_url}
-                        alt={post.title}
-                        className="mb-4 rounded-lg cursor-pointer"
-                        style={{ maxWidth: '300px', maxHeight: '1000px', objectFit: 'contain', width: 'auto', height: 'auto' }}
-                        onDoubleClick={() => likeButtonRef.current?.toggleLike()}
-                    />
-                )}
-                <div className="ml-6 flex-1 relative">
-                    <div className="flex justify-between items-start">
-                        <div className="flex-1 dark:text-gray-50">
-                            <h3 className="text-xl font-bold ">{post.title}</h3>
-                            {post.tags && post.tags.length > 0 && (
-                                <div className="mt-1 space-x-1">
-                                    {post.tags.map(tag => (
-                                        <Link
-                                            key={tag.id}
-                                            href={route('tags.show', { tagName: tag.name })}
-                                            className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 border border-blue-500 dark:border-blue-400 rounded px-1.5 py-0.5 hover:bg-blue-100 dark:hover:bg-blue-900"
-                                        >
-                                            ${tag.name}
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
-                            <p className="text-lg mt-2">{post.content}</p>
-                        </div>
-                        <div className="ml-4">
-                            <LikeButton
-                                ref={likeButtonRef}
-                                likeableId={post.id}
-                                likeableType="posts"
-                                initialLikesCount={post.likes_count}
-                                initialIsLiked={post.is_liked_by_user}
-                            />
-                        </div>
+            
+            {/* Post Content */}
+            <div className="p-5">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{post.title}</h3>
+                
+                {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {post.tags.map(tag => (
+                            <Link
+                                key={tag.id}
+                                href={route('tags.show', { tagName: tag.name })}
+                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors"
+                            >
+                                ${tag.name}
+                            </Link>
+                        ))}
                     </div>
-                    <hr className="my-4 border-gray-300" />
-                    <div className="mt-4">
-                        <h4 className="text-lg font-semibold mt-4 dark:text-white">Comments</h4>
-                        {comments && comments.length > 0 ? (
-                            comments.map((comment) => (
+                )}
+                
+                <p className="text-gray-700 dark:text-gray-300 mb-4">{post.content}</p>
+                
+                {post.image_url && (
+                    <div className="mt-4 rounded-lg overflow-hidden">
+                        <img
+                            src={post.image_url}
+                            alt={post.title}
+                            className="w-full h-auto object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                            onDoubleClick={() => likeButtonRef.current?.toggleLike()}
+                        />
+                    </div>
+                )}
+            </div>
+            
+            {/* Post Footer */}
+            <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-slate-700/50 flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                    <LikeButton
+                        ref={likeButtonRef}
+                        likeableId={post.id}
+                        likeableType="posts"
+                        initialLikesCount={post.likes_count}
+                        initialIsLiked={post.is_liked_by_user}
+                    />
+                    
+                    <button 
+                        onClick={() => setIsCommentBoxVisible(prev => !prev)}
+                        className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                        </svg>
+                        <span>{comments.length}</span>
+                    </button>
+                </div>
+                
+                <button 
+                    onClick={fetchCollections}
+                    className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                    </svg>
+                    <span>Save</span>
+                </button>
+            </div>
+            
+            {/* Comments Section */}
+            {isCommentBoxVisible && (
+                <div className="border-t border-gray-100 dark:border-gray-700">
+                    {/* New Comment Form */}
+                    <form onSubmit={handleSubmitComment} className="p-4">
+                        <div className="flex items-start">
+                            <textarea
+                                value={commentContent}
+                                onChange={(e) => setCommentContent(e.target.value)}
+                                className="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white resize-none focus:ring-blue-500 focus:border-blue-500"
+                                rows="3"
+                                placeholder="Write a comment..."
+                                required
+                            />
+                            <div className="ml-3 flex flex-col gap-2">
+                                <button 
+                                    type="submit" 
+                                    disabled={processing} 
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {processing ? 'Posting...' : 'Post'}
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setIsCommentBoxVisible(false)} 
+                                    className="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    {/* Comment List */}
+                    {comments && comments.length > 0 ? (
+                        <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {comments.map((comment) => (
                                 <Comment
                                     key={comment.id}
                                     comment={comment}
@@ -214,68 +294,25 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                         setComments((prev) => prev.filter((c) => c.id !== commentId))
                                     }
                                 />
-                            ))
-                        ) : (
-                            <p className="text-md text-gray-600 dark:text-gray-100">No comments available.</p>
-                        )}
-                        {!isCommentBoxVisible ? (
-                            <button onClick={() => setIsCommentBoxVisible(true)} className="mt-4 ml-3 text-blue-600 dark:text-blue-400 hover:underline">
-                                Add a comment...
-                            </button>
-                        ) : (
-                            <form onSubmit={handleSubmitComment} className="mt-4 relative flex items-start">
-                                <textarea
-                                    value={commentContent}
-                                    onChange={(e) => setCommentContent(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm dark:placeholder:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-md resize-none dark:bg-gray-500 dark:text-white"
-                                    rows="3"
-                                    placeholder="Write your comment here..."
-                                ></textarea>
-                                <div className="flex flex-col items-center justify-start ml-2 space-y-2">
-                                    <button type="submit" disabled={processing} className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-blue-600 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-20">
-                                        Post
-                                    </button>
-                                    <button type="button" onClick={() => setIsCommentBoxVisible(false)} className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-md font-medium text-white shadow-sm hover:bg-gray-600 dark:hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-20">
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-bold mb-4">Manage Collections</h2>
-                        {Array.isArray(collections) && collections.length > 0 ? (
-                            <ul>
-                                {collections
-                                    .filter((collection) => collection.name !== 'Liked Posts')
-                                    .map((collection) => (
-                                        <li key={collection.id} className="mb-2">
-                                            {isPostInCollection(collection) ? (
-                                                <button onClick={() => handleRemoveFromCollection(collection.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                                    Remove from {collection.name}
-                                                </button>
-                                            ) : (
-                                                <button onClick={() => handleAddToCollection(collection.id)} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
-                                                    Add to {collection.name}
-                                                </button>
-                                            )}
-                                        </li>
-                                    ))}
-                            </ul>
-                        ) : (
-                            <p className="text-gray-600">No collections available.</p>
-                        )}
-                        <button onClick={() => setShowModal(false)} className="mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Close
-                        </button>
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                            No comments yet. Be the first to comment!
+                        </div>
+                    )}
                 </div>
             )}
+            
+            <CollectionModal 
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                collections={collections}
+                postId={post.id}
+                onAddToCollection={handleAddToCollection}
+                onRemoveFromCollection={handleRemoveFromCollection}
+                isPostInCollection={isPostInCollection}
+            />
         </div>
     );
 }

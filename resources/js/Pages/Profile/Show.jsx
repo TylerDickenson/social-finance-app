@@ -33,40 +33,80 @@ const Show = ({ user, posts }) => {
 
     return (
         <AuthenticatedLayout
-            header={
-                <div className="flex items-center space-x-8 -m-4 ">
-                    <img src={user.avatar_url} alt="User Avatar" className="w-48 h-48 ml-2 rounded-full" />
-                    <div className="flex flex-col">
-                        <h1 className="text-4xl font-bold leading-tight text-gray-800 dark:text-white">
+    header={
+        <div className="flex justify-center items-center w-full py-6 relative">
+            <div className="w-full max-w-3xl px-4 lg:transform lg:translate-x-[-2.25rem]">
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                        <img 
+                            src={user.avatar_url} 
+                            alt={`${user.name}'s Avatar`} 
+                            className="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-md" 
+                        />
+                    </div>
+                    
+                    {/* User Info */}
+                    <div className="flex-1 text-center md:text-left">
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
                             {user.name}
                         </h1>
                         
-                        <div className="flex items-center space-x-12 mt-4">
-                            <p className="text-xl font-semibold text-gray-600 dark:text-white">
-                                Posts | {posts ? posts.length : 0}
+                        {user.about && (
+                            <p className="mt-2 text-base text-gray-600 dark:text-gray-300">
+                                {user.about}
                             </p>
-                            <p
-                                className="text-xl font-semibold text-gray-600 dark:text-white cursor-pointer hover:underline"
+                        )}
+                        
+                        <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center md:justify-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Member since {formattedDate}
+                        </p>
+                        
+                        {/* Stats Row */}
+                        <div className="flex items-center justify-center md:justify-start mt-4 space-x-8 border-t border-gray-100 dark:border-gray-700 pt-4">
+                            <div className="flex flex-col items-center">
+                                <span className="font-semibold text-gray-900 dark:text-white text-lg">{posts ? posts.length : 0}</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">Posts</span>
+                            </div>
+                            
+                            <div 
+                                className="flex flex-col items-center cursor-pointer group"
                                 onClick={() => openModal('followers')}
                             >
-                                Followers | {user.followers ? user.followers.length : 0}
-                            </p>
-                            <p
-                                className="text-xl font-semibold text-gray-600 dark:text-white cursor-pointer hover:underline"
+                                <span className="font-semibold text-gray-900 dark:text-white text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.followers ? user.followers.length : 0}</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Followers</span>
+                            </div>
+                            
+                            <div 
+                                className="flex flex-col items-center cursor-pointer group"
                                 onClick={() => openModal('following')}
                             >
-                                Following | {user.following ? user.following.length : 0}
-                            </p>
+                                <span className="font-semibold text-gray-900 dark:text-white text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.following ? user.following.length : 0}</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Following</span>
+                            </div>
+                            
+                            {currentUserId !== user.id && (
+                                <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200">
+                                    Follow
+                                </button>
+                            )}
                         </div>
-                        <p className="mt-2 text-xl text-gray-600 dark:text-white">{user.about}</p>
-                        <p className="mt-2 text-lg text-gray-600 dark:text-white">FinSocial Member since | {formattedDate}</p>
                     </div>
                 </div>
-            }
+            </div>
+        </div>
+    
+    
+
+
+    }
         >
             <Head title={`${user.name}`} />
 
-            <div className="py-28">
+            <div className="mt-4">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden  ===">
                         <div className="p-10 text-gray-900">
