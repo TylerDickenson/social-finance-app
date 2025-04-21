@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, memo, useCallback } from 'react';
 import axios from 'axios';
 import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
@@ -9,7 +9,7 @@ import { Link } from '@inertiajs/react';
 import CollectionModal from './CollectionModal';
 import { Transition } from '@headlessui/react';
 
-export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove, showAllComments }) {
+export default memo(function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove, showAllComments }) {
     const [comments, setComments] = useState(post.comments || []);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -18,8 +18,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
     const [collections, setCollections] = useState([]);
     const likeButtonRef = useRef(null);
     const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
+    const [commentsCount, setCommentsCount] = useState(post.comments?.length || 0);
 
-    const handleSubmitComment = async (e) => {
+    const handleSubmitComment = useCallback(async (e) => {
         e.preventDefault();
         setProcessing(true);
         try {
@@ -28,16 +29,16 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 postId: post.id,
             });
             
-            // Add new comment at the beginning of the array (newest first)
+            // Update the displayed comments (limited to 10 if not showing all)
             setComments((prevComments) => {
                 const updatedComments = [response.data.comment, ...prevComments];
-                
-                // If on SinglePost page (showAllComments is true), no need to slice
-                // Otherwise limit to 10 comments
                 return showAllComments 
                     ? updatedComments 
                     : updatedComments.slice(0, 10);
             });
+            
+            // Always increment the total count
+            setCommentsCount(prevCount => prevCount + 1);
             
             setCommentContent('');
         } catch (error) {
@@ -45,20 +46,20 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         } finally {
             setProcessing(false);
         }
-    };
+    }, [post.id, commentContent, showAllComments]);
 
-    const fetchCollections = async () => {
+    const fetchCollections = useCallback(async () => {
         try {
             const response = await axios.get(route('collections.index'));
             setCollections(response.data.collections || []);
             setShowModal(true);
         } catch (error) {
-            console.error('Error fetching collections:', error);
+            console.error('Error - fetching the collections:', error);
             setCollections([]);
         }
-    };
+    }, []);
 
-    const handleAddToCollection = async (collectionId) => {
+    const handleAddToCollection = useCallback(async (collectionId) => {
         try {
             await axios.post(route('collections.addPost'), {
                 collection_id: collectionId,
@@ -67,9 +68,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
             setShowModal(false);
             setDropdownOpen(false);
         } catch (error) {
-            console.error('Error adding post to collection:', error);
+            console.error('Error - adding a post to the collection:', error);
         }
-    };
+    }, [post.id]);
     
     const handleRemoveFromCollection = async (collectionId) => {
         try {
@@ -107,13 +108,13 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         toggleDropdown();
     };
 
-    const toggleDropdown = () => {
+    const toggleDropdown = useCallback(() => {
         setDropdownOpen((prev) => !prev);
-    };
+    }, []);
 
-    const handleDeletePost = async () => {
+    const handleDeletePost = useCallback(async () => {
         if (!confirm('Are you sure you want to delete this post?')) return;
-
+        
         try {
             await axios.delete(route('posts.destroy', { id: post.id }));
             if (onPostDelete) {
@@ -122,7 +123,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         } catch (error) {
             console.error('Error deleting post:', error);
         }
-    };
+    }, [post.id, onPostDelete]);
 
     return (
         <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300 hover:shadow-md">
@@ -163,15 +164,17 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </div>
                 
                 <div className="flex items-center gap-3">
-                    {currentUserId && post.user.id !== currentUserId && (
-                        <FollowButton
-                            userId={post.user.id}
-                            isFollowing={post.user.is_following}
-                            onFollowChange={onFollowChange}
-                            className="mr-2"
-                        />
-                    )}
-                    
+                    {currentUserId && 
+                        post.user.id !== currentUserId && 
+                        (!post.is_anonymous || post.user.id === currentUserId) && (
+                            <FollowButton
+                                userId={post.user.id}
+                                isFollowing={post.user.is_following}
+                                onFollowChange={onFollowChange}
+                                className="mr-2"
+                            />
+                            )}
+                        
                     <div className="relative">
                         <button
                             onClick={toggleDropdown}
@@ -267,7 +270,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-1">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
                         </svg>
-                        <span className="text-md font-bold text-white">{comments.length}</span>
+                        <span className="text-md font-bold text-white">{commentsCount}</span>
                     </button>
                 </div>
                 
@@ -324,7 +327,7 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                         
                         {comments && comments.length > 0 ? (
                             <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                                {/* Display the comments (limited to 10 if not on the single post page) */}
+
                                 {(showAllComments ? comments : comments
                                     .slice()
                                     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -340,20 +343,20 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                                 prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
                                             )
                                         }
-                                        onCommentDelete={(commentId) =>
-                                            setComments((prev) => prev.filter((c) => c.id !== commentId))
-                                        }
+                                        onCommentDelete={(commentId) => {
+                                            setComments((prev) => prev.filter((c) => c.id !== commentId));
+                                            setCommentsCount((prevCount) => prevCount - 1);
+                                        }}
                                     />
                                 ))}
                                 
-                                {/* Always show the view more button when not on single post page */}
                                 {!showAllComments && (
                                     <div className="p-3 text-center">
                                         <button 
                                             onClick={() => window.location.href = route('posts.show', { id: post.id })}
                                             className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                                         >
-                                            View all {comments.length} comments
+                                            View all {commentsCount} comments
                                         </button>
                                     </div>
                                 )}
@@ -377,4 +380,4 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
             />
         </div>
     );
-}
+});

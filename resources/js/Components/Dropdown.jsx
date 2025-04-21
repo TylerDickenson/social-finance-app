@@ -70,7 +70,7 @@ Dropdown.Content = function Content({ children, className = '' }) {
             leaveTo="transform opacity-0 scale-y-90 origin-bottom"
         >
             <div
-                className={`absolute bottom-full w-full rounded-t-md bg-white dark:bg-slate-600 z-50 py-1 overflow-hidden ${className}`} // Match dark bg, rounded-t-md, removed mb-2
+                className={`absolute bottom-full w-full rounded-md bg-white dark:bg-slate-600 z-50 overflow-hidden ${className}`} // Match dark bg, rounded-t-md, removed mb-2
             >
                 {children}
             </div>
