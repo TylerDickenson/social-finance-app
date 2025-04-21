@@ -4,10 +4,12 @@ import Comment from './Comment';
 import DateTimeDisplay from './DateTimeDisplay';
 import FollowButton from './FollowButton';
 import LikeButton from './LikeButton';
+import LinkIcon from './Icons/LinkIcon';
 import { Link } from '@inertiajs/react';
 import CollectionModal from './CollectionModal';
+import { Transition } from '@headlessui/react';
 
-export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove }) {
+export default function Post({ post, currentUserId, onFollowChange, onPostDelete, onPostRemove, showAllComments }) {
     const [comments, setComments] = useState(post.comments || []);
     const [commentContent, setCommentContent] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -25,9 +27,19 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 content: commentContent,
                 postId: post.id,
             });
-            setComments((prevComments) => [...prevComments, response.data.comment]);
+            
+            // Add new comment at the beginning of the array (newest first)
+            setComments((prevComments) => {
+                const updatedComments = [response.data.comment, ...prevComments];
+                
+                // If on SinglePost page (showAllComments is true), no need to slice
+                // Otherwise limit to 10 comments
+                return showAllComments 
+                    ? updatedComments 
+                    : updatedComments.slice(0, 10);
+            });
+            
             setCommentContent('');
-            setIsCommentBoxVisible(false);
         } catch (error) {
             console.error('Error creating comment:', error);
         } finally {
@@ -82,6 +94,19 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
         return collection.posts.some((postInCollection) => postInCollection.id === post.id);
     };
 
+    const handleSharePost = () => {
+        const postUrl = route('posts.show', { id: post.id });
+        navigator.clipboard.writeText(postUrl)
+            .then(() => {
+                alert('Post link copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy link: ', err);
+                alert('Failed to copy link. Please try again.');
+            });
+        toggleDropdown();
+    };
+
     const toggleDropdown = () => {
         setDropdownOpen((prev) => !prev);
     };
@@ -101,7 +126,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
 
     return (
         <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300 hover:shadow-md">
-            {/* Post Header */}
             <div className="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-700">
                 <div className="flex items-center space-x-4">
                     <Link 
@@ -160,6 +184,13 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                                     </svg>
                                     Add to Collection
                                 </button>
+                                <button
+                                    onClick={handleSharePost}
+                                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-green-400/50 group "
+                                >
+                                    <LinkIcon className="w-4 h-4 mr-2 text-gray-500 group-hover:text-green-600 dark:text-gray-400 dark:group-hover:text-green-400 " />
+                                    Share Post
+                                </button>
                                 
                                 {post.user.id === currentUserId && (
                                     <button 
@@ -178,7 +209,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </div>
             </div>
             
-            {/* Post Content */}
             <div className="p-5">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{post.title}</h3>
                 
@@ -210,7 +240,6 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 )}
             </div>
             
-            {/* Post Footer */}
             <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-slate-700/50 flex justify-between items-center">
                 <div className="flex items-center gap-4">
                     <LikeButton
@@ -223,9 +252,9 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                     
                     <button 
                         onClick={() => setIsCommentBoxVisible(prev => !prev)}
-                        className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                        className="flex items-center mt-2 text-gray-500 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-1">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
                         </svg>
                         <span>{comments.length}</span>
@@ -243,67 +272,90 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
                 </button>
             </div>
             
-            {/* Comments Section */}
-            {isCommentBoxVisible && (
-                <div className="border-t border-gray-100 dark:border-gray-700">
-                    {/* New Comment Form */}
-                    <form onSubmit={handleSubmitComment} className="p-4">
-                        <div className="flex items-start">
-                            <textarea
-                                value={commentContent}
-                                onChange={(e) => setCommentContent(e.target.value)}
-                                className="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white resize-none focus:ring-blue-500 focus:border-blue-500"
-                                rows="3"
-                                placeholder="Write a comment..."
-                                required
-                            />
-                            <div className="ml-3 flex flex-col gap-2">
-                                <button 
-                                    type="submit" 
-                                    disabled={processing} 
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {processing ? 'Posting...' : 'Post'}
-                                </button>
-                                <button 
-                                    type="button" 
-                                    onClick={() => setIsCommentBoxVisible(false)} 
-                                    className="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    
-                    {/* Comment List */}
-                    {comments && comments.length > 0 ? (
-                        <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                            {comments.map((comment) => (
-                                <Comment
-                                    key={comment.id}
-                                    comment={comment}
-                                    canEdit={currentUserId && comment.user.id === currentUserId}
-                                    canDelete={currentUserId && comment.user.id === currentUserId}
-                                    onCommentUpdate={(commentId, updatedComment) =>
-                                        setComments((prev) =>
-                                            prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
-                                        )
-                                    }
-                                    onCommentDelete={(commentId) =>
-                                        setComments((prev) => prev.filter((c) => c.id !== commentId))
-                                    }
+            <div className="border-t border-gray-100 dark:border-gray-700 overflow-hidden">
+                <Transition
+                    show={isCommentBoxVisible}
+                    enter="transition-all duration-300 ease-out"
+                    enterFrom="opacity-0 max-h-0"
+                    enterTo="opacity-100 max-h-[2000px]"
+                    leave="transition-all duration-200 ease-in"
+                    leaveFrom="opacity-100 max-h-[2000px]"
+                    leaveTo="opacity-0 max-h-0"
+                >
+                    <div>
+                        <form onSubmit={handleSubmitComment} className="p-4">
+                            <div className="flex items-start">
+                                <textarea
+                                    value={commentContent}
+                                    onChange={(e) => setCommentContent(e.target.value)}
+                                    className="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white resize-none focus:ring-blue-500 focus:border-blue-500"
+                                    rows="3"
+                                    placeholder="Write a comment..."
+                                    required
                                 />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                            No comments yet. Be the first to comment!
-                        </div>
-                    )}
-                </div>
-            )}
-            
+                                <div className="ml-3 flex flex-col gap-2">
+                                    <button 
+                                        type="submit" 
+                                        disabled={processing} 
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {processing ? 'Posting...' : 'Post'}
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsCommentBoxVisible(false)} 
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        {comments && comments.length > 0 ? (
+                            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                {/* Display the comments (limited to 10 if not on the single post page) */}
+                                {(showAllComments ? comments : comments
+                                    .slice()
+                                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                                    .slice(0, 10))
+                                    .map((comment) => (
+                                    <Comment
+                                        key={comment.id}
+                                        comment={comment}
+                                        canEdit={currentUserId && comment.user.id === currentUserId}
+                                        canDelete={currentUserId && comment.user.id === currentUserId}
+                                        onCommentUpdate={(commentId, updatedComment) =>
+                                            setComments((prev) =>
+                                                prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
+                                            )
+                                        }
+                                        onCommentDelete={(commentId) =>
+                                            setComments((prev) => prev.filter((c) => c.id !== commentId))
+                                        }
+                                    />
+                                ))}
+                                
+                                {/* Always show the view more button when not on single post page */}
+                                {!showAllComments && (
+                                    <div className="p-3 text-center">
+                                        <button 
+                                            onClick={() => window.location.href = route('posts.show', { id: post.id })}
+                                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+                                        >
+                                            View all {comments.length} comments
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                                No comments yet. Be the first to comment!
+                            </div>
+                        )}
+                    </div>
+                </Transition>
+            </div>
             <CollectionModal 
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}

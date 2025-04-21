@@ -11,6 +11,42 @@ use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
+
+    public function show($id)
+{
+    $post = Post::with([
+        'user' => function ($query) {
+            $query->withCount('followers');
+            if (auth()->check()) {
+                $query->withCount(['followers as is_following' => function ($query) {
+                    $query->where('follower_id', auth()->id());
+                }]);
+            }
+        },
+        'comments' => function ($query) {
+            $query->with('user');
+            $query->orderBy('created_at', 'desc');
+        },
+        'comments.user',
+        'likes',
+        'tags'
+    ])->findOrFail($id);
+
+    $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+    
+    $post->likes_count = $post->likes->count();
+    
+    $post->comments->transform(function ($comment) {
+        $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+        $comment->likes_count = $comment->likes->count();
+        return $comment;
+    });
+
+    return Inertia::render('SinglePost', [
+        'post' => $post
+    ]);
+}
+
     public function create()
     {
         return Inertia::render('Create');
