@@ -85,7 +85,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full rounded-md border-gray-300 dark:border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-md dark:bg-gray-500 dark:text-white"
+                            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-md dark:bg-slate-700/50 dark:text-white"
                             rows="3"
 
                             style={{ resize: 'none' }}

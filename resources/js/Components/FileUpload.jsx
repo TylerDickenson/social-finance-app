@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Folder from './Icons/Folder';
 
 export default function FileUpload({ label, name, value, onChange, error, onImagePreviewUpdate }) {
     const [imagePreview, setImagePreview] = useState(value ? URL.createObjectURL(value) : null);
@@ -31,7 +32,8 @@ export default function FileUpload({ label, name, value, onChange, error, onImag
                     onChange={handleFileChange}
                     className="custom-file-input"
                 />
-                <label className="custom-file-label dark:bg-gray-500 dark:text-white" htmlFor={name}>
+                <label className="custom-file-label dark:bg-gray-500 dark:text-white flex items-start gap-2" htmlFor={name}>
+                    <Folder className="" />
                     {value ? value.name : 'Choose file'}
                 </label>
             </div>

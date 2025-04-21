@@ -8,7 +8,7 @@ export default function Create({ auth }) {
         title: '',
         content: '',
         image: null,
-        is_anonymous: false, // Add this line 
+        is_anonymous: false, 
     });
 
     const handleSubmit = (e) => {
@@ -18,14 +18,13 @@ export default function Create({ auth }) {
         formData.append('content', data.content);
         formData.append('is_anonymous', data.is_anonymous ? '1' : '0');
         
-        // Only append image if it exists
         if (data.image) {
             formData.append('image', data.image);
         }
         
         post(route('posts.store'), {
             data: formData,
-            forceFormData: true, // Force FormData format
+            forceFormData: true,
         });
     };
     const handleFileChange = (file) => {
@@ -39,7 +38,7 @@ export default function Create({ auth }) {
         >
             <Head title="New Post" />
 
-            <div className="py-12">
+            <div className="py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300">
                         <div className="p-6">

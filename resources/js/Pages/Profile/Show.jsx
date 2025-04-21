@@ -87,12 +87,6 @@ const Show = ({ user, posts }) => {
                                 <span className="font-semibold text-gray-900 dark:text-white text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.following ? user.following.length : 0}</span>
                                 <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Following</span>
                             </div>
-                            
-                            {currentUserId !== user.id && (
-                                <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200">
-                                    Follow
-                                </button>
-                            )}
                         </div>
                     </div>
                 </div>
