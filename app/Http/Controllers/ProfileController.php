@@ -31,6 +31,9 @@ class ProfileController extends Controller
         $user->is_following = auth()->check() ? auth()->user()->isFollowing($user->id) : false;
 
         $posts = $user->posts()
+            ->when(!auth()->check() || auth()->id() !== $user->id, function($query) {
+                return $query->where('is_anonymous', false);
+            })
             ->with([
                 'user',
                 'likes',

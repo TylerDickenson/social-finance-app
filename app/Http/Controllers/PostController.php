@@ -35,6 +35,10 @@ class PostController extends Controller
     $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
     
     $post->likes_count = $post->likes->count();
+
+    if ($post->is_anonymous && $post->user_id !== auth()->id()) {
+        $post->user = $this->anonymizeUser($post->user);
+    }
     
     $post->comments->transform(function ($comment) {
         $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
@@ -56,12 +60,18 @@ class PostController extends Controller
     {
         $validated = $this->validatePost($request);
 
-        $imagePath = $this->handleImageUpload($request);
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $this->handleImageUpload($request);
+        }
 
-        $post = Post::create(array_merge($validated, [
+        $post = Post::create([
             'user_id' => auth()->id(),
-            'image' => $imagePath,
-        ]));
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'image' => $imagePath, 
+            'is_anonymous' => $request->boolean('is_anonymous'),
+        ]);
 
         $this->syncTags($post, $validated['title'] . ' ' . $validated['content']);
 
@@ -72,7 +82,6 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        // Ensure the user is authorized to delete the post
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -124,6 +133,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'is_anonymous' => 'boolean',
         ]);
     }
 
@@ -164,4 +174,29 @@ class PostController extends Controller
 
         $post->tags()->sync($tagIds);
     }
+
+    // This method is used to anonymize the user information
+    private function anonymizeUser($user)
+{
+    // Create a copy of the user object
+    $anonymousUser = clone $user;
+    
+    // Set basic anonymous properties
+    $anonymousUser->name = 'Anonymous';
+    $anonymousUser->email = null;
+    
+    // IMPORTANT: Handle the avatar_url property correctly
+    // This ensures Post.jsx will display the anonymous avatar correctly
+    $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
+    
+    // If your User model has a profile_picture attribute that's used to generate avatar_url
+    // Make sure it's either set to a placeholder or the accessor handles null properly
+    
+    // Zero out other identifying information
+    if (isset($anonymousUser->posts_count)) $anonymousUser->posts_count = 0;
+    if (isset($anonymousUser->followers_count)) $anonymousUser->followers_count = 0;
+    if (isset($anonymousUser->following_count)) $anonymousUser->following_count = 0;
+    
+    return $anonymousUser;
+}
 }

@@ -126,24 +126,34 @@ export default function Post({ post, currentUserId, onFollowChange, onPostDelete
 
     return (
         <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300 hover:shadow-md">
+            
             <div className="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-700">
                 <div className="flex items-center space-x-4">
                     <Link 
-                        href={route('profile.show', { id: post.user.id })} 
-                        className="group"
+                        href={post.is_anonymous && post.user.id !== currentUserId 
+                            ? '#' // Disable link for anonymous posts for other users
+                            : route('profile.show', { id: post.user.id })} 
+                        className={`group ${post.is_anonymous && post.user.id !== currentUserId ? 'cursor-default' : ''}`}
+                        onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
                     >
                         <img
                             src={post.user.avatar_url}
-                            alt={post.user.name}
+                            alt={post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
                             className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
                         />
                     </Link>
                     <div>
                         <Link 
-                            href={route('profile.show', { id: post.user.id })}
+                            href={post.is_anonymous && post.user.id !== currentUserId 
+                                ? '#' // Disable link for anonymous posts for other users
+                                : route('profile.show', { id: post.user.id })}
                             className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                            onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
                         >
-                            {post.user.name}
+                            {post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
+                            {post.is_anonymous && post.user.id === currentUserId && (
+                                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">(You, posted anonymously)</span>
+                            )}
                         </Link>
                         <DateTimeDisplay 
                             timestamp={post.created_at} 

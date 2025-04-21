@@ -14,6 +14,7 @@ class Post extends Model
         'title',
         'content',
         'image',
+        'is_anonymous',
     ];
 
     protected $appends = ['image_url'];

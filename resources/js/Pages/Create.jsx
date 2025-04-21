@@ -7,7 +7,8 @@ export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         content: '',
-        image: null, 
+        image: null,
+        is_anonymous: false, // Add this line 
     });
 
     const handleSubmit = (e) => {
@@ -15,17 +16,18 @@ export default function Create({ auth }) {
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('content', data.content);
+        formData.append('is_anonymous', data.is_anonymous ? '1' : '0');
+        
+        // Only append image if it exists
         if (data.image) {
             formData.append('image', data.image);
         }
+        
         post(route('posts.store'), {
             data: formData,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+            forceFormData: true, // Force FormData format
         });
     };
-
     const handleFileChange = (file) => {
         setData('image', file);
     };
@@ -85,6 +87,21 @@ export default function Create({ auth }) {
                                         error={errors.image}
                                     />
                                     {errors.image && <div className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.image}</div>}
+                                </div>
+                                
+                                {/* Add anonymous checkbox */}
+                                <div className="mb-6 flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        id="is_anonymous"
+                                        name="is_anonymous"
+                                        checked={data.is_anonymous}
+                                        onChange={(e) => setData('is_anonymous', e.target.checked)}
+                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                                    />
+                                    <label htmlFor="is_anonymous" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                                        Post anonymously
+                                    </label>
                                 </div>
                                 
                                 <div className="flex justify-end">

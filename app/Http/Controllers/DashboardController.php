@@ -31,6 +31,11 @@ class DashboardController extends Controller
 
             $post->is_liked_by_user = $isLoggedIn ? $post->likes->contains('user_id', $userId) : false;
 
+            // Anonymize user for anonymous posts (when viewer isn't the author)
+            if ($post->is_anonymous && $post->user_id !== $userId) {
+                $post->user = $this->anonymizeUser($post->user);
+            }
+
             if ($isLoggedIn && $post->user) {
                  $post->user->is_following = auth()->user()->following->contains($post->user_id);
             } else if ($post->user) {
@@ -53,5 +58,14 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'posts' => $posts,
         ]);
+    }
+
+    // Add the anonymizeUser method (same as in PostController)
+    private function anonymizeUser($user)
+    {
+        $anonymousUser = clone $user;
+        $anonymousUser->name = 'Anonymous';
+        $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
+        return $anonymousUser;
     }
 }

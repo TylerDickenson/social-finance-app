@@ -23,6 +23,7 @@ class FollowController extends Controller
         $followingIds = Auth::user()->following()->pluck('users.id');
 
         $posts = Post::whereIn('user_id', $followingIds)
+            ->where('is_anonymous', false)
             ->with([
                 'user',
                 'likes',
