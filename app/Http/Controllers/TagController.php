@@ -15,9 +15,26 @@ class TagController extends Controller
 {
     protected $postService;
 
+    
+
     public function __construct(PostService $postService)
     {
         $this->postService = $postService;
+    }
+
+    public function index()
+    {
+        $tags = Tag::whereHas('posts')
+                ->withCount('posts')
+                ->get()
+                ->groupBy(function ($tag) {
+                    return strtoupper(substr($tag->name, 0, 1)); 
+                })
+                ->sortKeys(); 
+
+        return Inertia::render('Discussions', [
+            'tags' => $tags
+        ]);
     }
 
     public function show(Request $request, string $tagName)
