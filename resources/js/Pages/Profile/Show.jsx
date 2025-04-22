@@ -34,7 +34,7 @@ const Show = ({ user, posts }) => {
     return (
         <AuthenticatedLayout
     header={
-        <div className="flex justify-center items-center w-full py-6 relative">
+        <div className="flex justify-center items-center w-full relative">
             <div className="w-full max-w-3xl px-4 lg:transform lg:translate-x-[-2.25rem]">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                     {/* Avatar */}
@@ -103,7 +103,7 @@ const Show = ({ user, posts }) => {
             <div className="mt-4">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden  ===">
-                        <div className="p-10 text-gray-900">
+                        <div className="px-6 text-gray-900">
                             <div className="mt-6 space-y-6">
                                 {posts && posts.length > 0 ? (
                                     posts.map((post) => (

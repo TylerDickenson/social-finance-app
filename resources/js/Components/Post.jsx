@@ -152,9 +152,9 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                             onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
                         >
                             {post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
-                            {post.is_anonymous && post.user.id === currentUserId && (
+                            {post.is_anonymous && post.user.id === currentUserId ? (
                                 <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">(You, posted anonymously)</span>
-                            )}
+                            ) : null}
                         </Link>
                         <DateTimeDisplay 
                             timestamp={post.created_at} 

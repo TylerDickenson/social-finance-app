@@ -119,6 +119,22 @@ export default function AuthenticatedLayout({ header, children }) {
                             </svg>
                             <span className="text-base font-medium">Create Post</span>
                         </NavLink>
+                        <NavLink
+                            href={route('posts.create')}
+                            active={route().current('posts.create')}
+                            className={({ isActive }) => `group flex items-center px-4 py-4 ${
+                                isActive 
+                                    ? 'bg-blue-50/40 text-blue-600 dark:bg-inherit dark:text-blue-400' 
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50/40 dark:hover:bg-slate-700/20'
+                            }`}
+                            onClick={handleNavLinkClick}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 mr-3 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 transition-colors duration-200">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                            </svg>
+
+                            <span className="text-base font-medium">Discussions</span>
+                        </NavLink>
                     </div>
                 </div>
 
@@ -208,67 +224,67 @@ export default function AuthenticatedLayout({ header, children }) {
             </Transition>
 
             <div className="flex-1 flex flex-col lg:pl-72">
-            {typeof header === 'string' ? (
-    <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
-        <div className="relative pt-7 pb-8">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
-                <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
-                    onClick={() => setIsNavbarOpen(true)}
-                >
-                    <span className="sr-only">Open menu</span>
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-            
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
-                <button
-                    onClick={toggleTheme}
-                    className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                >
-                    {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-                </button>
-            </div>
-            
-            <div className="flex-1 flex justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{header}</h1>
-            </div>
-        </div>
-    </header>
-) : (
-    <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
-        <div className="relative pt-7 pb-8">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
-                <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
-                    onClick={() => setIsNavbarOpen(true)}
-                >
-                    <span className="sr-only">Open menu</span>
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-            
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
-                <button
-                    onClick={toggleTheme}
-                    className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                >
-                    {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-                </button>
-            </div>
-            
-            {header}
-        </div>
-    </header>
-)}
+                {typeof header === 'string' ? (
+                    <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+                        <div className="relative pt-7 pb-8">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
+                                    onClick={() => setIsNavbarOpen(true)}
+                                >
+                                    <span className="sr-only">Open menu</span>
+                                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                                <button
+                                    onClick={toggleTheme}
+                                    className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                                >
+                                    {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                                </button>
+                            </div>
+                            
+                            <div className="flex-1 flex justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{header}</h1>
+                            </div>
+                        </div>
+                    </header>
+                    ) : (
+                        <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+                            <div className="relative pt-7 pb-8">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
+                                        onClick={() => setIsNavbarOpen(true)}
+                                    >
+                                        <span className="sr-only">Open menu</span>
+                                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="rounded-full p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                                        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                                    >
+                                        {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                                    </button>
+                                </div>
+                                
+                                {header}
+                            </div>
+                        </header>
+                    )}
 
                 <main className="flex-1 pb-8">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

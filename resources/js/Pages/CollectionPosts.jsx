@@ -153,9 +153,9 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
             header={
                 <div className="w-full flex justify-center items-center px-12">
                     <h1 className="text-3xl md:text-3xl font-bold">
-                        <span className="text-gray-500 dark:text-gray-400 mr-2">Collection</span>
-                        <span className="text-gray-900 dark:text-white">|</span>
-                        <span className="text-blue-600 dark:text-blue-400 ml-2">{collection.name}</span>
+                        <span className="text-gray-500 dark:text-white mr-2">Collection</span>
+                        <span className="text-gray-900 dark:text-white">-</span>
+                        <span className="text-blue-600 dark:text-white ml-2">{collection.name}</span>
                     </h1>
                 </div>
             }
@@ -283,7 +283,7 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
                             ) : (
                                 <div className="mr-16">
                                     <p className="mt-1 text-gray-600 dark:text-gray-300 text-lg">
-                                        {collection.description || <span className="italic text-gray-500 dark:text-gray-400">No description provided.</span>}
+                                        {collection.description || <span className="italic text-gray-500 dark:text-gray-400">This Collection has no description.</span>}
                                     </p>
                                     {collection.is_private ? (
                                         <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
