@@ -35,7 +35,7 @@ const Show = ({ user, posts }) => {
         <AuthenticatedLayout
     header={
         <div className="flex justify-center items-center w-full relative">
-            <div className="w-full max-w-3xl px-4 lg:transform lg:translate-x-[-2.25rem]">
+        <div className="w-full max-w-lg px-4">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                     {/* Avatar */}
                     <div className="flex-shrink-0">
