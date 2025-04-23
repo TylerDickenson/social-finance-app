@@ -55,10 +55,9 @@ export default function Collections({ auth, collections: initialCollections }) {
         <AuthenticatedLayout user={auth?.user} header="My Collections">
             <Head title="Collections" />
 
-            <div className="py-12 px-4 sm:px-6 lg:px-8">
+            <div className="py-6 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Add New Collection Card */}
                         <div 
                             onClick={() => setIsModalOpen(true)}
                             className="relative h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-dashed border-gray-300 dark:border-gray-700 cursor-pointer group"
