@@ -5,54 +5,19 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect, Fragment } from 'react';
 import { Transition } from '@headlessui/react';
 import CollectionIcon from '@/Components/Icons/CollectionIcon';
-
-const SunIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-6.364-.386 1.591-1.591M3 12h2.25m.386-6.364 1.591 1.591M12 12a2.25 2.25 0 0 0-2.25 2.25 2.25 2.25 0 0 0 2.25 2.25 2.25 2.25 0 0 0 2.25-2.25A2.25 2.25 0 0 0 12 12Z" />
-    </svg>
-);
-
-const MoonIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-    </svg>
-);
+import BackArrowIcon from '@/Components/Icons/BackArrowIcon';
+import MoonIcon from '@/Components/Icons/MoonIcon';
+import SunIcon from '@/Components/Icons/SunIcon';
+import SiteTheme from '@/Components/SiteTheme';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+    const { theme, toggleTheme } = SiteTheme('dark');
+
 
     const handleNavLinkClick = () => {
         setIsNavbarOpen(false);
-    };
-
-    const [theme, setTheme] = useState(() => {
-        // Check localStorage first, then system preference, then default to 'light'
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-            return localStorage.getItem('theme');
-        }
-        if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-        return 'light';
-    });
-
-    // Effect to apply theme class and save preference
-    useEffect(() => {
-        const root = document.documentElement;
-        if (theme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-        // Save preference to localStorage
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('theme', theme);
-        }
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 
     return (
@@ -64,12 +29,13 @@ export default function AuthenticatedLayout({ header, children }) {
         }}>
             <nav className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col shadow-lg`}>
                 <div className="flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
-                    <Link href="/" className="flex items-center">
+                    <Link href="/discover" className="flex items-center">
                         <ApplicationLogo className="h-24 w-auto fill-current text-blue-600 dark:text-blue-400" />
 
                     </Link>
                 </div>
                 
+                {/* Nav to other pages links */}
                 <div className="flex-1 overflow-y-auto px-6 py-8">
                     <div className="flex flex-col space-y-2">
                         <NavLink
@@ -139,7 +105,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
 
-                {/* User Profile Section */}
+                {/* Profile section*/}
                 <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                     <Dropdown>
                         <Dropdown.Trigger>
@@ -207,7 +173,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             </nav>
 
-            {/* Mobile nav backdrop */}
+            {/* Mobile phone or small device nav backdrop */}
             <Transition
                 show={isNavbarOpen}
                 as={Fragment}
@@ -227,20 +193,31 @@ export default function AuthenticatedLayout({ header, children }) {
             <div className="flex-1 flex flex-col lg:pl-72">
                 {typeof header === 'string' ? (
                     <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
-                        <div className="relative pt-7 pb-8">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
+                        <div className="relative pt-7 pb-8">    
+                            <div className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-10 flex items-center space-x-2">
                                 <button
                                     type="button"
-                                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
-                                    onClick={() => setIsNavbarOpen(true)}
+                                    onClick={() => window.history.back()}
+                                    className="inline-flex items-center justify-center rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm mr-2"
+                                    aria-label="Go back"
                                 >
-                                    <span className="sr-only">Open menu</span>
-                                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                    </svg>
+                                    <BackArrowIcon/>
                                 </button>
+                                
+                                <div className="lg:hidden">
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm"
+                                        onClick={() => setIsNavbarOpen(true)}
+                                    >
+                                        <span className="sr-only">Open menu</span>
+                                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                            
+                                                    
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
                                 <button
                                     onClick={toggleTheme}
