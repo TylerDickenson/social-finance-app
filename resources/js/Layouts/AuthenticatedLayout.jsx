@@ -57,16 +57,16 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="min-h-screen flex bg-gray-50 dark:bg-slate-800" 
-             style={{ 
-                 backgroundImage: 'url("/images/Backgrounds/topography2.svg")', 
-                 backgroundBlendMode: 'soft-light',
-                 backgroundSize: '400px'
-             }}>
+        style={{ 
+            backgroundImage: 'url("/images/Backgrounds/topography2.svg")', 
+            backgroundBlendMode: theme === 'light' ? 'multiply' : 'soft-light',
+            backgroundSize: '400px',
+        }}>
             <nav className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col shadow-lg`}>
-                <div className="px-6 py-7 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
-                    <Link href="/" className="flex items-center gap-3">
-                        <ApplicationLogo className="h-10 w-auto fill-current text-blue-600 dark:text-blue-400" />
-                        <span className="text-xl font-bold text-gray-900 dark:text-white">FinSocial</span>
+                <div className="flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                    <Link href="/" className="flex items-center">
+                        <ApplicationLogo className="h-24 w-auto fill-current text-blue-600 dark:text-blue-400" />
+
                     </Link>
                 </div>
                 
