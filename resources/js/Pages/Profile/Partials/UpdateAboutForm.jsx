@@ -59,9 +59,10 @@ export default function UpdateAboutForm({ about }) {
                         <p className="text-sm text-gray-600 mr-2 transition-opacity duration-1000 dark:text-white">Saved.</p>
                     )}
                     <svg
-                        className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+                        className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'} dark:stroke-white`}
                         fill="none"
                         stroke="currentColor"
+                        dark:stroke="black"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                     >
@@ -87,7 +88,7 @@ export default function UpdateAboutForm({ about }) {
 
                     <div className="flex items-center gap-4 mt-6">
                         <PrimaryButton
-                            className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" // Added dark mode styles
+                            className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
                             disabled={processing}
                         >
                             Save

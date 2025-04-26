@@ -65,12 +65,12 @@ export default function DeleteUserForm({ className = '' }) {
             </DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
+                <form onSubmit={deleteUser} className="p-6 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-white ">
                         Are you sure you want to delete your account?
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-100">
                         Once your account is deleted, all of its resources and
                         data will be permanently deleted. Please enter your
                         password to confirm you would like to permanently delete
@@ -81,7 +81,7 @@ export default function DeleteUserForm({ className = '' }) {
                         <InputLabel
                             htmlFor="password"
                             value="Password"
-                            className="sr-only"
+                            className="sr-only  "
                         />
 
                         <TextInput
@@ -93,7 +93,7 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            className="mt-1 block w-3/4"
+                            className="mt-1 block w-3/4 dark:bg-gray-600 dark:text-white "
                             isFocused
                             placeholder="Password"
                         />

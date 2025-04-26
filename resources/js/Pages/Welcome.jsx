@@ -12,7 +12,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
     const { theme, toggleTheme } = SiteTheme('dark');
     
-   
 
     return (
         <>
@@ -110,7 +109,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 <div className="flex-1 flex flex-col lg:pl-72">
                     {/* Header */}
                     <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md">
-                        <div className="relative py-6">
+                        <div className="relative py-7">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
                                 <button
                                     type="button"
@@ -135,7 +134,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </div>
                             
                             <div className="flex-1 flex justify-center max-w-7xl mx-auto px-4">
-                                <h1 className="text-5xl font-bold text-gray-900 dark:text-white">Welcome to FinSocial</h1>
+                                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Welcome to FinSocial</h1>
                             </div>
                         </div>
                     </header>
