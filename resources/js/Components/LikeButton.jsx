@@ -35,6 +35,7 @@ const LikeButton = forwardRef(({ likeableId, likeableType, initialLikesCount, in
                 className={`flex items-center space-x-1 focus:outline-none ${
                     isLiked ? 'animate-like' : ''
                 }`}
+                aria-label={isLiked ? 'Unlike this item' : 'Like this item'}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
