@@ -72,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/tag/{tagName}', [TagController::class, 'show'])->middleware(['auth', 'verified'])->name('tags.show');
-Route::get('/discussions', [TagController::class, 'index'])->name('discussions');
+Route::get('/discussions', [TagController::class, 'index'])->middleware(['auth', 'verified'])->name('discussions');
 
 
 

@@ -7,10 +7,9 @@ export default function Following({ posts: initialPosts, auth }) {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        // Filter posts to only include those from users the current user is following
         const filteredPosts = initialPosts
             .filter(post => post.user.is_following)
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort posts from newest to oldest
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         setPosts(filteredPosts);
     }, [initialPosts]);
 
@@ -41,7 +40,7 @@ export default function Following({ posts: initialPosts, auth }) {
                                 ))
                             ) : (
                                 <div className="bg-white dark:bg-slate-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-8">
-                                    <p className="text-gray-500 dark:text-gray-400 text-center">No posts in this collection yet.</p>
+                                    <p className="text-gray-500 dark:text-gray-400 text-center">You do not follow anyone yet, follow users to see their posts here.</p>
                                 </div>
                             )}
                         </div>
