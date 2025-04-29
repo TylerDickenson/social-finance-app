@@ -38,8 +38,8 @@ export default function Create({ auth }) {
         >
             <Head title="New Post" />
 
-            <div className="py-6">
-                <div className="max-w-7xl mx-auto px-4">
+            <div className="py-6 px-4">
+                <div className="max-w-7xl mx-auto px-10">
                     <div className="mx-auto mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-gray-700 transition-all duration-300">
                         <div className="p-6">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Share your thoughts</h2>

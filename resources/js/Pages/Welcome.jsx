@@ -19,7 +19,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             <div 
                 className="min-h-screen flex bg-gray-50 dark:bg-slate-800"
                 style={{ 
-                    backgroundImage: 'url("/images/Backgrounds/topography2.svg")', 
+                    backgroundImage: 'url("/images/backgrounds/topography2.svg")', 
                     backgroundBlendMode: 'soft-light',
                     backgroundSize: '400px'
                 }}

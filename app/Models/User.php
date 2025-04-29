@@ -66,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
         if (strpos($this->avatar, 'avatars/') === 0) {
             return Storage::disk('public')->url($this->avatar);
         }
-        return $this->avatar ? url($this->avatar) : '/images/Backgrounds/Avatar.jpeg';
+        return $this->avatar ? url($this->avatar) : '/images/backgrounds/Avatar.jpeg';
     }
 
     public function followers()

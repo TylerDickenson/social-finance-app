@@ -23,7 +23,7 @@ export default function AuthenticatedLayout({ header, children }) {
     return (
         <div className="min-h-screen flex bg-gray-50 dark:bg-slate-800" 
         style={{ 
-            backgroundImage: 'url("/images/Backgrounds/topography2.svg")', 
+            backgroundImage: 'url("/images/backgrounds/topography2.svg")', 
             backgroundBlendMode: theme === 'light' ? 'multiply' : 'soft-light',
             backgroundSize: '400px',
         }}>
