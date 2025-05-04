@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
-import SiteTheme from './SiteTheme';
-
 export default function ApplicationLogo(props) {
     const { theme } = SiteTheme();
-    const [logoSrc, setLogoSrc] = useState(theme === 'dark' ? "/images/backgrounds/FS_dark.png" : "/images/backgrounds/FS.png");
+    const [logoSrc, setLogoSrc] = useState(theme === 'dark' 
+        ? `${window.location.protocol}//${window.location.host}/images/backgrounds/FS_dark.png` 
+        : `${window.location.protocol}//${window.location.host}/images/backgrounds/FS.png`);
 
     useEffect(() => {
-        setLogoSrc(theme === 'dark' ? "/images/backgrounds/FS_dark.png" : "/images/backgrounds/FS.png");
+        setLogoSrc(theme === 'dark' 
+            ? `${window.location.protocol}//${window.location.host}/images/backgrounds/FS_dark.png` 
+            : `${window.location.protocol}//${window.location.host}/images/backgrounds/FS.png`);
     }, [theme]);
 
     useEffect(() => {
         const updateLogoSrc = () => {
             setTimeout(() => {
                 const isDark = document.documentElement.classList.contains('dark');
-                setLogoSrc(isDark ? "/images/backgrounds/FS_dark.png" : "/images/backgrounds/FS.png");
+                setLogoSrc(isDark 
+                    ? `${window.location.protocol}//${window.location.host}/images/backgrounds/FS_dark.png` 
+                    : `${window.location.protocol}//${window.location.host}/images/backgrounds/FS.png`);
             }, 10);
         };
 

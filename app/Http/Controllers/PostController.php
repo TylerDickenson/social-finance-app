@@ -13,43 +13,43 @@ class PostController extends Controller
 {
 
     public function show($id)
-{
-    $post = Post::with([
-        'user' => function ($query) {
-            $query->withCount('followers');
-            if (auth()->check()) {
-                $query->withCount(['followers as is_following' => function ($query) {
-                    $query->where('follower_id', auth()->id());
-                }]);
-            }
-        },
-        'comments' => function ($query) {
-            $query->with('user');
-            $query->orderBy('created_at', 'desc');
-        },
-        'comments.user',
-        'likes',
-        'tags'
-    ])->findOrFail($id);
+    {
+        $post = Post::with([
+            'user' => function ($query) {
+                $query->withCount('followers');
+                if (auth()->check()) {
+                    $query->withCount(['followers as is_following' => function ($query) {
+                        $query->where('follower_id', auth()->id());
+                    }]);
+                }
+            },
+            'comments' => function ($query) {
+                $query->with('user');
+                $query->orderBy('created_at', 'desc');
+            },
+            'comments.user',
+            'likes',
+            'tags'
+        ])->findOrFail($id);
 
-    $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
-    
-    $post->likes_count = $post->likes->count();
+        $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+        
+        $post->likes_count = $post->likes->count();
 
-    if ($post->is_anonymous && $post->user_id !== auth()->id()) {
-        $post->user = $this->anonymizeUser($post->user);
+        if ($post->is_anonymous && $post->user_id !== auth()->id()) {
+            $post->user = $this->anonymizeUser($post->user);
+        }
+        
+        $post->comments->transform(function ($comment) {
+            $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+            $comment->likes_count = $comment->likes->count();
+            return $comment;
+        });
+
+        return Inertia::render('SinglePost', [
+            'post' => $post // Sent as JSON to REACT
+        ]);
     }
-    
-    $post->comments->transform(function ($comment) {
-        $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
-        $comment->likes_count = $comment->likes->count();
-        return $comment;
-    });
-
-    return Inertia::render('SinglePost', [
-        'post' => $post
-    ]);
-}
 
     public function create()
     {
@@ -176,20 +176,20 @@ class PostController extends Controller
     }
 
     private function anonymizeUser($user)
-{
+    {
 
-    $anonymousUser = clone $user;
+        $anonymousUser = clone $user;
 
-    $anonymousUser->name = 'Anonymous';
-    $anonymousUser->email = null;
-    
+        $anonymousUser->name = 'Anonymous';
+        $anonymousUser->email = null;
+        
 
-    $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
+        $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
 
-    if (isset($anonymousUser->posts_count)) $anonymousUser->posts_count = 0;
-    if (isset($anonymousUser->followers_count)) $anonymousUser->followers_count = 0;
-    if (isset($anonymousUser->following_count)) $anonymousUser->following_count = 0;
-    
-    return $anonymousUser;
-}
+        if (isset($anonymousUser->posts_count)) $anonymousUser->posts_count = 0;
+        if (isset($anonymousUser->followers_count)) $anonymousUser->followers_count = 0;
+        if (isset($anonymousUser->following_count)) $anonymousUser->following_count = 0;
+        
+        return $anonymousUser;
+    }
 }
