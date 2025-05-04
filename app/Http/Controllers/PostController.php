@@ -175,24 +175,17 @@ class PostController extends Controller
         $post->tags()->sync($tagIds);
     }
 
-    // This method is used to anonymize the user information
     private function anonymizeUser($user)
 {
-    // Create a copy of the user object
+
     $anonymousUser = clone $user;
-    
-    // Set basic anonymous properties
+
     $anonymousUser->name = 'Anonymous';
     $anonymousUser->email = null;
     
-    // IMPORTANT: Handle the avatar_url property correctly
-    // This ensures Post.jsx will display the anonymous avatar correctly
+
     $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
-    
-    // If your User model has a profile_picture attribute that's used to generate avatar_url
-    // Make sure it's either set to a placeholder or the accessor handles null properly
-    
-    // Zero out other identifying information
+
     if (isset($anonymousUser->posts_count)) $anonymousUser->posts_count = 0;
     if (isset($anonymousUser->followers_count)) $anonymousUser->followers_count = 0;
     if (isset($anonymousUser->following_count)) $anonymousUser->following_count = 0;

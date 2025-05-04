@@ -23,6 +23,7 @@ export default function SiteTheme(defaultTheme = 'dark') {
         if (typeof localStorage !== 'undefined') {
             localStorage.setItem('theme', theme);
         }
+        window.dispatchEvent(new Event('theme-changed'));
     }, [theme]);
 
     const toggleTheme = () => {
