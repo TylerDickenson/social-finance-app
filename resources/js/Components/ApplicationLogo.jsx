@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react';
+import SiteTheme from '@/Components/SiteTheme';
+
 export default function ApplicationLogo(props) {
     const { theme } = SiteTheme();
     const [logoSrc, setLogoSrc] = useState(theme === 'dark' 
