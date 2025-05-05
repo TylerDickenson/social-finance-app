@@ -13,7 +13,7 @@ class CryptoDataController extends Controller
 
     public function __construct()
     {
-        $this->apiKey = config('services.twelvedata.key');
+        $this->apiKey = env('TWELVE_DATA_API_KEY');
     }
 
     public function getQuote(Request $request)
