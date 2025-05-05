@@ -47,7 +47,7 @@ class PostController extends Controller
         });
 
         return Inertia::render('SinglePost', [
-            'post' => $post // Sent as JSON to REACT
+            'post' => $post 
         ]);
     }
 
@@ -159,8 +159,7 @@ class PostController extends Controller
 
     private function syncTags(Post $post, string $textToScan): void
     {
-  
-        preg_match_all('/\$([A-Za-z0-9]+)/', $textToScan, $matches);
+        preg_match_all('/\$([A-Za-z0-9\.\-\_]+)/', $textToScan, $matches);
 
         $tagNames = array_unique(array_map('strtoupper', $matches[1]));
 

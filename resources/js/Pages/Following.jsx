@@ -22,7 +22,7 @@ export default function Following({ posts: initialPosts, auth }) {
     };
 
     return (
-        <AuthenticatedLayout header="Posts from People You Follow">
+        <AuthenticatedLayout header="Followed Users">
             <Head title="Following" />
 
             <div className="">

@@ -81,7 +81,7 @@ export default function Dashboard({ posts: paginatedPosts, auth }) {
     }, []);
 
     return (
-        <AuthenticatedLayout user={auth.user} header="All Posts">
+        <AuthenticatedLayout user={auth.user} header="Discover">
             <Head title="Discover" />
 
             <div>

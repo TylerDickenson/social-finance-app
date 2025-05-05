@@ -11,6 +11,8 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\StockDataController;
+use App\Http\Controllers\CryptoDataController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -71,12 +73,21 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/tag/{tagName}', [TagController::class, 'show'])->middleware(['auth', 'verified'])->name('tags.show');
+Route::get('/tag/{tagName}', [TagController::class, 'show'])
+    ->where('tagName', '.*') 
+    ->middleware(['auth', 'verified'])
+    ->name('tags.show');
+
 Route::get('/discussions', [TagController::class, 'index'])->middleware(['auth', 'verified'])->name('discussions');
 
 
 
+Route::get('/stock/quote', [StockDataController::class, 'getQuote']);
+Route::get('/stock/profile', [StockDataController::class, 'getProfile']);
+Route::get('/stock/timeseries', [StockDataController::class, 'getTimeSeriesData']);
 
 
+Route::get('/crypto/quote', [CryptoDataController::class, 'getQuote']);
+Route::get('/crypto/timeseries', [CryptoDataController::class, 'getTimeSeriesData']);
 
 require __DIR__.'/auth.php';
