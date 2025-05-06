@@ -8,6 +8,26 @@ use App\Models\Tag;
 
 class CommentController extends Controller
 {
+    /**
+     * Anonymize a comment's user information if needed.
+     */
+    private function anonymizeCommentUser($comment, $currentUser)
+    {
+        $commentCopy = clone $comment;
+                if ($commentCopy->post && $commentCopy->post->is_anonymous && 
+            (!$currentUser || $commentCopy->user_id !== $currentUser->id)) {
+            $commentCopy->user = (object)[
+                'id' => $commentCopy->user_id,
+                'name' => 'Anonymous',
+                'avatar_url' => '/Images/anonymous-avatar.png',
+                'is_anonymous' => true
+            ];
+        }
+        
+        return $commentCopy;
+    }
+
+
     public function store(Request $request)
     {
         $request->validate([
@@ -21,16 +41,17 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        $comment->load('user', 'tags');
+        $comment->load('user', 'post', 'tags');
         $comment->likes_count = 0;
         $comment->is_liked_by_user = false;
-
+        
+        $anonymizedComment = $this->anonymizeCommentUser($comment, $request->user());
+        
         $this->syncTags($comment, $request->content);
-        $comment->load('user', 'tags');
-
+        
         return response()->json([
             'success' => true,
-            'comment' => $comment
+            'comment' => $anonymizedComment
         ]);
     }
 
@@ -53,10 +74,12 @@ class CommentController extends Controller
         $this->syncTags($comment, $request->content);
 
         $comment->load('user', 'tags');
+        
+        $anonymizedComment = $this->anonymizeCommentUser($comment, $request->user());
 
         return response()->json([
             'success' => true,
-            'comment' => $comment
+            'comment' => $anonymizedComment
         ]);
     }
 
@@ -73,6 +96,9 @@ class CommentController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Like a comment.
+     */
     public function like($id)
     {
         $comment = Comment::findOrFail($id);
@@ -80,6 +106,9 @@ class CommentController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Unlike a comment.
+     */
     public function unlike($id)
     {
         $comment = Comment::findOrFail($id);
@@ -87,7 +116,9 @@ class CommentController extends Controller
         return response()->json(['success' => true]);
     }
 
-
+    /**
+     * Sync tags from comment content.
+     */
     private function syncTags(Comment $comment, string $textToScan): void
     {
         preg_match_all('/\$([A-Za-z0-9]+)/', $textToScan, $matches);
@@ -104,6 +135,4 @@ class CommentController extends Controller
 
         $comment->tags()->sync($tagIds);
     }
-
-
 }

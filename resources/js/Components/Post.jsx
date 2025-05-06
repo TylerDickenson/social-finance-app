@@ -128,31 +128,31 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
             
             <div className="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-700">
                 <div className="flex items-center space-x-4">
-                    <Link 
-                        href={post.is_anonymous && post.user.id !== currentUserId 
-                            ? '#' 
-                            : route('profile.show', { id: post.user.id })} 
-                        className={`group ${post.is_anonymous && post.user.id !== currentUserId ? 'cursor-default' : ''}`}
-                        onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
-                    >
-                        <img
-                            src={post.is_anonymous && post.user.id !== currentUserId 
-                                ? 'Images/anonymous-avatar.png' 
-                                : post.user.avatar_url}
-                            alt={post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
-                            className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
-                        />
-                    </Link>
+                <Link 
+                    href={(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId 
+                        ? '#' 
+                        : route('profile.show', { id: post.user.id })} 
+                    className={`group ${(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId ? 'cursor-default' : ''}`}
+                    onClick={(e) => (post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId && e.preventDefault()}
+                >
+                    <img
+                        src={(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId 
+                            ? '/Images/anonymous-avatar.png'
+                            : post.user.avatar_url}
+                        alt={(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
+                    />
+                </Link>
                     <div>
                         <Link 
-                            href={post.is_anonymous && post.user.id !== currentUserId 
+                            href={(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId 
                                 ? '#' 
                                 : route('profile.show', { id: post.user.id })}
                             className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                            onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
+                            onClick={(e) => (post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId && e.preventDefault()}
                         >
-                            {post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
-                            {post.is_anonymous && post.user.id === currentUserId ? (
+                            {(post.is_anonymous || post.user.anonymous) && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
+                            {(post.is_anonymous || post.user.anonymous) && post.user.id === currentUserId ? (
                                 <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">(You, posted anonymously)</span>
                             ) : null}
                         </Link>

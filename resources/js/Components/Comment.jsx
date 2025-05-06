@@ -6,13 +6,21 @@ import DeleteIcon from './Icons/DeleteIcon';
 import EditIcon from './Icons/EditIcon';
 import { Link } from '@inertiajs/react';
 
-export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, onCommentDelete }) {
+
+export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, onCommentDelete, currentUserId }) {
     const [isEditing, setIsEditing] = useState(false);
     const [content, setContent] = useState(comment.content);
     const [processing, setProcessing] = useState(false);
     const editRef = useRef(null);
 
+    const isAnonymous = (comment.post?.is_anonymous || comment.user?.anonymous);
+    const showRealInfo = !isAnonymous || (currentUserId && comment.user.id === currentUserId);
+
     const handleDelete = async () => {
+        if (!confirm('Are you sure you want to delete this comment?')) {
+            return;
+        }
+        
         setProcessing(true);
         try {
             await axios.delete(route('comments.destroy', { id: comment.id }));
@@ -36,10 +44,12 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
     const handleUpdate = async (e) => {
         e.preventDefault();
         setProcessing(true);
+        
         try {
             const response = await axios.patch(route('comments.update', { id: comment.id }), {
                 content: content
             });
+            
             onCommentUpdate(comment.id, response.data.comment);
             setIsEditing(false);
         } catch (error) {
@@ -49,7 +59,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
         }
     };
 
-     useEffect(() => {
+    useEffect(() => {
         const handleClickOutside = (event) => {
             if (editRef.current && !editRef.current.contains(event.target)) {
                 handleCancelEdit();
@@ -65,16 +75,40 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
         };
     }, [isEditing]);
 
-
     return (
-        <div className="mt-2 p-4 ">
+        <div className="mt-2 p-4">
             <div className="flex justify-between mb-2">
                 <div className="flex items-center">
-                    <img src={comment.user.avatar_url} alt={comment.user.name} className="w-8 h-8 rounded-full mr-2" />
-                    <h5 className="text-md font-semibold dark:text-white">{comment.user.name}</h5>
+                    <Link 
+                        href={showRealInfo ? route('profile.show', { id: comment.user.id }) : '#'} 
+                        className={`group ${!showRealInfo ? 'cursor-default' : ''}`}
+                        onClick={(e) => !showRealInfo && e.preventDefault()}
+                    >
+                        <img 
+                            src={showRealInfo ? comment.user.avatar_url : '/Images/anonymous-avatar.png'} 
+                            alt={showRealInfo ? comment.user.name : 'Anonymous'} 
+                            className="w-8 h-8 rounded-full mr-2 object-cover" 
+                        />
+                    </Link>
+                    <div className="flex items-center">
+                        <Link 
+                            href={showRealInfo ? route('profile.show', { id: comment.user.id }) : '#'}
+                            className="text-md font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                            onClick={(e) => !showRealInfo && e.preventDefault()}
+                        >
+                            {showRealInfo ? comment.user.name : 'Anonymous'}
+                        </Link>
+                        
+                        
+                        
+                       
+                    </div>
                 </div>
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
+
+    
+
 
             {isEditing ? (
                 <form onSubmit={handleUpdate} className="relative mb-2" ref={editRef}> 

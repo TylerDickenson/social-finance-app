@@ -15,35 +15,39 @@ class PostController extends Controller
     
 
     public function show($id)
-    {
-        $post = Post::with([
-            'user' => function ($query) {
-                $query->withCount('followers');
-                if (auth()->check()) {
-                    $query->withCount(['followers as is_following' => function ($query) {
-                        $query->where('follower_id', auth()->id());
-                    }]);
-                }
-            },
-            'comments' => function ($query) {
-                $query->with('user');
-                $query->orderBy('created_at', 'desc');
-            },
-            'comments.user',
-            'likes',
-            'tags'
-        ])->findOrFail($id);
+{
+    $post = Post::with([
+        'user' => function ($query) {
+            $query->withCount('followers');
+            if (auth()->check()) {
+                $query->withCount(['followers as is_following' => function ($query) {
+                    $query->where('follower_id', auth()->id());
+                }]);
+            }
+        },
+        'comments' => function ($query) {
+            $query->with(['user', 'likes']);  // Add likes here
+            $query->orderBy('created_at', 'desc');
+        },
+        'comments.user',
+        'likes',
+        'tags'
+    ])->findOrFail($id);
 
-        // Anonymize the post owner if needed
-        
-
-        $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
-        $post->likes_count = $post->likes->count();
-
-        return Inertia::render('PostShow', [
-            'post' => $post
-        ]);
+    // Add likes data to post
+    $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+    $post->likes_count = $post->likes->count();
+    
+    // Add likes data to each comment
+    foreach ($post->comments as $comment) {
+        $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
+        $comment->likes_count = $comment->likes->count();
     }
+
+    return Inertia::render('SinglePost', [
+        'post' => $post
+    ]);
+}
 
     public function create()
     {
