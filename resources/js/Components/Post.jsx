@@ -139,7 +139,7 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                     >
                         <img
                             src={post.is_anonymous && post.user.id !== currentUserId 
-                                ? '/images/anonymous-avatar.png' 
+                                ? 'Images/anonymous-avatar.png' 
                                 : post.user.avatar_url}
                             alt={post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
                             className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
