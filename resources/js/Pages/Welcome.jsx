@@ -6,13 +6,88 @@ import SiteTheme from '@/Components/SiteTheme';
 import MoonIcon from '@/Components/Icons/MoonIcon';
 import SunIcon from '@/Components/Icons/SunIcon';
 
-
+function CommunityRules() {
+    const [expanded, setExpanded] = useState(false);
+    
+    const rules = [
+        {
+            title: "Be Respectful",
+            description: "Treat everyone with respect. No personal attacks, harassment, or hate speech."
+        },
+        {
+            title: "Financial Advice Disclaimer",
+            description: "Posts are for informational purposes only. They do not constitute professional financial advice."
+        },
+        {
+            title: "Protect Privacy",
+            description: "Never share personal financial details or ask others for sensitive information."
+        },
+        {
+            title: "No Spam",
+            description: "Don't post promotional content without permission. No repetitive or off-topic posts."
+        },
+        {
+            title: "Honest Discussions",
+            description: "Share truthful experiences. Don't mislead others about investments or financial outcomes."
+        }
+    ];
+    
+    return (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-blue-100 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="p-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Community Guidelines
+                    </h2>
+                    <button 
+                        onClick={() => setExpanded(!expanded)} 
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center"
+                    >
+                        {expanded ? "Show Less" : "Show All"}
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className={`h-5 w-5 ml-1 transition-transform ${expanded ? "rotate-180" : ""}`}
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                    To ensure our community remains helpful and respectful, please follow these guidelines:
+                </p>
+                
+                <div className={`mt-6 space-y-4 transition-all duration-300 ${expanded ? 'max-h-[1000px] opacity-100' : 'max-h-[100px] overflow-hidden opacity-90'}`}>
+                    {rules.map((rule, index) => (
+                        <div key={index} className="flex">
+                            <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 mr-4">
+                                {index + 1}
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{rule.title}</h3>
+                                <p className="mt-1 text-gray-600 dark:text-gray-300">{rule.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-gray-600 dark:text-gray-300 italic">
+                            By joining and participating in our community, you agree to follow these guidelines. Repeated violations may result in account restrictions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
     const { theme, toggleTheme } = SiteTheme('dark');
     
-
     return (
         <>
             <Head title="Welcome" />
@@ -24,12 +99,10 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     backgroundSize: '400px'
                 }}
             >
-                {/* Left Sidebar */}
                 <nav className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col shadow-lg`}>
-                    <div className="px-6 py-7 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
-                        <Link href="/" className="flex items-center gap-3">
-                            <ApplicationLogo className="h-10 w-auto fill-current text-blue-600 dark:text-blue-400" />
-                            <span className="text-xl font-bold text-gray-900 dark:text-white">FinSocial</span>
+                    <div className="px-6 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                        <Link href="/discover" className="flex items-center">
+                            <ApplicationLogo className="h-24 w-auto fill-current text-blue-600 dark:text-blue-400" />
                         </Link>
                     </div>
                     
@@ -64,7 +137,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         </div>
                     </div>
 
-                    {/* Login CTA in sidebar footer */}
                     <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                         <div className="text-center">
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -88,7 +160,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     </div>
                 </nav>
 
-                {/* Mobile nav backdrop */}
                 <Transition
                     show={isNavbarOpen}
                     as={Fragment}
@@ -105,9 +176,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     ></div>
                 </Transition>
 
-                {/* Main Content */}
                 <div className="flex-1 flex flex-col lg:pl-72">
-                    {/* Header */}
                     <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 backdrop-blur-md">
                         <div className="relative py-7">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden z-10">
@@ -139,10 +208,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         </div>
                     </header>
 
-                    {/* Main Content Area */}
                     <main className="flex-1">
                         <div className="max-w-7xl mx-auto px-4 py-4">
-                            {/* Hero Section */}
                             <section className="my-8">
                                 <div className="bg-white dark:bg-slate-800 shadow-lg rounded-lg p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-gray-200 dark:border-gray-700 transform transition-transform duration-500 hover:scale-[1.02]">
                                     <div className="text-center md:text-left">
@@ -163,7 +230,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </div>
                             </section>
 
-                            {/* Features Section */}
                             <section id="features" className="my-12 scroll-mt-20 bg-white p-8 border dark:bg-slate-800 rounded-lg dark:border-gray-700 shadow-lg border-gray-200"  >
                                 <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">Why Choose FinSocial?</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -191,13 +257,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </div>
                             </section>
 
-                            {/* Screenshot Section */}
                             <section id="preview" className="my-12 text-center scroll-mt-20">
                                 <div className="bg-white dark:bg-slate-800 shadow-lg rounded-lg p-8 border border-gray-200 dark:border-gray-700">
                                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white">See What's Inside</h2>
                                     <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Get a glimpse of our feed page and see what you can expect.</p>
                                     <img src="/images/TestImage2.png" alt="Feed Screenshot" className="mt-8 mx-auto rounded-lg shadow-lg" />
                                 </div>
+                            </section>
+
+                            <section id="community-rules" className="my-12">
+                                <CommunityRules />
                             </section>
                         </div>
                         
