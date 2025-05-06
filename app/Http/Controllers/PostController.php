@@ -9,8 +9,10 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+
 class PostController extends Controller
 {
+    
 
     public function show($id)
     {
@@ -32,22 +34,14 @@ class PostController extends Controller
             'tags'
         ])->findOrFail($id);
 
-        $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
+        // Anonymize the post owner if needed
         
+
+        $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
         $post->likes_count = $post->likes->count();
 
-        if ($post->is_anonymous && $post->user_id !== auth()->id()) {
-            $post->user = $this->anonymizeUser($post->user);
-        }
-        
-        $post->comments->transform(function ($comment) {
-            $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
-            $comment->likes_count = $comment->likes->count();
-            return $comment;
-        });
-
-        return Inertia::render('SinglePost', [
-            'post' => $post 
+        return Inertia::render('PostShow', [
+            'post' => $post
         ]);
     }
 
@@ -174,21 +168,5 @@ class PostController extends Controller
         $post->tags()->sync($tagIds);
     }
 
-    private function anonymizeUser($user)
-    {
-
-        $anonymousUser = clone $user;
-
-        $anonymousUser->name = 'Anonymous';
-        $anonymousUser->email = null;
-        
-
-        $anonymousUser->avatar_url = asset('images/anonymous-avatar.png');
-
-        if (isset($anonymousUser->posts_count)) $anonymousUser->posts_count = 0;
-        if (isset($anonymousUser->followers_count)) $anonymousUser->followers_count = 0;
-        if (isset($anonymousUser->following_count)) $anonymousUser->following_count = 0;
-        
-        return $anonymousUser;
-    }
+    
 }

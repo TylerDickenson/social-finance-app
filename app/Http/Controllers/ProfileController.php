@@ -116,7 +116,7 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-        if ($user->avatar && $user->avatar !== '/images/backgrounds/Avatar.jpeg') {
+        if ($user->avatar && $user->avatar !== '/images/anonymous-avatar.png') {
             Storage::disk('public')->delete($user->avatar);
         }
 

@@ -132,13 +132,15 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                 <div className="flex items-center space-x-4">
                     <Link 
                         href={post.is_anonymous && post.user.id !== currentUserId 
-                            ? '#' // Disable link for anonymous posts for other users
+                            ? '#' 
                             : route('profile.show', { id: post.user.id })} 
                         className={`group ${post.is_anonymous && post.user.id !== currentUserId ? 'cursor-default' : ''}`}
                         onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
                     >
                         <img
-                            src={post.user.avatar_url}
+                            src={post.is_anonymous && post.user.id !== currentUserId 
+                                ? '/images/anonymous-avatar.png' 
+                                : post.user.avatar_url}
                             alt={post.is_anonymous && post.user.id !== currentUserId ? 'Anonymous' : post.user.name}
                             className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-500 transition-all duration-300"
                         />
