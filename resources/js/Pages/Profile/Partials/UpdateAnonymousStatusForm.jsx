@@ -7,7 +7,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import Toggle from '@/Components/Toggle';
 
 export default function UpdateAnonymousStatusForm({ isAnonymous, className = '' }) {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [showSaved, setShowSaved] = useState(false);
     const [localChecked, setLocalChecked] = useState(() => !!isAnonymous);
     

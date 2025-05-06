@@ -2,26 +2,16 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function UpdatePasswordForm({ className = '' }) {
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
-    const contentRef = useRef(null);
-    const timeoutRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [showSaved, setShowSaved] = useState(false);
 
-    const {
-        data,
-        setData,
-        errors,
-        put,
-        reset,
-        processing,
-        recentlySuccessful,
-    } = useForm({
+    const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
         current_password: '',
         password: '',
         password_confirmation: '',
@@ -38,10 +28,10 @@ export default function UpdatePasswordForm({ className = '' }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                setIsOpen(false);
+                setShowSaved(true);
+                setTimeout(() => setShowSaved(false), 3000);
             },
             onError: (errors) => {
-                if (!isOpen) setIsOpen(true);
                 if (errors.password) {
                     reset('password', 'password_confirmation');
                     passwordInput.current.focus();
@@ -54,61 +44,25 @@ export default function UpdatePasswordForm({ className = '' }) {
         });
     };
 
-    const updateMaxHeight = () => {
-        if (contentRef.current) {
-            if (isOpen) {
-                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
-            } else {
-                 if (contentRef.current.style.maxHeight !== '0px') {
-                    contentRef.current.style.maxHeight = '0px';
-                 }
-            }
-        }
-    };
-
-    useEffect(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        updateMaxHeight();
-        if (isOpen) {
-             timeoutRef.current = setTimeout(() => {
-                updateMaxHeight();
-             }, 50);
-        }
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, [isOpen]);
-
-
-    // ...existing code...
     return (
-        <section className={`${className} space-y-6`}>
-            {/* Add flex-grow to the left div and ml-4 to the right div */}
-            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
-                <div className="flex-grow"> {/* Make this div take available space */}
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+        <section className={`${className}`}>
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-600 pb-4 mb-5">
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                         Update Password
                     </h2>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-100">
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                         Ensure your account is using a long, random password to stay secure.
                     </p>
                 </div>
-                <div className="flex items-center ml-4"> {/* Add left margin for spacing */}
-                    <Transition
-                        show={recentlySuccessful && !isOpen}
-                        enter="transition ease-in-out duration-300"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out duration-300"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600 dark:text-white mr-2">Saved.</p>
-                    </Transition>
+                <button 
+                    type="button"
+                    onClick={toggleOpen}
+                    className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                >
+                    {isOpen ? 'Hide' : 'Show'}
                     <svg
-                        className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'} dark:stroke-white`}
+                        className={`w-5 h-5 ml-1 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -116,93 +70,68 @@ export default function UpdatePasswordForm({ className = '' }) {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                </div>
-            </header>
+                </button>
+            </div>
 
-            <div
-                ref={contentRef}
-                style={{ maxHeight: '0px' }}
-                className="overflow-hidden transition-max-height duration-700 ease-in-out"
-            >
-                {/* ... rest of the form ... */}
-                 <form onSubmit={updatePassword} className="mt-6 space-y-6">
+            {isOpen && (
+                <form onSubmit={updatePassword} className="space-y-6">
                     <div>
-                        <InputLabel
-                            htmlFor="current_password"
-                            value="Current Password"
-                            className="dark:text-white"
-                        />
+                        <InputLabel htmlFor="current_password" value="Current Password" className="dark:text-white" />
                         <TextInput
                             id="current_password"
                             ref={currentPasswordInput}
                             value={data.current_password}
-                            onChange={(e) =>
-                                setData('current_password', e.target.value)
-                            }
+                            onChange={(e) => setData('current_password', e.target.value)}
                             type="password"
-                            className="mt-1 block w-full border-2 dark:bg-gray-500"
+                            className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white rounded-lg"
                             autoComplete="current-password"
                         />
-                        <InputError
-                            message={errors.current_password}
-                            className="mt-2 dark:text-red-400"
-                        />
+                        <InputError message={errors.current_password} className="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel
-                            htmlFor="password"
-                            value="New Password"
-                            className="dark:text-white"
-                        />
+                        <InputLabel htmlFor="password" value="New Password" className="dark:text-white" />
                         <TextInput
                             id="password"
                             ref={passwordInput}
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             type="password"
-                            className="mt-1 block w-full border-2 dark:bg-gray-500"
+                            className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white rounded-lg"
                             autoComplete="new-password"
                         />
-                        <InputError message={errors.password} className="mt-2 dark:text-red-400" />
+                        <InputError message={errors.password} className="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel
-                            htmlFor="password_confirmation"
-                            value="Confirm Password"
-                            className='dark:text-white'
-                        />
+                        <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="dark:text-white" />
                         <TextInput
                             id="password_confirmation"
                             value={data.password_confirmation}
-                            onChange={(e) =>
-                                setData('password_confirmation', e.target.value)
-                            }
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
                             type="password"
-                            className="mt-1 block w-full border-2 dark:bg-gray-500"
+                            className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white rounded-lg"
                             autoComplete="new-password"
                         />
-                        <InputError
-                            message={errors.password_confirmation}
-                            className="mt-2 dark:text-red-400"
-                        />
+                        <InputError message={errors.password_confirmation} className="mt-2" />
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <PrimaryButton className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" disabled={processing}>Save</PrimaryButton>
-                        <Transition
-                            show={recentlySuccessful && isOpen}
-                            enter="transition ease-in-out duration-300"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out duration-300"
-                            leaveTo="opacity-0"
+                    <div className="flex items-center justify-between">
+                        <PrimaryButton 
+                            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                            disabled={processing}
                         >
-                            <p className="text-sm text-gray-600 dark:text-white">Saved.</p>
-                        </Transition>
+                            {processing ? 'Saving...' : 'Save Changes'}
+                        </PrimaryButton>
+                        
+                        {showSaved && (
+                            <span className="text-sm text-green-600 dark:text-green-400 animate-pulse">
+                                Saved successfully!
+                            </span>
+                        )}
                     </div>
                 </form>
-            </div>
+            )}
         </section>
     );
 }

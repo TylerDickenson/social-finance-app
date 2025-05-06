@@ -1,15 +1,16 @@
 import { useForm } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import FileUpload from '@/Components/FileUpload';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Transition } from '@headlessui/react';
+import InputError from '@/Components/InputError';
 
-export default function UpdateAvatarForm({ avatarUrl }) {
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({ avatar: null });
+export default function UpdateAvatarForm({ avatarUrl, className = '' }) {
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({ 
+        avatar: null 
+    });
 
     const [isOpen, setIsOpen] = useState(false);
-    const contentRef = useRef(null);
-    const timeoutRef = useRef(null);
+    const [showSaved, setShowSaved] = useState(false);
 
     const toggleOpen = () => {
         setIsOpen(!isOpen);
@@ -17,80 +18,41 @@ export default function UpdateAvatarForm({ avatarUrl }) {
 
     const handleFileChange = (file) => {
         setData('avatar', file);
-        if (!isOpen) {
-            setIsOpen(true);
-        }
     };
 
     const submit = (e) => {
         e.preventDefault();
         if (!data.avatar) return;
 
-        const scrollPosition = window.scrollY;
         post(route('profile.updateAvatar'), {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
-                setIsOpen(false);
-            },
-            onError: () => {
-                setIsOpen(true);
-            },
+                setShowSaved(true);
+                setTimeout(() => setShowSaved(false), 3000);
+            }
         });
     };
 
-    const updateMaxHeight = () => {
-        if (contentRef.current) {
-            if (isOpen) {
-                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
-            } else {
-                 if (contentRef.current.style.maxHeight !== '0px') {
-                    contentRef.current.style.maxHeight = '0px';
-                 }
-            }
-        }
-    };
-
-    useEffect(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-
-        updateMaxHeight();
-
-        if (isOpen && data.avatar) {
-             timeoutRef.current = setTimeout(() => {
-                updateMaxHeight();
-             }, 50);
-        }
-
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-
-    }, [isOpen, data.avatar]);
-
     return (
-        <section className="space-y-6">
-            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
+        <section className={`${className}`}>
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-600 pb-4 mb-5">
                 <div>
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">Avatar</h2>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-100">Update your profile's avatar.</p>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Avatar
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        Update your profile's avatar.
+                    </p>
                 </div>
-                <div className="flex items-center">
-                    <Transition
-                        show={recentlySuccessful && !isOpen}
-                        enter="transition ease-in-out duration-300"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out duration-300"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600 dark:text-white mr-2">Saved.</p>
-                    </Transition>
+                <button 
+                    type="button"
+                    onClick={toggleOpen}
+                    className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                >
+                    {isOpen ? 'Hide' : 'Show'}
                     <svg
-                        className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'} dark:stroke-white`}
+                        className={`w-5 h-5 ml-1 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -98,61 +60,52 @@ export default function UpdateAvatarForm({ avatarUrl }) {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                </div>
-            </header>
+                </button>
+            </div>
 
-            <div
-                ref={contentRef}
-                style={{ maxHeight: '0px' }}
-                className="overflow-hidden transition-max-height duration-700 ease-in-out"
-            >
-                <form onSubmit={submit} className="mt-6 space-y-4">
+            {isOpen && (
+                <form onSubmit={submit} className="space-y-6">
                     <div className="space-y-4">
-                        {/* Current Avatar Section */}
-                        <div className="border-2 border-gray-300 bg-gray-200 dark:bg-gray-500 dark:border-gray-400 rounded-3xl p-4 max-w-xs">
-                            <label htmlFor="avatar-current" className="block text-lg font-semibold text-gray-700 dark:text-white text-center">Your Current Avatar</label>
-                            <img id="avatar-current" src={avatarUrl} alt="Current Avatar" className="w-auto border-2 rounded-3xl mt-2 mx-auto block" />
+                        <div className="border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                            <label className="block text-base font-medium text-gray-700 dark:text-gray-200 text-center">
+                                Current Avatar
+                            </label>
+                            <img 
+                                src={avatarUrl} 
+                                alt="Current Avatar" 
+                                className="w-32 h-32 object-cover rounded-full mx-auto mt-3 border-2 border-gray-300 dark:border-gray-500"
+                            />
                         </div>
-
-                        <hr className="border-gray-300 border-2 dark:border-gray-600 max-w-xs" />
-
-                        {/* File Upload / New Preview Section */}
-                        <div className="max-w-xs">
-                            <div className={data.avatar ? "border-2 border-gray-300 bg-gray-200 dark:bg-gray-500 dark:border-gray-400 rounded-3xl p-4" : ""}>
-                                {data.avatar && (
-                                    <label className="block text-lg font-semibold text-gray-700 dark:text-white text-center mb-2">New Avatar Preview</label>
-                                )}
-                                <FileUpload
-                                    label={data.avatar ? "Change Avatar" : "Select a new Avatar"}
-                                    name="avatar"
-                                    value={data.avatar}
-                                    onChange={handleFileChange}
-                                    error={errors.avatar}
-                                />
-                            </div>
+                        
+                        <div>
+                            <FileUpload
+                                label="Choose a new avatar"
+                                name="avatar"
+                                value={data.avatar}
+                                onChange={handleFileChange}
+                                error={errors.avatar}
+                                className="w-full"
+                            />
+                            <InputError message={errors.avatar} className="mt-2" />
                         </div>
                     </div>
 
-                     {/* Save Button Section*/}
-                     <div className="flex items-center gap-4 mt-6 max-w-xs">
-                        <PrimaryButton
-                            className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                    <div className="flex items-center justify-between">
+                        <PrimaryButton 
+                            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                             disabled={processing || !data.avatar}
                         >
-                            Save
+                            {processing ? 'Saving...' : 'Save Changes'}
                         </PrimaryButton>
-                        <Transition
-                            show={recentlySuccessful && isOpen}
-                            enter="transition ease-in-out duration-300"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out duration-300"
-                            leaveTo="opacity-0"
-                        >
-                            <p className="text-sm text-gray-600 dark:text-white">Saved.</p>
-                        </Transition>
+                        
+                        {showSaved && (
+                            <span className="text-sm text-green-600 dark:text-green-400 animate-pulse">
+                                Saved successfully!
+                            </span>
+                        )}
                     </div>
                 </form>
-            </div>
+            )}
         </section>
     );
 }

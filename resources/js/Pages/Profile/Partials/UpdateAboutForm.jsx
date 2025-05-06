@@ -1,17 +1,15 @@
 import { useForm } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/InputError';
 
-import { Transition } from '@headlessui/react';
-
-export default function UpdateAboutForm({ about }) {
+export default function UpdateAboutForm({ about, className = '' }) {
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         about: about || '',
     });
 
     const [isOpen, setIsOpen] = useState(false);
     const [showSaved, setShowSaved] = useState(false);
-    const contentRef = useRef(null);
 
     const toggleOpen = () => {
         setIsOpen(!isOpen);
@@ -19,87 +17,77 @@ export default function UpdateAboutForm({ about }) {
 
     const submit = (e) => {
         e.preventDefault();
-        const scrollPosition = window.scrollY;
         patch(route('profile.updateAbout'), {
+            preserveScroll: true,
             onSuccess: () => {
-                setIsOpen(false);
                 setShowSaved(true);
-                setTimeout(() => setShowSaved(false), 5000); 
-                window.scrollTo(0, scrollPosition); 
+                setTimeout(() => setShowSaved(false), 3000);
             },
         });
     };
 
-    useEffect(() => {
-        if (recentlySuccessful) {
-            setShowSaved(true);
-            setTimeout(() => setShowSaved(false), 5000); 
-        }
-    }, [recentlySuccessful]);
-
-    useEffect(() => {
-        if (isOpen) {
-            contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
-        } else {
-            contentRef.current.style.maxHeight = '0px';
-        }
-    }, [isOpen]);
-
     return (
-        <section className="space-y-6">
-            <header onClick={toggleOpen} className="cursor-pointer flex justify-between items-center -mb-5">
+        <section className={`${className}`}>
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-600 pb-4 mb-5">
                 <div>
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">About</h2>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-100">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        About
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                         Update your profile's about section.
                     </p>
                 </div>
-                <div className="flex items-center">
-                    {showSaved && !isOpen && (
-                        <p className="text-sm text-gray-600 mr-2 transition-opacity duration-1000 dark:text-white">Saved.</p>
-                    )}
+                <button 
+                    type="button"
+                    onClick={toggleOpen}
+                    className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                >
+                    {isOpen ? 'Hide' : 'Show'}
                     <svg
-                        className={`w-6 h-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'} dark:stroke-white`}
+                        className={`w-5 h-5 ml-1 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
-                        dark:stroke="black"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                </div>
-            </header>
+                </button>
+            </div>
 
-            <div ref={contentRef} className="transition-max-height duration-1000 overflow-hidden max-h-0">
-                <form onSubmit={submit} className="mt-6 relative">
+            {isOpen && (
+                <form onSubmit={submit} className="space-y-6">
                     <div>
                         <label htmlFor="about" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                             Your About section
                         </label>
                         <textarea
                             id="about"
-                            className="mt-1 block w-full h-24 rounded-md border-2 border-gray-300 dark:bg-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
+                            name="about"
+                            rows="4"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-slate-700/50 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             value={data.about}
                             onChange={(e) => setData('about', e.target.value)}
                         />
-                        {errors.about && <div className="mt-2 text-sm text-red-600">{errors.about}</div>}
+                        <InputError message={errors.about} className="mt-2" />
                     </div>
 
-                    <div className="flex items-center gap-4 mt-6">
-                        <PrimaryButton
-                            className="dark:bg-gray-500 hover:dark:bg-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
+                    <div className="flex items-center justify-between">
+                        <PrimaryButton 
+                            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                             disabled={processing}
                         >
-                            Save
+                            {processing ? 'Saving...' : 'Save Changes'}
                         </PrimaryButton>
-
+                        
+                        {showSaved && (
+                            <span className="text-sm text-green-600 dark:text-green-400 animate-pulse">
+                                Saved successfully!
+                            </span>
+                        )}
                     </div>
-                    
                 </form>
-
-                
-            </div>
+            )}
         </section>
     );
 }

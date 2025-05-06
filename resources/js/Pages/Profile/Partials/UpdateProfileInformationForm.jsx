@@ -11,7 +11,7 @@ export default function UpdateProfileInformation({
     className = '',
 }) {
     const user = usePage().props.auth.user;
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [showSaved, setShowSaved] = useState(false);
     const contentRef = useRef(null);
 
