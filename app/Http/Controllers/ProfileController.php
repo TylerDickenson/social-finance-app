@@ -52,6 +52,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Show', [
             'user' => $user,
             'posts' => $posts,
+
         ]);
     }
 
@@ -61,7 +62,8 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'about' => auth()->user()->about,
-            'avatarUrl' => auth()->user()->avatar_url,
+             'avatarUrl' => auth()->user()->avatar_url,
+            'isAnonymous' => (bool)auth()->user()->anonymous, 
         ]);
     }
 
@@ -125,5 +127,22 @@ class ProfileController extends Controller
         $user->update(['avatar' => $path]);
 
         return back()->with('status', 'avatar-updated');
+    }
+
+    public function updateAnonymous(Request $request)
+    {
+        $user = $request->user();
+        
+        $validated = $request->validate([
+            'anonymous' => 'required|boolean',
+        ]);
+        
+        $user->anonymous = $validated['anonymous'];
+        $user->save();
+        
+
+        Auth::login($user->fresh());
+        
+        return back();
     }
 }

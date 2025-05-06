@@ -6,8 +6,9 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import UpdateAboutForm from './Partials/UpdateAboutForm';
 import UpdateAvatarForm from './Partials/UpdateAvatarForm';
+import UpdateAnonymousStatusForm from './Partials/UpdateAnonymousStatusForm';
 
-export default function Edit({ auth, mustVerifyEmail, status, about, avatarUrl }) {
+export default function Edit({ auth, mustVerifyEmail, status, about, avatarUrl, isAnonymous }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -23,6 +24,12 @@ export default function Edit({ auth, mustVerifyEmail, status, about, avatarUrl }
                                 <UpdateProfileInformationForm
                                     mustVerifyEmail={mustVerifyEmail}
                                     status={status}
+                                />
+                            </div>
+                            
+                            <div className="border-t border-gray-200 dark:border-gray-700 p-6">
+                                <UpdateAnonymousStatusForm 
+                                    isAnonymous={isAnonymous}
                                 />
                             </div>
                             
