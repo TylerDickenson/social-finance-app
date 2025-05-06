@@ -27,7 +27,6 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
 
     const isLikedPostsCollection = collection.name === 'Liked Posts';
 
-    // All the existing useEffect and handlers stay the same
     useEffect(() => {
         setCollection(initialCollection);
         setPosts(initialPosts);
@@ -164,7 +163,6 @@ export default function CollectionPosts({ collection: initialCollection, posts: 
         
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {/* Description Card */}
                     <div className="mb-8 overflow-visible bg-white dark:bg-slate-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="p-6 text-gray-900 dark:text-white relative">
                             {!isLikedPostsCollection && (

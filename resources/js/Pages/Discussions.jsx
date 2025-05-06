@@ -5,7 +5,6 @@ import { Head, Link } from '@inertiajs/react';
 export default function Discussions({ auth, tags }) {
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter tags based on the search term
     const filteredTags = searchTerm
         ? Object.fromEntries(
               Object.entries(tags).map(([letter, tags]) => [
@@ -46,7 +45,6 @@ export default function Discussions({ auth, tags }) {
                                     Discussions are grouped by tags to help you find the topic you are interested in.
                                 </p>
 
-                                {/* Search input */}
                                 
                             </div>
 

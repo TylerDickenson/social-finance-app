@@ -14,20 +14,20 @@ class FollowSeeder extends Seeder
     {
         DB::table('follows')->insert([
             [
-                'follower_id' => 1, // Valid user ID
-                'following_id' => 2, // Valid user ID
+                'follower_id' => 1,
+                'following_id' => 2, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'follower_id' => 2, // Valid user ID
-                'following_id' => 1, // Valid user ID
+                'follower_id' => 2, 
+                'following_id' => 1, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'follower_id' => 3, // Valid user ID
-                'following_id' => 1, // Valid user ID
+                'follower_id' => 3, 
+                'following_id' => 1, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

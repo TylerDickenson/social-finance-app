@@ -46,7 +46,7 @@ class CommentSeeder extends Seeder
             [
                 'post_id' => 3,
                 'user_id' => 1,
-                'content' => 'This inshallah my post inshallahnymous post.',
+                'content' => 'This post is anonymous.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

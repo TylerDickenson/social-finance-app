@@ -72,7 +72,7 @@ export default function StockDetails({ stockData, profileData, keyStats }) {
                 </div>
             </div>
             
-            {/* Basic price metrics - shown for both stocks and crypto */}
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Open</p>

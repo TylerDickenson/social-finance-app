@@ -29,7 +29,6 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                 postId: post.id,
             });
             
-            // Update the displayed comments (limited to 10 if not showing all)
             setComments((prevComments) => {
                 const updatedComments = [response.data.comment, ...prevComments];
                 return showAllComments 
@@ -37,7 +36,6 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                     : updatedComments.slice(0, 10);
             });
             
-            // Always increment the total count
             setCommentsCount(prevCount => prevCount + 1);
             
             setCommentContent('');
@@ -148,7 +146,7 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                     <div>
                         <Link 
                             href={post.is_anonymous && post.user.id !== currentUserId 
-                                ? '#' // Disable link for anonymous posts for other users
+                                ? '#' 
                                 : route('profile.show', { id: post.user.id })}
                             className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                             onClick={(e) => post.is_anonymous && post.user.id !== currentUserId && e.preventDefault()}
@@ -205,6 +203,17 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                                 >
                                     <LinkIcon className="w-4 h-4 mr-2 text-gray-500 group-hover:text-green-600 dark:text-gray-400 dark:group-hover:text-green-400 " />
                                     Share Post
+                                </button>
+
+                                <button
+                                    onClick={() => setDropdownOpen(false)}
+                                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-orange-200/50 group "
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2 text-gray-500 group-hover:text-orange-600 dark:text-gray-400 dark:group-hover:text-orange-400">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+                                    </svg>
+
+                                    Report Post
                                 </button>
                                 
                                 {post.user.id === currentUserId && (

@@ -12,7 +12,6 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
     const [processing, setProcessing] = useState(false);
     const editRef = useRef(null);
 
-    // ... (handleDelete, handleEdit, handleCancelEdit, handleUpdate, useEffect) ...
     const handleDelete = async () => {
         setProcessing(true);
         try {
@@ -41,7 +40,6 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
             const response = await axios.patch(route('comments.update', { id: comment.id }), {
                 content: content
             });
-            // Use the comment data from the response to ensure tags are updated if content changed
             onCommentUpdate(comment.id, response.data.comment);
             setIsEditing(false);
         } catch (error) {
@@ -78,9 +76,8 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                 <DateTimeDisplay timestamp={comment.created_at} />
             </div>
 
-            {/* Middle section: Content or Edit Form */}
             {isEditing ? (
-                <form onSubmit={handleUpdate} className="relative mb-2" ref={editRef}> {/* Added mb-2 */}
+                <form onSubmit={handleUpdate} className="relative mb-2" ref={editRef}> 
                      <div className="flex">
                         <textarea
                             value={content}
@@ -109,15 +106,14 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                     </div>
                 </form>
             ) : (
-                <p className="text-md dark:text-white mb-2"> {/* Added mb-2 */}
+                <p className="text-md dark:text-white mb-2"> 
                     {comment.content} {comment.updated_at !== comment.created_at && <span className="text-sm text-gray-500 dark:text-gray-400">(edited)</span>}
                 </p>
             )}
 
-            {/* Bottom section: Likes, Tags, Edit/Delete */}
-            <div className="flex items-center justify-between mt-2"> {/* Main bottom row container */}
-                {/* Left side: Like button and Tags */}
-                <div className="flex items-center space-x-4"> {/* Container for likes and tags */}
+            <div className="flex items-center justify-between mt-2">
+   
+                <div className="flex items-center space-x-4"> 
                     <LikeButton
                         likeableId={comment.id}
                         likeableType="comments"
@@ -125,7 +121,7 @@ export default function Comment({ comment, canEdit, canDelete, onCommentUpdate, 
                         initialIsLiked={comment.is_liked_by_user}
                     />
                     {comment.tags && comment.tags.length > 0 && (
-                        <div className="flex flex-wrap items-center space-x-1 mt-2"> {/* Tags container */}
+                        <div className="flex flex-wrap items-center space-x-1 mt-2"> 
                             {comment.tags.map((tag) => (
                                 <Link
                                     key={tag.id}

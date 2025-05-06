@@ -29,7 +29,6 @@ export default function StockChart({ symbol }) {
     const [chartLoading, setChartLoading] = useState(false);
     const [chartError, setChartError] = useState(null);
     
-    // Check if this is a cryptocurrency
     const isCrypto = CRYPTO_SYMBOLS.includes(symbol);
     
     useEffect(() => {

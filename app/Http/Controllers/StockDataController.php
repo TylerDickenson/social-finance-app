@@ -24,7 +24,6 @@ class StockDataController extends Controller
             return response()->json(['error' => 'Symbol parameter is required'], 400);
         }
         
-        // Cache quotes for 5 minutes to avoid hitting API limits
         $cacheKey = "stock_quote_{$symbol}";
         
         return Cache::remember($cacheKey, 300, function () use ($symbol) {
@@ -49,7 +48,6 @@ class StockDataController extends Controller
             return response()->json(['error' => 'Symbol parameter is required'], 400);
         }
         
-        // Cache profile data for 24 hours as it rarely changes
         $cacheKey = "stock_profile_{$symbol}";
         
         return Cache::remember($cacheKey, 86400, function () use ($symbol) {

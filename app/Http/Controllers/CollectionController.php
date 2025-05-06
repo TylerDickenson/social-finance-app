@@ -42,7 +42,7 @@ class CollectionController extends Controller
         $collection = Collection::with([
             'posts' => function ($query) {
                 $query->with([
-                        'user', // Eager load the post author
+                        'user', 
                         'comments.user',
                         'comments.likes',
                         'likes'

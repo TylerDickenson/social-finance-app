@@ -88,7 +88,6 @@ export default function Create({ auth }) {
                                     {errors.image && <div className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.image}</div>}
                                 </div>
                                 
-                                {/* Add anonymous checkbox */}
                                 <div className="mb-6 flex items-center">
                                     <input
                                         type="checkbox"

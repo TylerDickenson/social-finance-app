@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        $defaultAvatar = '/images/Backgrounds/Avatar.jpeg'; // Ensure this path is correct
+        $defaultAvatar = '/images/Backgrounds/Avatar.jpeg'; 
 
         DB::table('users')->insert([
             [
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'anonymous' => false,
-                'avatar' => '/images/Chase.png', // Ensure this path is correct
+                'avatar' => '/images/Chase.png', 
                 'about' => 'I am a software developer.',
                 'remember_token' => Str::random(10),
                 'created_at' => now(),

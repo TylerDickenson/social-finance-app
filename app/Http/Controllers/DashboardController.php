@@ -18,7 +18,6 @@ class DashboardController extends Controller
             'likes',
             'tags',
             'comments' => function ($query) {
-                // *** Ensure 'tags' is loaded for comments ***
                 $query->with(['user', 'likes', 'tags'])
                       ->withCount('likes')
                       ->orderBy('created_at', 'asc');
@@ -41,7 +40,6 @@ class DashboardController extends Controller
                  $post->user->is_following = false;
             }
             
-            // Handle anonymous posts by replacing avatar URL in the backend
             if ($post->is_anonymous && $post->user && $userId !== $post->user->id) {
                 $post->user->avatar_url = asset('images/anonymous-avatar.png');
             }

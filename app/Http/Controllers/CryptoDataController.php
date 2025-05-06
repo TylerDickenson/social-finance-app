@@ -23,11 +23,7 @@ class CryptoDataController extends Controller
         if (!$symbol) {
             return response()->json(['error' => 'Symbol parameter is required'], 400);
         }
-        
-        // Ensure we have the USD pair format for crypto
         $symbolParam = "{$symbol}/USD";
-        
-        // Cache quotes for 2 minutes - crypto prices change rapidly
         $cacheKey = "crypto_quote_{$symbol}";
         
         return Cache::remember($cacheKey, 120, function () use ($symbolParam) {
