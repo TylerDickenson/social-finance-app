@@ -26,7 +26,7 @@ class PostController extends Controller
             }
         },
         'comments' => function ($query) {
-            $query->with(['user', 'likes']);  // Add likes here
+            $query->with(['user', 'likes']);  
             $query->orderBy('created_at', 'desc');
         },
         'comments.user',
@@ -34,11 +34,9 @@ class PostController extends Controller
         'tags'
     ])->findOrFail($id);
 
-    // Add likes data to post
     $post->is_liked_by_user = $post->likes->contains('user_id', auth()->id());
     $post->likes_count = $post->likes->count();
     
-    // Add likes data to each comment
     foreach ($post->comments as $comment) {
         $comment->is_liked_by_user = $comment->likes->contains('user_id', auth()->id());
         $comment->likes_count = $comment->likes->count();

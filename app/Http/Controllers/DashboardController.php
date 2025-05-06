@@ -39,10 +39,6 @@ class DashboardController extends Controller
             } else if ($post->user) {
                  $post->user->is_following = false;
             }
-            
-            if ($post->is_anonymous && $post->user && $userId !== $post->user->id) {
-                $post->user->avatar_url = asset('images/anonymous-avatar.png');
-            }
 
             if ($post->comments) {
                 foreach ($post->comments as $comment) {

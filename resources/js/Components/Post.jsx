@@ -166,14 +166,15 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                 <div className="flex items-center gap-3">
                     {currentUserId && 
                         post.user.id !== currentUserId && 
-                        (!post.is_anonymous || post.user.id === currentUserId) && (
+                        !post.is_anonymous && 
+                        !post.user.anonymous && (
                             <FollowButton
                                 userId={post.user.id}
                                 isFollowing={post.user.is_following}
                                 onFollowChange={onFollowChange}
                                 className="mr-2"
                             />
-                            )}
+                        )}
                         
                     <div className="relative">
                         <button
@@ -257,7 +258,7 @@ export default memo(function Post({ post, currentUserId, onFollowChange, onPostD
                         <img
                             src={post.image_url}
                             alt={post.title}
-                            className="w-full h-max object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                            className="w-full max-h-[32rem] object-contain cursor-pointer hover:opacity-90 transition-opacity mx-auto"
                             onDoubleClick={() => likeButtonRef.current?.toggleLike()}
                         />
                     </div>
