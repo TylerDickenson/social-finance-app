@@ -95,7 +95,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 className="min-h-screen flex bg-gray-50 dark:bg-slate-800"
                 style={{ 
                     backgroundImage: 'url("/images/backgrounds/topography2.svg")', 
-                    backgroundBlendMode: 'soft-light',
+                    backgroundBlendMode: theme === 'light' ? 'multiply' : 'soft-light',
+                   
                     backgroundSize: '400px'
                 }}
             >
