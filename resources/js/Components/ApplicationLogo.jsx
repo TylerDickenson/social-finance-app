@@ -5,12 +5,12 @@ export default function ApplicationLogo(props) {
     const { theme } = SiteTheme();
     
     const [logoSrc, setLogoSrc] = useState(theme === 'dark' 
-        ? "/Images/Backgrounds/FS_dark.png" 
+        ? "/images/backgrounds/FS_dark.png" 
         : "/images/backgrounds/FS.png");
 
     useEffect(() => {
         setLogoSrc(theme === 'dark' 
-            ? "/Images/Backgrounds/FS_dark.png" 
+            ? "/images/backgrounds/FS_dark.png" 
             : "/images/backgrounds/FS.png");
     }, [theme]);
 
@@ -19,7 +19,7 @@ export default function ApplicationLogo(props) {
             setTimeout(() => {
                 const isDark = document.documentElement.classList.contains('dark');
                 setLogoSrc(isDark 
-                    ? "/Images/Backgrounds/FS_dark.png" 
+                    ? "/images/backgrounds/FS_dark.png" 
                     : "/images/backgrounds/FS.png");
             }, 10);
         };
