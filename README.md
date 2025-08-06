@@ -1,4 +1,11 @@
+
+
+
+
+
 Social Finance App
+
+wwww.fin-social.com
 
 This is a finance-based social media application built using Laravel Breeze with React and Inertia.js. The application allows users to create posts, comment on posts, follow other users, and update their profiles with avatars and about sections.
 
