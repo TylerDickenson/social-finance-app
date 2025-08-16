@@ -33,7 +33,7 @@ function CommunityRules() {
     ];
     
     return (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-blue-100 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden">
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -93,12 +93,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             <Head title="Welcome" />
             <div 
                 className="min-h-screen flex bg-gray-50 dark:bg-slate-800"
-                style={{ 
-                    backgroundImage: 'url("/images/backgrounds/topography2.svg")', 
-                    backgroundBlendMode: theme === 'light' ? 'multiply' : 'soft-light',
-                   
-                    backgroundSize: '400px'
-                }}
+               
             >
                 <nav className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 z-50 transform ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col shadow-lg`}>
                     <div className="px-6 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
