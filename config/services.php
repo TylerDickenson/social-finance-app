@@ -19,7 +19,7 @@ return [
     ],
 
     'twelvedata' => [
-        'key' => env('5eebb6909b0d4970af5d79f44a4dd2f6'),
+        'key' => env('TWELVE_DATA_API_KEY'),
     ],
 
     'ses' => [

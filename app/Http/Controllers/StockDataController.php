@@ -13,7 +13,9 @@ class StockDataController extends Controller
 
     public function __construct()
     {
-        $this->apiKey = env('TWELVE_DATA_API_KEY');
+        $this->apiKey = config('services.twelvedata.key');
+        \Log::info('Twelve Data API Key: ' . $this->apiKey);
+        
     }
 
     public function getQuote(Request $request)
